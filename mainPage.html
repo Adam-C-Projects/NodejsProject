@@ -77,7 +77,7 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
                         },
                         {
                             role: "user",
-                            content: `Create a recipe using the following ingredients: ${ingredients}`
+                            content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the macros (protein, carbs, fat) and the total calories for the recipe and any allegies.`
                         }
                     ]
                 })
