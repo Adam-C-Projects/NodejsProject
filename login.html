@@ -5,17 +5,20 @@
     <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <header>
-        <h1>Login to Recipes4U</h1>
-    </header>
-    <main>
-        <form action="scripts/login.php" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+<body class ="login">
+    <div class="wrapper">
+        <form class= "login-form" action="scripts/login.php" method="POST">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class = "input-box">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+
+            <button class="btn "type="submit">Login</button>
         </form>
-        <p>Don't have an account? <a href="register.html">Register here</a>.</p>
-    </main>
+        <p class="register-link">Don't have an account? <a href="register.html">Register here</a>.</p>
+    </div>
 </body>
 </html>
