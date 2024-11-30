@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Saved Recipes</title>
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <header>Saved Recipes</header>
+        <div>
+            <% if (recipes.length > 0) { %>
+                <ul>
+                    <% recipes.forEach(recipe => { %>
+                        <li>
+                            <h2><%= recipe.recipeName %></h2>
+                            <p><%= recipe.ingredientName %></p>
+                            <p><%= recipe.dietaryReq %></p>
+                            <p><%= recipe.macros %></p>
+                            <p><%= recipe.cookingTime %></p>
+                            
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No saved recipes found.</p>
+            <% } %>   
+        </div> 
+    </body>
+</html>

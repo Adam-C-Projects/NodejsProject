@@ -10,7 +10,7 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
 <head>
     <meta charset="UTF-8">
     <title>Recipes4U</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <header>
@@ -44,12 +44,12 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
 
     <div id="authLinks">
         <a href="login.html">Login</a> |
-        <a href="register.html">Register</a>
+        <a href="register.html">Register</a> |
+        <a href="savedRecipes.ejs">savedRecipes</a>
     </div>
 </main>
 
 <script>
-
     document.getElementById("enter-button").addEventListener("click", generateRecipe);
 
     async function generateRecipe() {
