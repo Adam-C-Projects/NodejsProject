@@ -1,8 +1,8 @@
---- Step 1: Create Database
+
 CREATE DATABASE Recipes4U;
 USE Recipes4U;
 
--- Step 2: Create Tables
+
 CREATE TABLE User (
     UID INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -60,3 +60,17 @@ WHERE sr.UID = 1;
 -- Delete a Recipe
 DELETE FROM Recipes
 WHERE RID = 2;
+
+CREATE TABLE RecipeCategories (
+    CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+    CategoryName VARCHAR(50) NOT NULL UNIQUE
+);
+-- new catogrised recipes for dinner breakfast and lunch 
+CREATE TABLE RecipeCategoryMapping (
+    RID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    FOREIGN KEY (RID) REFERENCES Recipes(RID),
+    FOREIGN KEY (CategoryID) REFERENCES RecipeCategories(CategoryID)
+);
+--- and favuitred recipes 
+ALTER TABLE SavedRecipes ADD is_favorite BOOLEAN DEFAULT FALSE;
