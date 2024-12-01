@@ -15,9 +15,9 @@ app.set('views', path.join(__dirname, 'views')); // Ensure EJS files are placed 
 // Create a connection to the database
 const db = mysql.createConnection({
   host: 'dragon.kent.ac.uk',
-  user: 'asc50',
-  password: '3ydonef',
-  database: "asc50"
+  user: 'pi48',
+  password: '4terfou',
+  database: "pi48"
 });
 
 // Open the MySQL connection
@@ -148,3 +148,14 @@ app.get('/savedRecipes.ejs', (req, res) => {
         }
     );
   });
+  // route to fetch all recipes from the recipes database
+app.get('/all-recipes', (req, res) => {
+  recipeDB.query('SELECT * FROM Recipes', (err, results) => {
+      if (err) {
+          console.error('Error fetching all recipes: ', err);
+          return res.status(500).send('Error fetching all recipes');
+      }
+
+      res.render('allRecipes', { recipes: results });
+  });
+});
