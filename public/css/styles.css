@@ -12,7 +12,7 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f9f9f9;
+    background-color: #b1e2cead;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,10 +27,10 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    background: #80c1ff;
+    background: linear-gradient(135deg, #9DE0AD, #45ADA8);
     color: #fff;
     text-align: center;
-    padding: 10px 0;
+    padding: 2px 0;
     font-size: 1.8rem;
     font-weight: bold;
     z-index: 1000;
@@ -40,11 +40,11 @@ header {
 /* Main section styles */
 main {
     margin-top: 90px;
-    background: #ffffff;
+    background: linear-gradient(135deg, #8ed4bb, #7dadad);
     border-radius: 10px;
-    padding: 20px;
-    width: 80%;
-    height: 85%;
+    padding: 10px;
+    width: 65%;
+    height: 80%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -63,19 +63,20 @@ main {
 }
 
 .search-bar input {
-    width: 30%;
+    width: 20%;
     padding: 10px;
     font-size: 1rem;
-    border: 2px solid #ddd;
+    border: 2px solid #000000;
     border-radius: 20px 0 0 20px;
     outline: none;
     transition: border-color 0.3s ease;
+    background: #d3cece;
 }
 
 .search-bar button {
-    padding: 12px 20px;
+    padding: 12px 15px;
     font-size: 1rem;
-    background-color: #007BFF;
+    background-color: #0066cc;
     color: white;
     border: none;
     border-radius: 5px;
@@ -85,53 +86,60 @@ main {
 }
 
 .search-bar button:hover {
-    background-color: #0056b3;
+    background-color: #004c99;
 }
 
 .search-bar input:focus {
-    border-color: #007BFF;
+    border-color: #0066cc;
 }
+
 #searchBar{
     text-align: center;  
     width: 100%;
 }
+
 #ingredientOwn{
     text-align: center;
-    margin: 20px 0;
-    width: 100%;
+    margin: 20px;
+    width: 65%;
 }
+
 textarea {
-    width: 60%;
-    height: 150px;
+    background: #d3cece;
+    width: 35%;
+    height: 50px;
     padding: 10px;
     font-size: 1rem;
-    border: 2px solid #ddd;
+    border: 2px solid #000000;
     border-radius: 5px;
     outline: none;
     resize: none;
+    margin-left: 25px;
     margin-bottom: 10px;
     transition: border-color 0.3s ease;
   }
 
 textarea:focus {
-    border-color: #007BFF;
+    border-color: #0066cc;
 }
+
 #enter-button {
     display: inline-block;
+    font-size: 1rem;
     padding: 10px 20px;
-    background-color: #007BFF;
+    background-color: #0066cc;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 25px;
     transition: background-color 0.3s ease;
 }
 
 #enter-button:hover {
-    background-color: #0056b3;
+    background-color: #004c99;
 }
     
-
 #ingredientList{
     text-align: center;
     margin: 20px 0;
@@ -140,8 +148,8 @@ textarea:focus {
 
 /* Recipe Output */
 #recipeOutput {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
+    background: #d3cece;
+    border: 2px solid #000000;
     border-radius: 5px;
     padding: 15px;
     margin: 20px 0;
@@ -151,7 +159,7 @@ textarea:focus {
 }
 
 #recipeOutput h2 {
-    color: #007BFF;
+    color: #000000;
     margin-bottom: 10px;
 }
 
@@ -167,11 +175,11 @@ textarea:focus {
     text-decoration: none;
     margin: 0 10px;
     transition: color 0.3s ease;
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 #authLinks a:hover {
-    color: #0056b3;
+    color: #004c99;
 }
 
 /* Responsive Adjustments */
@@ -194,11 +202,7 @@ textarea:focus {
     }
 }
 
-
-
-/*
-login and resister page styles
-*/
+/* login and resister page styles */
 .login{
     display: flex;
     justify-content: center;
@@ -214,12 +218,14 @@ login and resister page styles
     justify-content: center;
     border-radius: 20px;
 }
+
 .wrapper .input-box{
     display: flex;
     width: 90%;
     height: 50px;
     margin: 20px auto;
 }
+
 .input-box input{
     width: 100%;
     height: 100%;
@@ -228,6 +234,7 @@ login and resister page styles
     border-radius: 40px;
     font-size: 16px;
 }
+
 .wrapper .btn{
     margin-top: 20px;
     width: 90%;
@@ -237,10 +244,12 @@ login and resister page styles
     cursor: pointer;
     font-size: 16px;
 }
+
 .register-link{
     margin-top: 20px;
     margin-bottom: 45px;
 }
+
 .wrapper .login-form{
     margin-top: 35px;
 }
