@@ -12,12 +12,12 @@ const PORT = 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')); // Ensure EJS files are placed in the 'views' folder
 
-// Create a connection to the database
+// Create a connection to the database. Dont change details. if you need to change database tables do it on this server
 const db = mysql.createConnection({
   host: 'dragon.kent.ac.uk',
-  user: 'pi48',
-  password: '4terfou',
-  database: "pi48"
+  user: 'asc50',
+  password: '3ydonef',
+  database: "asc50"
 });
 
 // Open the MySQL connection
@@ -150,7 +150,7 @@ app.get('/savedRecipes.ejs', (req, res) => {
   });
   // route to fetch all recipes from the recipes database
 app.get('/all-recipes', (req, res) => {
-  recipeDB.query('SELECT * FROM Recipes', (err, results) => {
+  db.query('SELECT * FROM Recipes', (err, results) => {
       if (err) {
           console.error('Error fetching all recipes: ', err);
           return res.status(500).send('Error fetching all recipes');

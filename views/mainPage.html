@@ -29,8 +29,10 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
     <div id="ingredientOwn">
         <b>Fill in the box below with ingredients that you own!</b>
         <p>We can find you available recipes based on your input.</p>
-        <textarea id="ingredients-input" name="enter your ingredients here..." cols="50" rows="10"></textarea>
-        <button id="enter-button">Enter</button>
+        <div id="ingredientInputWrapper">
+            <textarea id="ingredients-input" name="enter your ingredients here..." cols="50" rows="10"></textarea>
+            <button id="enter-button">Enter</button>
+        </div>
     </div>
 
     <div id="ingredientList">
