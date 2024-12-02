@@ -15,9 +15,9 @@ app.set('views', path.join(__dirname, 'views')); // Ensure EJS files are placed 
 // Create a connection to the database. Dont change details. if you need to change database tables do it on this server
 const db = mysql.createConnection({
   host: 'dragon.kent.ac.uk',
-  user: 'asc50',
-  password: '3ydonef',
-  database: "asc50"
+  user: 'hamas-i',
+  password: 'jr753',
+  database: "jr753"
 });
 
 // Open the MySQL connection
@@ -125,7 +125,6 @@ app.get('/savedRecipes.ejs', (req, res) => {
     if (!username) {
         return res.redirect('/login.html'); // If the user is not logged in, redirect to login
     }
-  
     db.query(
         `SELECT r.*
          FROM SavedRecipes sr
@@ -158,4 +157,19 @@ app.get('/all-recipes', (req, res) => {
 
       res.render('allRecipes', { recipes: results });
   });
+});
+//Route to create new recipe, saves to Recipes
+app.post('/createRecipes', (req, res)=> {
+    const {title, ingredients, instructions} = req.body;
+    const userID = req.session.username //TO-DO: How do we store userID in session? Im just gonna leave this for now
+    const query = `
+        INSERT INTO Recipes (title, ingredients, instructions, macros, allergies, user_id)
+        VALUES (?, ?, ?, ?, ?, ?)`;
+    db.query(query, [title, ingredients, instructions, userId], (err, result) => {
+        if (err) {
+            console.error('Error inserting recipe: ', err);
+            return res.status(500).send('Error saving recipe');
+        }
+        res.status(200).send('Recipe created successfully');
+    });
 });

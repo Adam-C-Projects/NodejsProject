@@ -79,8 +79,7 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
                         },
                         {
                             role: "user",
-                            content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the macros (protein, carbs, fat) and the total calories for the recipe and any allegies.
-                            Give multiple recipes for choice and dont limit to ingredients as long as they are included.`
+                            content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the macros (protein, carbs, fat) and the total calories for the recipe and any allergies.`
                         }
                     ]
                 })
@@ -90,6 +89,31 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
             if (response.ok) {
                 const recipe = data.choices[0].message.content;
                 recipeOutput.innerHTML = `<pre>${recipe}</pre>`;
+
+                const tempTitle = recipe.match(/Recipe: (.*)/);
+                const tempIngredients = recipe.match(/Ingredients:([\s\S]*?)Instructions:/);
+                const tempInstructions = recipe.match(/Instructions:([\s\S]*)/);
+                const tempMacros = recipe.match(/Macros:\n([\s\S]*?)\n\n/);
+                const tempAllergies = recipe.match(/Allergies:\n([\s\S]*)/);
+
+                if (tempTitle && tempIngredients && tempInstructions){
+                    const title=tempTitle[1].trim();
+                    const ingredients=tempIngredients[1].trim();
+                    const instructions=tempInstructions[1].trim();
+                    const macros=tempMacros[1].trim();
+                    const allegies=tempAllergies[1].trim();
+                    await fetch('/createRecipes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title,
+                            ingredients,
+                            instructions
+                        })
+                    });
+                }
             } else {
                 recipeOutput.innerHTML = `Error: ${data.error.message}`;
             }
