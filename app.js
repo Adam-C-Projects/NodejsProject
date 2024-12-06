@@ -15,9 +15,9 @@ app.set('views', path.join(__dirname, 'views')); // Ensure EJS files are placed 
 // Create a connection to the database. Dont change details. if you need to change database tables do it on this server
 const db = mysql.createConnection({
   host: 'dragon.kent.ac.uk',
-  user: 'hamas-i',
-  password: 'jr753',
-  database: "jr753"
+  user: 'asc50',
+  password: '3ydonef',
+  database: "asc50"
 });
 
 // Open the MySQL connection
