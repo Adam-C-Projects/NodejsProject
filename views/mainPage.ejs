@@ -45,9 +45,9 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
     </div>
 
     <div id="authLinks">
-        <a href="login.html">Login</a> |
-        <a href="register.html">Register</a> |
-        <a href="savedRecipes.ejs">savedRecipes</a>
+        <a href="login">Login</a> |
+        <a href="register">Register</a> |
+        <a href="savedRecipes">savedRecipes</a>
     </div>
 </main>
 
@@ -79,7 +79,8 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
                         },
                         {
                             role: "user",
-                            content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the macros (protein, carbs, fat) and the total calories for the recipe and any allergies.`
+                            content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the title, the ingredients, the instructions, 
+                            the macros (protein, carbs, fat) ,the total calories for the recipe and any allergies.`
                         }
                     ]
                 })
