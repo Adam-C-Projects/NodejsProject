@@ -34,9 +34,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Create a connection to the database
 const db = mysql.createConnection({
     host: 'dragon.kent.ac.uk',
-    user: 'asc50',
-    password: '3ydonef',
-    database: "asc50"
+    user: 'jr753',
+    password: 'hamas-i',
+    database: "jr753"
 });
 
 // Open the MySQL connection
