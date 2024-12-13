@@ -11,7 +11,7 @@ async function callOpenAI(ingredients) {
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
                 messages: [
-                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat, fiber, sugar, sodium), total calories, allergies, prep time, cook time and servings." },
+                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat, fiber, sugar, sodium), total calories, allergies, prep time (in minutes), cook time (in minutes) and servings. Avoid leaving any field undefined or null" },
                     {
                         role: "user",
                         content: `Generate a recipe for the following ingredients: ${ingredients}`
@@ -53,7 +53,7 @@ async function generateRecipe() {
     try {
         const recipe = await callOpenAI(ingredients);
         if(recipe) {
-            let recipeText = `Recipe for: ${recipe.title}\n\n`;
+            let recipeText = `${recipe.title}\n\n`;
             recipeText += `Ingredients:\n${recipe.ingredients.join("\n")}\n\n`;
             recipeText += `Instructions:\n${recipe.instructions.join("\n")}\n\n`;
             recipeText += `Macronutrients:\n`;
@@ -65,8 +65,8 @@ async function generateRecipe() {
             recipeText += `Sodium: ${recipe.macros.sodium}\n\n`;
             recipeText += `Total Calories: ${recipe.total_calories}\n`;
             recipeText += `Allergies: ${recipe.allergies.join(", ")}`;
-            recipeText += `\nPrep time: ${recipe.prepTime}\n`;
-            recipeText += `Cook time: ${recipe.cookTime}\n`;
+            recipeText += `\nPrep time: ${recipe.prepTime || "Not specified"}\n`;
+            recipeText += `Cook time: ${recipe.cookTime|| "Not specified"} \n`;
             recipeText += `Servings: ${recipe.servings}\n\n`;
 
             recipeOutput.innerText = recipeText;
