@@ -1,14 +1,6 @@
 document.getElementById("enter-button").addEventListener("click", generateRecipe);
 
-async function generateRecipe() {
-    const ingredients = document.getElementById("ingredients-input").value;
-    const recipeOutput = document.getElementById("recipe-text");
-
-    if (!ingredients.trim()) {
-        recipeOutput.innerHTML = "Add ingredients";
-        return;
-    }
-
+async function callOpenAI(ingredients) {
     try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
@@ -19,51 +11,56 @@ async function generateRecipe() {
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
                 messages: [
-                    {
-                        role: "system",
-                        content: "You are a chef who generates recipes based on a list of ingredients provided."
-                    },
+                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat), total calories, and allergies." },
                     {
                         role: "user",
-                        content: `Create a recipe using the following ingredients: ${ingredients}. Please also provide the macros (protein, carbs, fat) and the total calories for the recipe and any allergies.`
+                        content: `Generate a recipe for the following ingredients: ${ingredients}`
                     }
                 ]
             })
         });
 
-        const data = await response.json();
-        if (response.ok) {
-            const recipe = data.choices[0].message.content;
-            recipeOutput.innerHTML = `<pre>${recipe}</pre>`;
-
-            const tempTitle = recipe.match(/Recipe: (.*)/);
-            const tempIngredients = recipe.match(/Ingredients:([\s\S]*?)Instructions:/);
-            const tempInstructions = recipe.match(/Instructions:([\s\S]*)/);
-            const tempMacros = recipe.match(/Macros:\n([\s\S]*?)\n\n/);
-            const tempAllergies = recipe.match(/Allergies:\n([\s\S]*)/);
-
-            if (tempTitle && tempIngredients && tempInstructions) {
-                const title = tempTitle[1].trim();
-                const ingredients = tempIngredients[1].trim();
-                const instructions = tempInstructions[1].trim();
-                const macros = tempMacros[1].trim();
-                const allergies = tempAllergies[1].trim();
-
-                await fetch('/createRecipes', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title,
-                        ingredients,
-                        instructions
-                    })
-                });
-            }
-        } else {
-            recipeOutput.innerHTML = `Error: ${data.error.message}`;
+        if (!response.ok) {
+            throw new Error(`Failed to fetch recipe: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log("API output:", data);
+
+        const recipeContent = data.choices[0].message.content;
+        return JSON.parse(recipeContent);
+
+    } catch (error) {
+        console.error("Error fetching recipe:", error);
+        throw error;
+    }
+}
+
+async function generateRecipe() {
+    const ingredients = document.getElementById("ingredients-input").value;
+    const recipeOutput = document.getElementById("recipe-text");
+
+    if (!ingredients.trim()) {
+        recipeOutput.innerHTML = "Add ingredients";
+        return;
+    }
+
+    try {
+        const recipe = await callOpenAI(ingredients);
+        if(recipe) {
+            let recipeText = `Recipe for: ${recipe.title}\n\n`;
+            recipeText += `Ingredients:\n${recipe.ingredients.join("\n")}\n\n`;
+            recipeText += `Instructions:\n${recipe.instructions.join("\n")}\n\n`;
+            recipeText += `Macronutrients:\n`;
+            recipeText += `Protein: ${recipe.macros.protein}\n`;
+            recipeText += `Carbs: ${recipe.macros.carbs}\n`;
+            recipeText += `Fat: ${recipe.macros.fat}\n\n`;
+            recipeText += `Total Calories: ${recipe.total_calories}\n`;
+            recipeText += `Allergies: ${recipe.allergies.join(", ")}`;
+
+            recipeOutput.innerText = recipeText;
+        }
+
     } catch (error) {
         recipeOutput.innerHTML = `Error: ${error.message}`;
     }
