@@ -28,7 +28,9 @@ async function callOpenAI(ingredients) {
         console.log("API output:", data);
 
         const recipeContent = data.choices[0].message.content;
-        return JSON.parse(recipeContent);
+        const recipe = JSON.parse(recipeContent);
+        console.log("Parsed recipe:", recipe);
+        return recipe;
 
     } catch (error) {
         console.error("Error fetching recipe:", error);
