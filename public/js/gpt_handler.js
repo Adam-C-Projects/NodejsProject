@@ -11,7 +11,7 @@ async function callOpenAI(ingredients) {
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
                 messages: [
-                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat), total calories, and allergies." },
+                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat, fiber, sugar, sodium), total calories, allergies, prep time, cook time and servings." },
                     {
                         role: "user",
                         content: `Generate a recipe for the following ingredients: ${ingredients}`
@@ -30,6 +30,9 @@ async function callOpenAI(ingredients) {
         const recipeContent = data.choices[0].message.content;
         const recipe = JSON.parse(recipeContent);
         console.log("Parsed recipe:", recipe);
+
+        console.log("Ingredients:", recipe.ingredients);
+
         return recipe;
 
     } catch (error) {
@@ -56,9 +59,15 @@ async function generateRecipe() {
             recipeText += `Macronutrients:\n`;
             recipeText += `Protein: ${recipe.macros.protein}\n`;
             recipeText += `Carbs: ${recipe.macros.carbs}\n`;
-            recipeText += `Fat: ${recipe.macros.fat}\n\n`;
+            recipeText += `Fat: ${recipe.macros.fat}\n`;
+            recipeText += `Fiber: ${recipe.macros.fiber}\n`;
+            recipeText += `Sugar: ${recipe.macros.sugar}\n`;
+            recipeText += `Sodium: ${recipe.macros.sodium}\n\n`;
             recipeText += `Total Calories: ${recipe.total_calories}\n`;
             recipeText += `Allergies: ${recipe.allergies.join(", ")}`;
+            recipeText += `\nPrep time: ${recipe.prepTime}\n`;
+            recipeText += `Cook time: ${recipe.cookTime}\n`;
+            recipeText += `Servings: ${recipe.servings}\n\n`;
 
             recipeOutput.innerText = recipeText;
         }
