@@ -1,79 +1,66 @@
 document.getElementById("enter-button").addEventListener("click", generateRecipe);
 
-async function callOpenAI(ingredients) {
+async function fetchFromAPI(url, method, headers, body) {
     try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer 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`
-            },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat, fiber, sugar, sodium), total calories, allergies, prep time (in minutes), cook time (in minutes) and servings. Avoid leaving any field undefined or null" },
-                    {
-                        role: "user",
-                        content: `Generate a recipe for the following ingredients: ${ingredients}`
-                    }
-                ]
-            })
-        });
-
+        const response = await fetch(url, { method, headers, body: JSON.stringify(body) });
         if (!response.ok) {
-            throw new Error(`Failed to fetch recipe: ${response.status}`);
+            throw new Error(`API Error: ${response.status}`);
         }
-
-        const data = await response.json();
-        console.log("API output:", data);
-
-        const recipeContent = data.choices[0].message.content;
-        const recipe = JSON.parse(recipeContent);
-        console.log("Parsed recipe:", recipe);
-
-        console.log("Ingredients:", recipe.ingredients);
-
-        return recipe;
-
+        return await response.json();
     } catch (error) {
-        console.error("Error fetching recipe:", error);
+        console.error("Error in API call:", error);
         throw error;
     }
 }
 
+async function callOpenAI(ingredients) {
+    const apiUrl = "https://api.openai.com/v1/chat/completions";
+    const apiHeaders = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer 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`,
+    };
+    const apiBody = {
+        model: "gpt-3.5-turbo",
+        messages: [
+            { role: "system", content: "You are a chef who generates recipes based on a list of ingredients provided. Please return the recipe in JSON format, including the title, ingredients, instructions, macros (protein, carbs, fat, fiber, sugar, sodium), total calories, allergies, prep time (in minutes), cook time (in minutes) and servings. Avoid leaving any field undefined or null" },
+            { role: "user", content: `Generate a recipe for the following ingredients: ${ingredients}` },
+        ],
+    };
+    const data = await fetchFromAPI(apiUrl, "POST", apiHeaders, apiBody);
+    const recipeContent = data.choices[0].message.content;
+    return JSON.parse(recipeContent);
+}
+function renderRecipe(recipe, index) {
+    const recipeText = `
+        <h3>Recipe ${index + 1}: ${recipe.title}</h3>
+        <p><b>Ingredients:</b><br>${recipe.ingredients.join("<br>")}</p>
+        <p><b>Instructions:</b><br>${recipe.instructions.join("<br>")}</p>
+        <p><b>Macronutrients:</b><br>
+            Protein: ${recipe.macros.protein}, 
+            Carbs: ${recipe.macros.carbs}, 
+            Fat: ${recipe.macros.fat},
+            Fiber: ${recipe.macros.fiber}, 
+            Sugar: ${recipe.macros.sugar}, 
+            Sodium: ${recipe.macros.sodium}</p>
+        <p><b>Total Calories:</b> ${recipe.total_calories} kcal</p>
+        <p><b>Allergies:</b> ${recipe.allergies.join(", ")||"None"}</p>
+        <p>Prep Time: ${recipe.prepTime||"Not specified"} minutes</p>
+        <p>Cook Time: ${recipe.cookTime ||"Not specified"} minutes</p>
+        <p>Servings: ${recipe.servings}</p>
+    `;
+    const recipeDiv = document.createElement("div");
+    recipeDiv.classList.add("recipe-card");
+    recipeDiv.innerHTML = recipeText;
+    return recipeDiv;
+}
 async function generateRecipe() {
-    const ingredients = document.getElementById("ingredients-input").value;
-    const recipeOutput = document.getElementById("recipe-text");
-
-    if (!ingredients.trim()) {
-        recipeOutput.innerHTML = "Add ingredients";
-        return;
-    }
-
-    try {
-        const recipe = await callOpenAI(ingredients);
-        if(recipe) {
-            let recipeText = `${recipe.title}\n\n`;
-            recipeText += `Ingredients:\n${recipe.ingredients.join("\n")}\n\n`;
-            recipeText += `Instructions:\n${recipe.instructions.join("\n")}\n\n`;
-            recipeText += `Macronutrients:\n`;
-            recipeText += `Protein: ${recipe.macros.protein}\n`;
-            recipeText += `Carbs: ${recipe.macros.carbs}\n`;
-            recipeText += `Fat: ${recipe.macros.fat}\n`;
-            recipeText += `Fiber: ${recipe.macros.fiber}\n`;
-            recipeText += `Sugar: ${recipe.macros.sugar}\n`;
-            recipeText += `Sodium: ${recipe.macros.sodium}\n\n`;
-            recipeText += `Total Calories: ${recipe.total_calories}\n`;
-            recipeText += `Allergies: ${recipe.allergies.join(", ")}`;
-            recipeText += `\nPrep time: ${recipe.prepTime || "Not specified"}\n`;
-            recipeText += `Cook time: ${recipe.cookTime|| "Not specified"} \n`;
-            recipeText += `Servings: ${recipe.servings}\n\n`;
-
-            recipeOutput.innerText = recipeText;
+    const ingredients= document.getElementById("ingredients-input").value;
+    const recipeCount=parseInt(document.getElementById("recipeCount").value, 10);
+    const recipeOutput= document.getElementById("recipe-text");
+        for (let i = 0;i < recipeCount; i++) {
+            const recipe = await callOpenAI(ingredients);
+            const recipeCard = renderRecipe(recipe, i);
+            recipeOutput.appendChild(recipeCard);
         }
-
-    } catch (error) {
-        recipeOutput.innerHTML = `Error: ${error.message}`;
-    }
 }
 
