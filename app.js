@@ -53,7 +53,7 @@ db.connect(error => {
 
 // Use routers for specific routes
 app.use('/login', loginRouter(db));
-app.use('/register', registerRouter);
+app.use('/register', registerRouter(db));
 app.use('/savedRecipes', savedRecipeRouter(db));
 app.use('/allRecipes', allRecipesRouter);
 app.use('/createRecipes',createRecipesRouter(db));
