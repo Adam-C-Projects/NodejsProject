@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordion Recipe Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .accordion {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-title {
+            padding: 15px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-title:hover {
+            background-color: #f1f1f1;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #fff;
+        }
+
+        .accordion-content img {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+            display: block;
+        }
+
+        .accordion-content p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .accordion-content h4 {
+            margin: 5px 0;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<h1 style="text-align: center;">Accordion Recipe Display</h1>
+<div class="accordion">
+    <div class="accordion-item">
+        <div class="accordion-title">Spaghetti Carbonara</div>
+        <div class="accordion-content">
+            <img src="https://via.placeholder.com/400" alt="Spaghetti Carbonara">
+            <h4>Spaghetti Carbonara</h4>
+            <p>Main Ingredients: Pasta, Eggs, Bacon, Parmesan, Pepper</p>
+
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-title">Vegetable Stir Fry</div>
+        <div class="accordion-content">
+            <img src="https://via.placeholder.com/400" alt="Vegetable Stir Fry">
+            <h4>Vegetable Stir Fry</h4>
+            <p>Main Ingredients: Broccoli, Carrots, Bell Peppers, Soy Sauce, Garlic</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-title">Chicken Caesar Salad</div>
+        <div class="accordion-content">
+            <img src="https://via.placeholder.com/400" alt="Chicken Caesar Salad">
+            <h4>Chicken Caesar Salad</h4>
+            <p>Main Ingredients: Lettuce, Chicken, Croutons, Caesar Dressing, Parmesan</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-title">Beef Tacos</div>
+        <div class="accordion-content">
+            <img src="https://via.placeholder.com/400" alt="Beef Tacos">
+            <h4>Beef Tacos</h4>
+            <p>Main Ingredients: Tortillas, Ground Beef, Lettuce, Tomato, Cheese</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-title">Mushroom Risotto</div>
+        <div class="accordion-content">
+            <img src="https://via.placeholder.com/400" alt="Mushroom Risotto">
+            <h4>Mushroom Risotto</h4>
+            <p>Main Ingredients: Arborio Rice, Mushrooms, White Wine, Parmesan, Onion</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.accordion-title').forEach(title => {
+        title.addEventListener('click', () => {
+            
+            const allItems = document.querySelectorAll('.accordion-item');
+            allItems.forEach(item => item.classList.remove('active'));
+            
+            const parentItem = title.parentElement;
+            parentItem.classList.toggle('active');
+        });
+    });
+</script>
+</body>
+</html>
