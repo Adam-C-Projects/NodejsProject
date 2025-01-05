@@ -8,7 +8,7 @@ const registerRouter = require('./routes/registerRoutes');
 const savedRecipeRouter = require('./routes/savedRecipeRoutes');
 const allRecipesRouter = require('./routes/allRecipesRoutes');
 const createRecipesRouter = require('./routes/createRecipesRoutes');
-
+const recommendationRouter = require('./routes/recommendationRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -57,6 +57,7 @@ app.use('/register', registerRouter);
 app.use('/savedRecipes', savedRecipeRouter(db));
 app.use('/allRecipes', allRecipesRouter);
 app.use('/createRecipes',createRecipesRouter(db));
+app.use('/RestaurantAdviser', recommendationRouter(db));
 
 // Main routes
 app.get('/', (req, res) => {
