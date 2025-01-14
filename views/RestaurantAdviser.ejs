@@ -13,6 +13,7 @@
     </form>
 
     <div id="recommendations"></div>
+    <div id="map" style="width: 100%; height: 400px; margin-top: 20px; display: none;"></div>
 
     <script>
         document.getElementById("recipeForm").addEventListener("submit", async function(event) {
@@ -45,7 +46,9 @@
 
         function displayRecommendations(recommendations) {
             const recommendationsDiv = document.getElementById("recommendations");
+            const mapDiv = document.getElementById("map");
             recommendationsDiv.innerHTML = ''; // Clear previous recommendations
+            mapDiv.style.display = "none";
 
             if (recommendations && recommendations.length > 0) {
                 const list = document.createElement('ul');
@@ -62,6 +65,22 @@
                 recommendationsDiv.innerHTML = 'No restaurant recommendations found.';
             }
         }
+
+        function showMap(address) {
+            const mapDiv = document.getElementByID('map');
+            const encodedAddress = encodeURIComponent(address);
+            const googleMapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodedAddress}`;
+
+            mapDiv.innerHTML = `<iframe 
+                                  width="100%" 
+                                  height="100%" 
+                                  frameborder="0" 
+                                  style="border:0;" 
+                                  src="${googleMapsEmbedUrl}" 
+                                  allowfullscreen>
+                                </iframe>`;
+            mapDiv.style.display = "block"; // Show the map
+         }
     </script>
 </body>
 </html>
