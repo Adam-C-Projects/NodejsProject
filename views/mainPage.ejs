@@ -26,12 +26,13 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
         </div>
     </div>
     
-    <!-- Restaurant Advisor Button -->
-    <div id="restaurant-advisor">
-        <b>Need a place to eat?</b>
-        <p>If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
-        <button id="restaurant-advisor-button">Get Restaurant Recommendations</button>
-    </div>
+    <form class= "login-form" action="/RestaurantAdviser/submit" method="POST"></form>
+        <div id="restaurant-advisor">
+            <b>Need a place to eat?</b>
+            <p>If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+            <a href="recommendation/advisersubmit" id="restaurant-advisor-button" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px; text-align: center;">Get Restaurant Recommendations</a>
+        </div>
+    </form>
     
     <div id="ingredientOwn">
         <b>Fill in the box below with ingredients that you own!</b>

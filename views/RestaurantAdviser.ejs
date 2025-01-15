@@ -1,67 +1,31 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Recommendation</title>
-</head>
-<body>
-    <h1>Enter Your Recipe</h1>
-    <form id="recipeForm">
-        <textarea id="recipeText" placeholder="Enter your recipe here" rows="10" cols="30"></textarea><br><br>
-        <button type="submit">Get Restaurant Recommendations</button>
-    </form>
-
-    <div id="recommendations"></div>
-
-    <script>
-        document.getElementById("recipeForm").addEventListener("submit", async function(event) {
-            event.preventDefault();  // Prevent form from submitting the usual way
-
-            const recipeText = document.getElementById("recipeText").value;
-
-            // Send the recipe data to the server
-            try {
-                const response = await fetch('http://localhost:3000/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ recipeText }),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    displayRecommendations(data.recommendations);
-                } else {
-                    const errorText = await response.text();
-                    alert(`Error: ${errorText}`);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("An error occurred while fetching recommendations.");
-            }
-        });
-
-        function displayRecommendations(recommendations) {
-            const recommendationsDiv = document.getElementById("recommendations");
-            recommendationsDiv.innerHTML = ''; // Clear previous recommendations
-
-            if (recommendations && recommendations.length > 0) {
-                const list = document.createElement('ul');
-                recommendations.forEach(rec => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<strong>${rec.name}</strong><br>
-                                          Cuisine: ${rec.cuisine}<br>
-                                          Address: ${rec.address}<br>
-                                          Rating: ${rec.rating}`;
-                    list.appendChild(listItem);
-                });
-                recommendationsDiv.appendChild(list);
-            } else {
-                recommendationsDiv.innerHTML = 'No restaurant recommendations found.';
-            }
-        }
-    </script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>RestaurantAdviser</title>
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <header>Restaurant RestaurantAdviser</header>
+        <div>
+            <% if (recipes.length > 0) { %>
+                <ul>
+                    <% recipes.forEach(recipe => { %>
+                        <li>
+                            <h2><%= recommendationsquery.name %></h2>
+                            <p><%= recommendationsquery.cuisine %></p>
+                            <p><%= recommendationsquery.address %></p>
+                            <p><%= recommendationsquery.rating%></p>     
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No saved recipes found.</p>
+            <% } %>   
+        </div> 
+    </body>
 </html>
+
+
+

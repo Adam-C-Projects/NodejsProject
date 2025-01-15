@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-    router.post('/', (req, res) => {
+    router.get('/', (req,res) => {
+    });
+    router.post('/advisersubmit', (req, res) => {
         const { recipeText } = req.body;
 
         if (!recipeText || recipeText.trim() == "") {
@@ -23,9 +25,11 @@ module.exports = (db) => {
                 return res.status(404).send("No restaurants found matching the recipe ingredients.");
             }
 
-            res.json({ recommendations });
+            
         });
     });
+
+
 
     // Helper function to extract key ingredients
     function extractKeyIngredients(recipeText) {
@@ -71,6 +75,8 @@ module.exports = (db) => {
             }));
 
             callback(null, recommendations);
+
+            res.render('RestaurantAdviser', { recommendationquery: recommendations })
         });
     }
 
