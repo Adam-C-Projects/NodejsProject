@@ -65,3 +65,51 @@ app.get('/', (req, res) => {
     console.log(req.session.id);
     req.session.visited = true;
 });
+
+app.post('/saveRecipe', (req, res) => {
+    const recipe = req.body;
+    const UID = req.session.UID; 
+    console.log('Incoming request body:', req.body)
+
+    if (!UID) {
+        return res.status(401).send("Unauthorized: No user logged in.");
+    }
+
+    const insertRecipeQuery = `
+        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
+    `;
+    const recipeValues = [
+        recipe.recipeName,
+        recipe.ingredientName,
+        recipe.dietaryReq,
+        recipe.macros,
+        recipe.cookingTime,
+    ];
+
+    db.query(insertRecipeQuery, recipeValues, (recipeError, recipeResults) => {
+        if (recipeError) {
+            console.error('Error saving recipe:', recipeError);
+            return res.status(500).send("Failed to save recipe.");
+        }
+
+        const RID = recipeResults.insertId;
+
+        const saveRecipeQuery = `
+            INSERT INTO SavedRecipes (UID, RID, saved_at)
+            VALUES (?, ?, NOW())
+        `;
+        const saveRecipeValues = [UID, RID];
+
+        db.query(saveRecipeQuery, saveRecipeValues, (saveError) => {
+            if (saveError) {
+                console.error('Error saving recipe to SavedRecipes:', saveError);
+                return res.status(500).send("Failed to save recipe.");
+            }
+
+            res.redirect('/');
+        });
+    });
+});
+

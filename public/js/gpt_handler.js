@@ -47,6 +47,14 @@ function renderRecipe(recipe, index) {
         <p>Prep Time: ${recipe.prepTime||"Not specified"} minutes</p>
         <p>Cook Time: ${recipe.cookTime ||"Not specified"} minutes</p>
         <p>Servings: ${recipe.servings}</p>
+        <form action="/saveRecipe" method="POST">
+            <input type="hidden" name="recipeName" value="${recipe.title}">
+            <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
+            <input type="hidden" name="dietaryReq" value='${JSON.stringify(recipe.allergies) || 'none'}'>
+            <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
+            <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
+            <button type="submit" class="save-recipe">Save Recipe</button>
+        </form>
     `;
     const recipeDiv = document.createElement("div");
     recipeDiv.classList.add("recipe-card");
@@ -63,4 +71,5 @@ async function generateRecipe() {
             recipeOutput.appendChild(recipeCard);
         }
 }
+
 
