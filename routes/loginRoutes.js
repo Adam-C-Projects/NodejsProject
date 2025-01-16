@@ -37,6 +37,7 @@ module.exports = (db) => {
                     if (isMatch) {
                         // Store user info in session
                         req.session.username = username;
+                        req.session.UID = user.UID;
                         req.session.loggedIn = true;
 
                         // Redirect to homepage
