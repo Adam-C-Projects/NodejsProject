@@ -15,6 +15,17 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
 <body>
 <header>
     <h1>Recipes4U</h1>
+    <div id="userProfileIcon">
+        <img src="images/user.png">
+        <p>Login</p>
+        <div id="userProfileDropdown">
+            <ul>
+                <li>My Account</li>
+                <li>Settings</li>
+                <li>Log Out</li>
+            </ul>
+        </div>
+    </div>
 </header>
 <main>
     <div id="searchBar">
@@ -56,5 +67,6 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
     </div>
 </main>
 <script type= "module" src="js/gpt_handler.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
