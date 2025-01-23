@@ -266,3 +266,19 @@ textarea:focus {
 .wrapper .login-form{
     margin-top: 35px;
 }
+
+.recipe-container {
+    flex: 1; /* Takes available space */
+    padding: 1rem;
+    overflow-y: auto; /* Enable scrolling */
+    max-height: calc(100vh - 80px); /* Adjust based on header height */
+    background-color: #fff;
+}
+
+.home-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-size: 16px;
+}

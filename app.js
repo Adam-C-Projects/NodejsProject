@@ -75,6 +75,23 @@ app.post('/saveRecipe', (req, res) => {
         return res.status(401).send("Unauthorized: No user logged in.");
     }
 
+    if(recipe.dietaryReq = []){
+        recipe.dietaryReq = "None"
+    }
+
+    const trimBrackets = (value) => {
+        if (typeof value === 'string') {
+            return value.replace(/[\[\]{}]/g, '').trim();
+        }
+        return value;
+    };
+
+    recipe.recipeName = trimBrackets(recipe.recipeName);
+    recipe.ingredientName = trimBrackets(recipe.ingredientName);
+    recipe.dietaryReq = recipe.dietaryReq && recipe.dietaryReq.length ? trimBrackets(recipe.dietaryReq) : "None";
+    recipe.macros = trimBrackets(recipe.macros);
+    recipe.cookingTime = trimBrackets(recipe.cookingTime);
+
     const insertRecipeQuery = `
         INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime)
         VALUES (?, ?, ?, ?, ?)

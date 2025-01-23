@@ -23,10 +23,20 @@ module.exports = (db) => {
                 if (recipeResults.length === 0) {
                     return res.send('No saved recipes found for this user.');
                 }
-    
+                
+                recipeResults.forEach(recipe => {
+                    if (recipe.macros) {
+                        recipe.macros = recipe.macros
+                        .replace(/"/g, '')
+                        .split(',')
+                        .map(macro => macro.trim());
+                    }
+                });
+                console.log(recipeResults);
                 res.render('savedRecipes', { recipes: recipeResults });
             }
         );
     });
+    
     return router;
 };
