@@ -81,7 +81,7 @@ app.post('/saveRecipe', (req, res) => {
 
     const trimBrackets = (value) => {
         if (typeof value === 'string') {
-            return value.replace(/[\[\]{}]/g, '').trim();
+            return value.replace(/[\[\]{}"]/g, '').trim();
         }
         return value;
     };

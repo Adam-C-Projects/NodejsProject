@@ -12,26 +12,61 @@
         </header>
         <div class="recipe-container">
             <% if (recipes.length > 0) { %>
-                <ul>
+                <ul id="recipe-list">
                     <% recipes.forEach(recipe => { %>
-                        <li>
-                            <h2><%= recipe.recipeName %></h2>
-                            <p>Ingredients: <%= recipe.ingredientName %></p>
-                            <p>dietary requirements: <%= recipe.dietaryReq %></p>
-                            <p><%= recipe.macros[0] %></p>
-                            <p><%= recipe.macros[1] %></p>
-                            <p><%= recipe.macros[2] %></p>
-                            <p><%= recipe.macros[3] %></p>
-                            <p><%= recipe.macros[4] %></p>
-                            <p><%= recipe.macros[5] %></p>
-                            <p>cooking time: <%= recipe.cookingTime %></p>
+                        <li data-id="<%= recipe.RID %>">
+                            <h3><%= recipe.recipeName %></h3>
+                            <p><b>Ingredients:</b><br>
+                                <% recipe.ingredientName.forEach(ingredientName => { %>
+                                    <%= ingredientName %></br></p>
+                                    <% }) %>
+                            <p><b>Macronutrients:</b><br>
+                                <%= recipe.macros[0] %>g<br> 
+                                <%= recipe.macros[1] %>g<br> 
+                                <%= recipe.macros[2] %>g<br> 
+                                <%= recipe.macros[3] %>g<br> 
+                                <%= recipe.macros[4] %>g<br> 
+                                <%= recipe.macros[5] %>g</p>
+                            <p><b>Dietary requirements:</b> <%= recipe.dietaryReq %></p>
+                            <p>Cook Time: <%= recipe.cookingTime %> minutes</p>
+
+                            <button class="remove-btn">Remove</button>
                         </li>
                     <% }) %>
                 </ul>
             <% } else { %>
                 <p>No saved recipes found.</p>
-            <% } %>   
+            <% } %>
         </div>    
     </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const recipeList = document.getElementById('recipe-list');
+
+        recipeList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-btn')) {
+                const recipeId = event.target.closest('li').dataset.id;
+                fetch(`/savedRecipes/remove/${recipeId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to remove recipe');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        event.target.closest('li').remove();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while removing the recipe.');
+                    });
+            }
+        });
+    });
+</script>
+
 
