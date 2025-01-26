@@ -85,16 +85,18 @@ app.post('/saveRecipe', (req, res) => {
         }
         return value;
     };
-
+    console.log(recipe.TotalCalories);
     recipe.recipeName = trimBrackets(recipe.recipeName);
     recipe.ingredientName = trimBrackets(recipe.ingredientName);
+    recipe.instructions = trimBrackets(recipe.instructions);
     recipe.dietaryReq = recipe.dietaryReq && recipe.dietaryReq.length ? trimBrackets(recipe.dietaryReq) : "None";
     recipe.macros = trimBrackets(recipe.macros);
     recipe.cookingTime = trimBrackets(recipe.cookingTime);
+    recipe.TotalCalories = trimBrackets(recipe.TotalCalories);
 
     const insertRecipeQuery = `
-        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
     `;
     const recipeValues = [
@@ -103,6 +105,8 @@ app.post('/saveRecipe', (req, res) => {
         recipe.dietaryReq,
         recipe.macros,
         recipe.cookingTime,
+        recipe.instructions,
+        recipe.TotalCalories
     ];
 
     db.query(insertRecipeQuery, recipeValues, (recipeError, recipeResults) => {

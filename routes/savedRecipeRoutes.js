@@ -41,6 +41,7 @@ module.exports = (db) => {
                         .map(ingredientName => ingredientName.trim());
                     }
                 });
+                console.log(recipeResults);
                 res.render('savedRecipes', { recipes: recipeResults });
             }
         );

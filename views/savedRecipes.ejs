@@ -11,25 +11,33 @@
             <a href="/" class="home-link">Home</a>
         </header>
         <div class="recipe-container">
-            <% if (recipes.length > 0) { %>
+            <% if (recipes && recipes.length > 0) { %>
                 <ul id="recipe-list">
                     <% recipes.forEach(recipe => { %>
                         <li data-id="<%= recipe.RID %>">
                             <h3><%= recipe.recipeName %></h3>
                             <p><b>Ingredients:</b><br>
-                                <% recipe.ingredientName.forEach(ingredientName => { %>
-                                    <%= ingredientName %></br></p>
-                                    <% }) %>
+                                <% recipe.ingredientName.forEach(ingredient => { %>
+                                    <%= ingredient %><br>
+                                <% }) %>
+                            </p>
+                            <p><b>Instructions:</b><br>
+                                <%= recipe.instructions %>
+                            </p>
                             <p><b>Macronutrients:</b><br>
-                                <%= recipe.macros[0] %>g<br> 
-                                <%= recipe.macros[1] %>g<br> 
-                                <%= recipe.macros[2] %>g<br> 
-                                <%= recipe.macros[3] %>g<br> 
-                                <%= recipe.macros[4] %>g<br> 
-                                <%= recipe.macros[5] %>g</p>
+                                <% recipe.macros.forEach((macro, index) => { %>
+                                    <%= macro %>g<br>
+                                <% }) %>
+                            </p>
+                            <p><b>Total Calories: </b>
+                                <% if (recipe.calories === null || recipe.calories === undefined) { %>
+                                    Undefined
+                                <% } else { %>
+                                    <%= recipe.calories %> KCAL
+                                <% } %>
+                            </p>
                             <p><b>Dietary requirements:</b> <%= recipe.dietaryReq %></p>
                             <p>Cook Time: <%= recipe.cookingTime %> minutes</p>
-
                             <button class="remove-btn">Remove</button>
                         </li>
                     <% }) %>
@@ -37,7 +45,7 @@
             <% } else { %>
                 <p>No saved recipes found.</p>
             <% } %>
-        </div>    
+        </div>
     </body>
 </html>
 

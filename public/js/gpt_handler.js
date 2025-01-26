@@ -50,8 +50,10 @@ function renderRecipe(recipe, index) {
         <form action="/saveRecipe" method="POST">
             <input type="hidden" name="recipeName" value="${recipe.title}">
             <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
+            <input type="hidden" name="instructions" value='${JSON.stringify(recipe.instructions)}'>
             <input type="hidden" name="dietaryReq" value='${JSON.stringify(recipe.allergies) || 'none'}'>
             <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
+            <input type="hidden" name="TotalCalories" value='${JSON.stringify(recipe.total_calories)}'>
             <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
             <button type="submit" class="save-recipe">Save Recipe</button>
         </form>
