@@ -1,0 +1,17 @@
+<div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <div style="border: 1px solid #ddd; border-radius: 5px; width: 150px; text-align: center; background-color: #f9f9f9;">
+        <img src="https://via.placeholder.com/150" alt="Recipe Thumbnail" style="width: 100%; border-bottom: 1px solid #ddd;">
+        <h4>Spaghetti Carbonara</h4>
+        <p style="font-size: 12px;">Main Ingredients:<br>Pasta, Eggs, Bacon</p>
+    </div>
+    <div style="border: 1px solid #ddd; border-radius: 5px; width: 150px; text-align: center; background-color: #f9f9f9;">
+        <img src="https://via.placeholder.com/150" alt="Recipe Thumbnail" style="width: 100%; border-bottom: 1px solid #ddd;">
+        <h4>Vegetable Stir Fry</h4>
+        <p style="font-size: 12px;">Main Ingredients:<br>Broccoli, Carrots</p>
+    </div>
+    <div style="border: 1px solid #ddd; border-radius: 5px; width: 150px; text-align: center; background-color: #f9f9f9;">
+        <img src="https://via.placeholder.com/150" alt="Recipe Thumbnail" style="width: 100%; border-bottom: 1px solid #ddd;">
+        <h4>Chicken Caesar Salad</h4>
+        <p style="font-size: 12px;">Main Ingredients:<br>Chicken, Lettuce</p>
+    </div>
+</div>

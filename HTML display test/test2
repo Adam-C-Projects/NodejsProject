@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expandable Recipe Cards</title>
+    <style>
+        .recipe-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
+            background-color: #f9f9f9;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        .recipe-card:hover {
+            transform: scale(1.05);
+        }
+        .recipe-card .details {
+            display: none;
+            padding: 10px;
+            text-align: center;
+        }
+        .recipe-card img {
+            width: 100%;
+        }
+        .recipe-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .recipe-card h4 {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .recipe-card .main-ingredients {
+            font-size: 12px;
+            text-align: center;
+        }
+        .recipe-card.expanded .details {
+            display: block;
+        }
+        .recipe-card.expanded .summary {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1 style="text-align: center;">Expandable Recipe Cards</h1>
+<div id="recipe-container" class="recipe-container">
+    <div class="recipe-card">
+        <div class="summary">
+            <h4>Spaghetti Carbonara</h4>
+            <p class="main-ingredients">Main Ingredients:<br>Pasta, Eggs, Bacon</p>
+        </div>
+        <div class="details">
+            <img src="https://via.placeholder.com/256" alt="Spaghetti Carbonara">
+            <h4>Spaghetti Carbonara</h4>
+            <p>Main Ingredients:<br>Pasta, Eggs, Bacon</p>
+        </div>
+    </div>
+    <div class="recipe-card">
+        <div class="summary">
+            <h4>Vegetable Stir Fry</h4>
+            <p class="main-ingredients">Main Ingredients:<br>Broccoli, Carrots</p>
+        </div>
+        <div class="details">
+            <img src="https://via.placeholder.com/256" alt="Vegetable Stir Fry">
+            <h4>Vegetable Stir Fry</h4>
+            <p>Main Ingredients:<br>Broccoli, Carrots</p>
+        </div>
+    </div>
+    <div class="recipe-card">
+        <div class="summary">
+            <h4>Chicken Caesar Salad</h4>
+            <p class="main-ingredients">Main Ingredients:<br>Lettuce, Chicken</p>
+        </div>
+        <div class="details">
+            <img src="https://via.placeholder.com/256" alt="Chicken Caesar Salad">
+            <h4>Chicken Caesar Salad</h4>
+            <p>Main Ingredients:<br>Lettuce, Chicken</p>
+        </div>
+    </div>
+    <div class="recipe-card">
+        <div class="summary">
+            <h4>Beef Tacos</h4>
+            <p class="main-ingredients">Main Ingredients:<br>Tortillas, Ground Beef</p>
+        </div>
+        <div class="details">
+            <img src="https://via.placeholder.com/256" alt="Beef Tacos">
+            <h4>Beef Tacos</h4>
+            <p>Main Ingredients:<br>Tortillas, Ground Beef</p>
+        </div>
+    </div>
+    <div class="recipe-card">
+        <div class="summary">
+            <h4>Mushroom Risotto</h4>
+            <p class="main-ingredients">Main Ingredients:<br>Arborio Rice, Mushrooms</p>
+        </div>
+        <div class="details">
+            <img src="https://via.placeholder.com/256" alt="Mushroom Risotto">
+            <h4>Mushroom Risotto</h4>
+            <p>Main Ingredients:<br>Arborio Rice, Mushrooms</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.recipe-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('expanded');
+        });
+    });
+</script>
+</body>
+</html>

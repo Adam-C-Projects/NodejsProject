@@ -9,6 +9,17 @@
 <body>
 <header>
     <h1>Recipes4U</h1>
+    <div id="userProfileIcon">
+        <img src="images/user.png">
+        <p>Login</p>
+        <div id="userProfileDropdown">
+            <ul>
+                <li>My Account</li>
+                <li>Settings</li>
+                <li>Log Out</li>
+            </ul>
+        </div>
+    </div>
 </header>
 <main>
     <div id="searchBar">
@@ -108,7 +119,12 @@
     <div id="ingredientList">
         <b>You can also press and hold on any of the common ingredients from below.</b>
     </div>
-    <!-- temporary output, kinda ugly so we gott spruce it up -->
+
+    <div id="ingredientNumTest">
+        <label for="recipe-count"> Number of recipes</label>
+        <input type="number" id="recipeCount" min="1" max="10" value="1">
+    </div>
+
     <div id="recipeOutput">
         <h2>Generated Recipe:</h2>
         <div id="recipe-text"></div>
@@ -121,5 +137,6 @@
     </div>
 </main>
 <script type= "module" src="js/gpt_handler.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

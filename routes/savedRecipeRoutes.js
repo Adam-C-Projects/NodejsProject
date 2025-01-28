@@ -23,10 +23,55 @@ module.exports = (db) => {
                 if (recipeResults.length === 0) {
                     return res.send('No saved recipes found for this user.');
                 }
-    
+                
+                recipeResults.forEach(recipe => {
+                    if (recipe.macros) {
+                        recipe.macros = recipe.macros
+                        .replace(/"/g, '')
+                        .split(',')
+                        .map(macro => macro.trim());
+                    }
+                });
+
+                recipeResults.forEach(recipe => {
+                    if (recipe.ingredientName) {
+                        recipe.ingredientName = recipe.ingredientName
+                        .replace(/"/g, '')
+                        .split(',')
+                        .map(ingredientName => ingredientName.trim());
+                    }
+                });
+                console.log(recipeResults);
                 res.render('savedRecipes', { recipes: recipeResults });
             }
         );
     });
+
+    router.delete('/remove/:rid', (req, res) => {
+        const username = req.session.username;
+        const recipeId = req.params.rid;
+        console.log(recipeId);
+        db.query(
+            `DELETE sr
+             FROM SavedRecipes sr
+             JOIN User u ON sr.UID = u.UID
+             WHERE sr.RID = ? AND u.username = ?`,
+            [recipeId, username],
+            (err, result) => {
+                if (err) {
+                    console.error('Error removing recipe: ', err);
+                    return res.status(500).send('Error removing recipe');
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).send('Recipe not found or not saved by this user.');
+                }
+
+                res.status(200).json({ message: 'Recipe removed successfully!' });
+            }
+        );
+    });
+
+    
     return router;
 };
