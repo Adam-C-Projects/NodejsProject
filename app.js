@@ -8,10 +8,10 @@ const registerRouter = require('./routes/registerRoutes');
 const savedRecipeRouter = require('./routes/savedRecipeRoutes');
 const allRecipesRouter = require('./routes/allRecipesRoutes');
 const createRecipesRouter = require('./routes/createRecipesRoutes');
-
+const recommendationRouter = require('./routes/recommendationRoutes');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3010;
 
 // Set up middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -57,6 +57,8 @@ app.use('/register', registerRouter(db));
 app.use('/savedRecipes', savedRecipeRouter(db));
 app.use('/allRecipes', allRecipesRouter);
 app.use('/createRecipes',createRecipesRouter(db));
+app.use('/recommendation', recommendationRouter(db));
+
 
 // Main routes
 app.get('/', (req, res) => {
