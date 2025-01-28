@@ -1,10 +1,4 @@
-<?php 
-session_start();
-include("connection.php");
-include("functions.php");
 
-$user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +30,83 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
             <button type="submit" id="search-button">Search</button>
         </div>
     </div>
-
+    
+    <div id="restaurant-advisor">
+        <h2>🍽️ Need a place to eat?</h2>
+        <p>If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+    
+        <form class="login-form" action="/recommendation/advisersubmit" method="POST">
+            <input type="text" name="recipeText" placeholder="Enter a recipe..." required>
+            <button class="btn" type="submit">Find Restaurants</button>
+        </form>
+    </div>
+    
+    <style>
+        /* Centering the entire page */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #92c7c7, #acd8d8);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+    
+        /* Centering and styling the search box */
+        #restaurant-advisor {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 50%;
+            max-width: 600px;
+        }
+    
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    
+        .login-form input {
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+    
+        /* Enlarge input field on focus */
+        .login-form input:focus {
+            border-color: #007bff;
+            box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
+        }
+    
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+    
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    
     <div id="ingredientOwn">
         <b>Fill in the box below with ingredients that you own!</b>
         <p>We can find you available recipes based on your input.</p>
