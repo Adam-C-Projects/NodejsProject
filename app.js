@@ -95,8 +95,8 @@ app.post('/saveRecipe', (req, res) => {
     recipe.TotalCalories = trimBrackets(recipe.TotalCalories);
 
     const insertRecipeQuery = `
-        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories,image)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
     `;
     const recipeValues = [
@@ -106,7 +106,8 @@ app.post('/saveRecipe', (req, res) => {
         recipe.macros,
         recipe.cookingTime,
         recipe.instructions,
-        recipe.TotalCalories
+        recipe.TotalCalories,
+        recipe.image
     ];
 
     db.query(insertRecipeQuery, recipeValues, (recipeError, recipeResults) => {

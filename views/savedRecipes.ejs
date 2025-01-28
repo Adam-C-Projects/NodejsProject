@@ -2,79 +2,95 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Saved Recipes</title>
-        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     </head>
-    <body>
-        <header>
-            Saved Recipes
-            <a href="/" class="home-link">Home</a>
+    <body class="bg-gray-100 text-gray-800">
+        <header class="bg-green-600 text-white p-4 flex justify-between items-center shadow-lg rounded-lg">
+            <div class="flex-1 text-center">
+                <h1 class="text-3xl font-extrabold tracking-tight transition-colors ease-in-out">Saved Recipes</h1>
+            </div>
+            <a href="/" class="bg-white text-green-600 py-2 px-4 rounded-lg font-semibold hover:bg-green-200 transition-all text-lg">Home</a>
         </header>
-        <div class="recipe-container">
-            <% if (recipes && recipes.length > 0) { %>
-                <ul id="recipe-list">
-                    <% recipes.forEach(recipe => { %>
-                        <li data-id="<%= recipe.RID %>">
-                            <h3><%= recipe.recipeName %></h3>
-                            <p><b>Ingredients:</b><br>
-                                <% recipe.ingredientName.forEach(ingredient => { %>
-                                    <%= ingredient %><br>
-                                <% }) %>
-                            </p>
-                            <p><b>Instructions:</b><br>
-                                <%= recipe.instructions %>
-                            </p>
-                            <p><b>Macronutrients:</b><br>
-                                <% recipe.macros.forEach((macro, index) => { %>
-                                    <%= macro %>g<br>
-                                <% }) %>
-                            </p>
-                            <p><b>Total Calories: </b>
-                                <% if (recipe.calories === null || recipe.calories === undefined) { %>
-                                    Undefined
-                                <% } else { %>
-                                    <%= recipe.calories %> KCAL
-                                <% } %>
-                            </p>
-                            <p><b>Dietary requirements:</b> <%= recipe.dietaryReq %></p>
-                            <p>Cook Time: <%= recipe.cookingTime %> minutes</p>
-                            <button class="remove-btn">Remove</button>
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p>No saved recipes found.</p>
-            <% } %>
-        </div>
+        
+
+        <main class="p-6 max-w-4xl mx-auto">
+            <div class="recipe-container">
+                <% if (recipes && recipes.length > 0) { %>
+                    <ul id="recipe-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+                        <% recipes.forEach(recipe => { %>
+                            <li data-id="<%= recipe.RID %>" class="bg-white shadow-md rounded-lg overflow-hidden">
+                                <button class="w-full text-left px-4 py-2 bg-green-500 text-white rounded-t-lg hover:bg-green-600 focus:outline-none" onclick="toggleRecipeDetails(event)">
+                                    <h3 class="text-lg font-bold"><%= recipe.recipeName %></h3>
+                                </button>
+                                <img src="<%= recipe.image %>" alt="Image for <%= recipe.recipeName %>" class="w-full h-auto rounded-lg mb-4" />
+                                <div class="recipe-details hidden px-4 py-2">
+                                    <p class="mt-2"><b>Ingredients:</b></p>
+                                    <ul class="list-disc list-inside text-sm text-gray-600">
+                                        <% recipe.ingredientName.forEach(ingredient => { %>
+                                            <li><%= ingredient %></li>
+                                        <% }) %>
+                                    </ul>
+                                    <p class="mt-2"><b>Instructions:</b></p>
+                                    <p class="text-sm text-gray-600"><%= recipe.instructions %></p>
+                                    <p class="mt-2"><b>Macronutrients:</b></p>
+                                    <ul class="list-disc list-inside text-sm text-gray-600">
+                                        <% recipe.macros.forEach((macro, index) => { %>
+                                            <li><%= macro %>g</li>
+                                        <% }) %>
+                                    </ul>
+                                    <p class="mt-2"><b>Total Calories:</b> <span class="text-gray-600">
+                                        <% if (recipe.calories === null || recipe.calories === undefined) { %>
+                                            Undefined
+                                        <% } else { %>
+                                            <%= recipe.calories %> KCAL
+                                        <% } %>
+                                    </span></p>
+                                    <p class="mt-2"><b>Dietary requirements:</b> <span class="text-gray-600"><%= recipe.dietaryReq %></span></p>
+                                    <p class="mt-2"><b>Cook Time:</b> <span class="text-gray-600"><%= recipe.cookingTime %> minutes</span></p>
+                                    <button class="remove-btn bg-red-500 text-white px-4 py-2 mt-4 rounded hover:bg-red-600">Remove</button>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p class="text-center text-gray-600">No saved recipes found.</p>
+                <% } %>
+            </div>
+        </main>
+
+        <script>
+            function toggleRecipeDetails(event) {
+                const details = event.target.closest('li').querySelector('.recipe-details');
+                details.classList.toggle('hidden');
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const recipeList = document.getElementById('recipe-list');
+
+                recipeList.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('remove-btn')) {
+                        const recipeId = event.target.closest('li').dataset.id;
+                        fetch(`/savedRecipes/remove/${recipeId}`, {
+                            method: 'DELETE',
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to remove recipe');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                event.target.closest('li').remove();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An error occurred while removing the recipe.');
+                            });
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const recipeList = document.getElementById('recipe-list');
-
-        recipeList.addEventListener('click', (event) => {
-            if (event.target.classList.contains('remove-btn')) {
-                const recipeId = event.target.closest('li').dataset.id;
-                fetch(`/savedRecipes/remove/${recipeId}`, {
-                    method: 'DELETE',
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to remove recipe');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        event.target.closest('li').remove();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while removing the recipe.');
-                    });
-            }
-        });
-    });
-</script>
-
-
