@@ -45,7 +45,65 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
             <button id="enter-button">Enter</button>
         </div>
     </div>
-
+    <div id="restaurant-advisor">
+        <h2>🍽️ Need a place to eat?</h2>
+        <p>If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+    
+        <form class="search-form" action="/recommendation/advisersubmit" method="POST">
+            <input type="text" name="recipeText" placeholder="Enter a recipe..." required>
+            <button class="btn" type="submit">Find Restaurants</button>
+        </form>
+    </div>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        
+        #restaurant-advisor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50vh; /* Centers vertically */
+        }
+    
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+    
+        .search-form input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    
     <div id="ingredientList">
         <b>You can also press and hold on any of the common ingredients from below.</b>
     </div>
