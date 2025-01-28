@@ -39,7 +39,7 @@
         </style>
     </head>
     <body>
-        <header>🍽️ Restaurant Adviser</header>
+        <header>🍽️ Here are your recommended Restaurants 🍽️</header>
         <div>
             <% if (recipes.length > 0) { %>
                 <ul class="restaurant-list">
@@ -58,3 +58,30 @@
         </div> 
     </body>
 </html>
+<button class="back-btn" onclick="goBack()">🔙 Go Back</button>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+<style>
+    .back-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 12px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #ff4d4d; /* Red button */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .back-btn:hover {
+        background-color: #cc0000;
+    }
+</style>
