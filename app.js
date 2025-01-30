@@ -65,6 +65,9 @@ app.get('/', (req, res) => {
     console.log(req.session.id);
     req.session.visited = true;
 });
+app.get('/userProfile', (req, res) => {
+    res.render('userProfile');
+})
 
 app.post('/saveRecipe', (req, res) => {
     const recipe = req.body;

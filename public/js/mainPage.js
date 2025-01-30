@@ -1,4 +1,4 @@
-document.getElementById("userProfileIcon").addEventListener("click", function() {
+/*document.getElementById("userProfileIcon").addEventListener("click", function() {
   const dropdown = document.getElementById("userProfileDropdown");
 
   if (dropdown.style.display == "none" || dropdown.style.display == "") {
@@ -6,4 +6,4 @@ document.getElementById("userProfileIcon").addEventListener("click", function() 
   } else {
     dropdown.style.display = "none";
   }
-});
+});*/

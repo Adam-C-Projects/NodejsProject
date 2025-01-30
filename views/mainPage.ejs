@@ -1,10 +1,3 @@
-<?php 
-session_start();
-include("connection.php");
-include("functions.php");
-
-$user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,17 +8,19 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
 <body>
 <header>
     <h1>Recipes4U</h1>
-    <div id="userProfileIcon">
-        <img src="images/user.png">
-        <p>Login</p>
-        <div id="userProfileDropdown">
-            <ul>
-                <li>My Account</li>
-                <li>Settings</li>
-                <li>Log Out</li>
-            </ul>
+    <a href="login">
+        <div id="userProfileIcon">
+            <img src="images/user.png">
+            <p>Login</p>
+            <div id="userProfileDropdown">
+                <ul>
+                    <li>My Account</li>
+                    <li>Settings</li>
+                    <li>Log Out</li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </a>
 </header>
 <main>
     <div id="searchBar">
@@ -119,12 +114,10 @@ $user_data = isset($_SESSION['user_data']) ? $_SESSION['user_data'] : null;
     </div>
 
     <div id="authLinks">
-        <a href="login">Login</a> |
-        <a href="register">Register</a> |
         <a href="savedRecipes">Saved Recipes</a>
     </div>
 </main>
 <script type= "module" src="js/gpt_handler.js"></script>
-<script src="js/script.js"></script>
+<script src="js/mainPage.js"></script>
 </body>
 </html>
