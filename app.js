@@ -137,4 +137,17 @@ app.post('/saveRecipe', (req, res) => {
         });
     });
 });
+app.get('/allRecipes', (req, res) => {
+    const query = 'SELECT * FROM Recipes';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("An error occurred while fetching data:", err);
+            res.status(500).send("Error fetching data from the database.");
+            return;
+        }
+        console.log("Query results:", results);
+        res.render('allRecipes', { recipes: results });
+    });
+});
 
