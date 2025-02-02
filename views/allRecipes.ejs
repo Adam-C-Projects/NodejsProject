@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Recipes</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        //Parse macros to numeric value
+        function parseMacros(text) {
+            let protein = 0, carb = 0, fat = 0, calories = 0;
+            const proteinMatch = text.match(/protein\s*[:\-]?\s*([\d.]+)/i);
+            if (proteinMatch) protein = parseFloat(proteinMatch[1]);
+            const carbMatch = text.match(/carb\s*[:\-]?\s*([\d.]+)/i);
+            if (carbMatch) carb = parseFloat(carbMatch[1]);
+            const fatMatch = text.match(/fat\s*[:\-]?\s*([\d.]+)/i);
+            if (fatMatch) fat = parseFloat(fatMatch[1]);
+            const calorieMatch = text.match(/calorie\s*[:\-]?\s*([\d.]+)/i);
+            if (calorieMatch) calories = parseFloat(calorieMatch[1]);
+            return { protein, carb, fat, calories };
+        }
+        function filterTable() {
+            //Get the text filters
+            const nameFilter = document.getElementById("name-search").value.toLowerCase().trim();
+            const ingredientFilter = document.getElementById("ingredient-search").value.toLowerCase().trim();
+
+            //Get checked diet filters
+            const dietCheckboxes = document.querySelectorAll('input[name="diet-filter"]:checked');
+            const dietFilters = Array.from(dietCheckboxes).map(cb => cb.value.toLowerCase());
+
+            //Get checked allergy filters
+            const allergyCheckboxes = document.querySelectorAll('input[name="allergy-filter"]:checked');
+            const allergyFilters = Array.from(allergyCheckboxes).map(cb => cb.value.toLowerCase());
+
+            //Get selected macro filters
+            const proteinFilterEl = document.querySelector('input[name="protein-filter"]:checked');
+            const proteinFilter = proteinFilterEl ? proteinFilterEl.value : "";
+            const carbFilterEl = document.querySelector('input[name="carb-filter"]:checked');
+            const carbFilter = carbFilterEl ? carbFilterEl.value : "";
+            const fatFilterEl = document.querySelector('input[name="fat-filter"]:checked');
+            const fatFilter = fatFilterEl ? fatFilterEl.value : "";
+            const calorieFilterEl = document.querySelector('input[name="calorie-filter"]:checked');
+            const calorieFilter = calorieFilterEl ? calorieFilterEl.value : "";
+
+            //Get all rows from the table body
+            const rows = document.querySelectorAll("table tbody tr");
+            rows.forEach(function(row) {
+                //Read the text from each cell
+                const recipeName = row.cells[0].textContent.toLowerCase();
+                const ingredients = row.cells[1].textContent.toLowerCase();
+                const dietText = row.cells[2].textContent.toLowerCase();
+                const macrosText = row.cells[3].textContent;
+
+                //Name Filter
+                if (nameFilter && recipeName.indexOf(nameFilter) === -1) {
+                    row.style.display = "none";
+                    return;
+                }
+
+                //Ingredient Filter
+                if (ingredientFilter && ingredients.indexOf(ingredientFilter) === -1) {
+                    row.style.display = "none";
+                    return;
+                }
+
+                //Diet Filter
+                if (dietFilters.length > 0) {
+                    const dietMatch = dietFilters.some(function(diet) {
+                        return dietText.indexOf(diet) !== -1;
+                    });
+                    if (!dietMatch) {
+                        row.style.display = "none";
+                        return;
+                    }
+                }
+
+                //Allergy Filter TO-DO when we add a allergy column
+
+
+                //Macros Filter
+                const macros = parseMacros(macrosText);
+
+                //Protein Filter
+                if (proteinFilter) {
+                    if (proteinFilter === "high-protein" && macros.protein < 20) {
+                        row.style.display = "none";
+                        return;
+                    }
+                    if (proteinFilter === "low-protein" && macros.protein >= 10) {
+                        row.style.display = "none";
+                        return;
+                    }
+                }
+
+                //Carb Filter
+                if (carbFilter) {
+                    if (carbFilter === "high-carb" && macros.carb < 30) {
+                        row.style.display = "none";
+                        return;
+                    }
+                    if (carbFilter === "low-carb" && macros.carb >= 10) {
+                        row.style.display = "none";
+                        return;
+                    }
+                }
+
+                //Fat Filter
+                if (fatFilter) {
+                    if (fatFilter === "high-fat" && macros.fat < 15) {
+                        row.style.display = "none";
+                        return;
+                    }
+                    if (fatFilter === "low-fat" && macros.fat >= 5) {
+                        row.style.display = "none";
+                        return;
+                    }
+                }
+
+                //Calorie Filter
+                if (calorieFilter) {
+                    if (calorieFilter === "high-calorie" && macros.calories < 500) {
+                        row.style.display = "none";
+                        return;
+                    }
+                    if (calorieFilter === "low-calorie" && macros.calories >= 200) {
+                        row.style.display = "none";
+                        return;
+                    }
+                }
+
+                //Make rows that satisfy all conditions visible
+                row.style.display = "";
+            });
+        }
+
+
+        function handleCheckbox(checkbox, counterpartId) {
+            const counterpart = document.getElementById(counterpartId);
+            if (checkbox.checked) {
+                counterpart.checked = false;
+            }
+            filterTable();
+        }
+    </script>
+    <style>
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .diet-box,
+        .ingredient-box {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .macros-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        .macros-box label {
+            font-size: 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>All Recipes</h1>
+</header>
+<main>
+
+<!--debug, pastes into page in json -->
+<!--<div>
+    <% if (recipes && recipes.length > 0) { %>
+        <pre><%= JSON.stringify(recipes, null, 2) %></pre>
+        <pre><%= recipes[0].recipeName %></pre>
+    <% } else { %>
+        <p>No recipes found</p>
+    <% } %>
+</div>-->
+<div class="container">
+    <div class="name-box">
+        <label><strong>Filter by Name</strong></label>
+        <div>
+            <label for="name-search"></label>
+            <input type="text" id="name-search" name="name-filter" oninput="filterTable()">
+        </div>
+    </div>
+    <div class="ingredient-box">
+        <label><strong>Filter by Ingredient:</strong></label>
+        <div>
+            <label for="ingredient-search"></label>
+            <input type="text" id="ingredient-search" name="ingredient-filter" oninput="filterTable()">
+        </div>
+    </div>
+    <div class="diet-box">
+        <label><strong>Filter by Diet</strong></label>
+            <div>
+                <input type="checkbox" id="vegetarian" name="diet-filter" value="Vegetarian" onchange="filterTable()">
+                <label for="vegetarian">Vegetarian</label>
+            </div>
+            <div>
+                <input type="checkbox" id="vegan" name="diet-filter" value="Vegan" onchange="filterTable()">
+                <label for="vegan">Vegan</label>
+            </div>
+            <div>
+                <input type="checkbox" id="gluten-free" name="diet-filter" value="Gluten-Free" onchange="filterTable()">
+                <label for="gluten-free">Gluten Free</label>
+            </div>
+            <div>
+                <input type="checkbox" id="keto" name="diet-filter" value="Keto" onchange="filterTable()">
+                <label for="Keto">Keto</label>
+            </div>
+            <div>
+                <input type="checkbox" id="low-carb" name="diet-filter" value="Low-Carb" onchange="filterTable()">
+                <label for="low-carb">Low Carb</label>
+            </div>
+    </div>
+    <div class="allergies-box">
+        <label><strong>Exclude ingredients</strong></label>
+        <div>
+            <input type="checkbox" id="dairy" name="allergy-filter" value="dairy">
+            <label for="dairy">Dairy</label>
+        </div>
+        <div>
+            <input type="checkbox" id="eggs" name="allergy-filter" value="eggs">
+            <label for="eggs">Eggs</label>
+        </div>
+        <div>
+            <input type="checkbox" id="fish" name="allergy-filter" value="fish">
+            <label for="fish">Fish</label>
+        </div>
+        <div>
+            <input type="checkbox" id="shellfish" name="allergy-filter" value="shellfish">
+            <label for="shellfish">Shellfish</label>
+        </div>
+        <div>
+            <input type="checkbox" id="tree-nuts" name="allergy-filter" value="tree-nuts">
+            <label for="tree-nuts">Tree Nuts</label>
+        </div>
+        <div>
+            <label for="ingredient-search"></label>
+            <input type="text" id="ingredient-search" name="ingredient-filter">
+        </div>
+    </div>
+    <div class="macros-box">
+        <div>
+            <input type="radio" id="high-protein" name="protein-filter" value="high-protein" onchange="handleCheckbox(this, 'low-protein')">
+            <label for="high-protein">High-protein (>= 20g)</label>
+        </div>
+        <div>
+            <input type="radio" id="low-protein" name="protein-filter" value="low-protein" onchange="handleCheckbox(this, 'high-protein')">
+            <label for="low-protein">Low-protein (< 10g)</label>
+        </div>
+
+        <div>
+            <input type="radio" id="high-carb" name="carb-filter" value="high-carb" onchange="handleCheckbox(this, 'lowcarb')">
+            <label for="high-carb">High-carb (>= 30g)</label>
+        </div>
+        <div>
+            <input type="radio" id="lowcarb" name="carb-filter" value="low-carb" onchange="handleCheckbox(this, 'high-carb')">
+            <label for="low-carb">Low-carb (< 10g)</label>
+        </div>
+
+        <div>
+            <input type="radio" id="high-fat" name="fat-filter" value="high-fat" onchange="handleCheckbox(this, 'low-fat')">
+            <label for="high-fat">High-fat (>= 15g)</label>
+        </div>
+        <div>
+            <input type="radio" id="low-fat" name="fat-filter" value="low-fat" onchange="handleCheckbox(this, 'high-fat')">
+            <label for="low-fat">Low-fat (< 5g)</label>
+        </div>
+
+        <div>
+            <input type="radio" id="high-calorie" name="calorie-filter" value="high-calorie" onchange="handleCheckbox(this, 'low-calorie')">
+            <label for="high-calorie">High-calorie (>= 500g)</label>
+        </div>
+        <div>
+            <input type="radio" id="low-calorie" name="calorie-filter" value="low-calorie" onchange="handleCheckbox(this, 'high-calorie')">
+            <label for="low-calorie">Low-calorie (< 200g)</label>
+        </div>
+    </div>
+
+
+</div>
+    <div>
+        <button onclick="resetFilters()">Reset Filters</button>
+    </div>
+    <!--Table method-->
+<div>
+    <%if (recipes && recipes.length>0) { %>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Recipe Name</th>
+            <th>Ingredients</th>
+            <th>Dietary requirements</th>
+            <th>Macros</th>
+            <th>Cooking Time</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% recipes.forEach((recipe, index) => {%>
+               <tr>
+                 <td>
+                    <span id="recipeName-<%= index %>">
+                        <%= recipe.recipeName%></span>
+                 </td>
+                <td>
+                    <span id="ingredients-<%= index %>">
+                        <%= recipe.ingredientName%></span>
+                </td>
+                 <td>
+                   <span id="dietaryRequirements-<%= index %>">
+                        <%= recipe.dietaryReq%></span>
+                 </td>
+                   <td>
+                       <span id="macros-<%= index %>">
+                        <%= recipe.macros%></span>
+                   </td>
+                   <td>
+                       <span id="cookingTime-<%= index %>">
+                           <%= recipe.cookingTime%></span>
+                   </td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+    <% } else { %>
+        <p>No recipes found!</p>
+    <% } %>
+</div>
+
+<div>
+    <a href="/">Back to Home</a>
+</div>
+</main>
+</body>
+</html>
