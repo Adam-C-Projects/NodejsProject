@@ -3,122 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Maestro</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<header>
-    <h1>Maestro</h1>
-    <a href="login">
-        <div id="userProfileIcon">
-            <img src="images/user.png">
-            <p>Login</p>
-            <div id="userProfileDropdown">
-                <ul>
-                    <li>My Account</li>
-                    <li>Settings</li>
-                    <li>Log Out</li>
-                </ul>
+<body class="bg-gray-100">
+<header class="bg-white shadow">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Maestro</h1>
+        <div class="flex items-center space-x-4">
+            <a href="savedRecipes" class="text-gray-800">Saved Recipes</a>
+            <span class="text-gray-500">|</span>
+            <a href="/allRecipes" class="text-gray-800">View All Recipes</a>
+            <span class="text-gray-500">|</span>
+            <div class="relative" id="userProfileIcon">
+                <a href="login" class="flex items-center space-x-2">
+                    <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+                    <p class="text-gray-700">Login</p>
+                </a>
             </div>
         </div>
-    </a>
+    </div>
 </header>
-<main>
-    <div id="searchBar">
-        <b>What would you like to cook today?</b>
-        <p>Anything you would like to cook, you can input here.</p>
-        <div class="search-bar">
-            <input type="text" placeholder="Search recipes..." id="search-input">
-            <button type="submit" id="search-button">Search</button>
-        </div>
-    </div>
-
-    <div id="ingredientOwn">
-        <b>Fill in the box below with ingredients that you own!</b>
-        <p>We can find you available recipes based on your input.</p>
-        <div id="ingredientInputWrapper">
-            <textarea id="ingredients-input" name="enter your ingredients here..." cols="50" rows="10"></textarea>
-            <button id="enter-button">Enter</button>
-        </div>
-    </div>
-    <div id="restaurant-advisor">
-        <h2>🍽️ Need a place to eat?</h2>
-        <p>If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+<main class="container mx-auto px-6 py-8">
     
-        <form class="search-form" action="/recommendation/advisersubmit" method="POST">
-            <input type="text" name="recipeText" placeholder="Enter a ingredient..." required>
-            <button class="btn" type="submit">Find Restaurants</button>
+    <div class="text-center mb-8">
+        <h2 class="text-2xl text-gray-800">🍽️ Need a place to eat?</h2>
+        <p class="text-gray-600">If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+        <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex justify-center">
+            <input type="text" name="recipeText"placeholder="Enter an ingredient..." class="px-4 py-2 border rounded-l-lg focus:outline-none">
+            <button type="submit" class="px-4 py-2 border rounded-r-lg text-gray-800">Find Restaurants</button>
         </form>
     </div>
     
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            text-align: center;
-        }
-        
-        #restaurant-advisor {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 50vh; /* Centers vertically */
-        }
-    
-        .search-form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 400px;
-        }
-    
-        .search-form input {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-    
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    
-        .btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    
-    <div id="ingredientList">
-        <b>You can also press and hold on any of the common ingredients from below.</b>
+    <div class="text-center mb-8">
+        <b class="text-xl text-gray-800">Fill in the box below with ingredients that you own!</b>
+        <p class="text-gray-600">We can find you available recipes based on your input.</p>
+        <div class="mt-4 flex justify-center">
+            <textarea id="ingredients-input" class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none" rows="3" placeholder="Enter your ingredients here..."></textarea>
+            <button id="enter-button" class="ml-2 px-4 py-2 border rounded-lg text-gray-800">Enter</button>
+        </div>
     </div>
 
-    <div id="ingredientNumTest">
-        <label for="recipe-count"> Number of recipes</label>
-        <input type="number" id="recipeCount" min="1" max="10" value="1">
+    <div class="text-center mb-8">
+        <label for="recipe-count" class="text-gray-800">Number of recipes</label>
+        <input type="number" id="recipeCount" min="1" max="10" value="1" class="px-4 py-2 border rounded-lg focus:outline-none">
     </div>
 
-    <div id="recipeOutput">
-        <h2>Generated Recipe:</h2>
-        <div id="recipe-text"></div>
-    </div>
-
-    <div id="authLinks">
-        <a href="savedRecipes">Saved Recipes</a>
-        <a href="/allRecipes">View All Recipes</a>
+    <div class="mb-8">
+        <h2 class="text-2xl text-gray-800">Generated Recipe:</h2>
+        <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg">
+        </div>
     </div>
 </main>
-<script type= "module" src="js/gpt_handler.js"></script>
+<script type="module" src="js/gpt_handler.js"></script>
 <script src="js/mainPage.js"></script>
 </body>
 </html>

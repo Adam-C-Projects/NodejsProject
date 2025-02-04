@@ -51,42 +51,69 @@ async function callOpenAI(ingredients) {
             { role: "user", content: `Generate a recipe for these ingredients: ${ingredients}` },
         ],
     };
-    const data = await fetchFromAPI(apiUrl, "POST", apiHeaders, apiBody);
-    const recipeContent = data.choices[0].message.content;
-    return JSON.parse(recipeContent);
+    const maxRetries = 5; // Max retries
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+        try {
+            const data = await fetchFromAPI(apiUrl, "POST", apiHeaders, apiBody);
+            const recipeContent = data.choices[0].message.content;
+
+            // Attempt to parse the response into JSON
+            const parsedRecipe = JSON.parse(recipeContent);
+
+            // If JSON parsing is successful, return the parsed recipe
+            return parsedRecipe;
+        } catch (error) {
+            console.error("Error parsing or fetching recipe, attempt:", attempt + 1, error);
+            attempt++;
+            if (attempt >= maxRetries) {
+                console.error("Max retries reached, failed to get valid JSON.");
+                throw new Error("Failed to generate a valid recipe after multiple attempts");
+            }
+        }
+    }
 }
 function renderRecipe(recipe, index) {
     const recipeText = `
-        <h3>Recipe ${index + 1}: ${recipe.title}</h3>
-        <p><b>Ingredients:</b><br>${recipe.ingredients.join("<br>")}</p>
-        <p><b>Instructions:</b><br>${recipe.instructions.join("<br>")}</p>
-        <p><b>Macronutrients:</b><br>
-            Protein: ${recipe.macros.protein}, 
-            Carbs: ${recipe.macros.carbs}, 
-            Fat: ${recipe.macros.fat},
-            Fiber: ${recipe.macros.fiber}, 
-            Sugar: ${recipe.macros.sugar}, 
-            Sodium: ${recipe.macros.sodium}</p>
-        <p><b>Total Calories:</b> ${recipe.total_calories} kcal</p>
-        <p><b>Allergies:</b> ${recipe.allergies.join(", ")||"None"}</p>
-        <p>Prep Time: ${recipe.prepTime||"Not specified"} minutes</p>
-        <p>Cook Time: ${recipe.cookTime ||"Not specified"} minutes</p>
-        <p>Servings: ${recipe.servings}</p>
-        <img src="${recipe.image}" alt="Image for ${recipe.title}" onerror="this.onerror=null; this.src='fallback-image.png';" style="width: 100px; height: auto;">
-        <form action="/saveRecipe" method="POST">
-            <input type="hidden" name="recipeName" value="${recipe.title}">
-            <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
-            <input type="hidden" name="instructions" value='${JSON.stringify(recipe.instructions)}'>
-            <input type="hidden" name="dietaryReq" value='${JSON.stringify(recipe.allergies) || 'none'}'>
-            <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
-            <input type="hidden" name="TotalCalories" value='${JSON.stringify(recipe.total_calories)}'>
-            <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
-            <input type="hidden" name="image" value="${recipe.image}">
-            <button type="submit" class="save-recipe">Save Recipe</button>
-        </form>
+        <div data-id="${index}" class="bg-gray-100 shadow-md rounded-lg relative">
+            <img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-72 h-72 object-cover absolute top-4 right-4 p-2 rounded-lg shadow-md" />
+            <h3 class="text-lg font-bold text-gray-800 p-6">${recipe.title}</h3>
+
+            <div class="px-6 py-4">
+                <p class="mt-2"><b>Ingredients:</b></p>
+                <ul class="list-disc list-inside text-sm text-gray-600">
+                    ${recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                </ul>
+                <p class="mt-2"><b>Instructions:</b></p>
+                <p class="text-sm text-gray-600">${recipe.instructions.join('<br>')}</p>
+                <p class="mt-2"><b>Macronutrients:</b></p>
+                <ul class="list-disc list-inside text-sm text-gray-600">
+                    <li>Protein: ${recipe.macros.protein}g</li>
+                    <li>Carbs: ${recipe.macros.carbs}g</li>
+                    <li>Fat: ${recipe.macros.fat}g</li>
+                    <li>Fiber: ${recipe.macros.fiber}g</li>
+                    <li>Sugar: ${recipe.macros.sugar}g</li>
+                    <li>Sodium: ${recipe.macros.sodium}g</li>
+                </ul>
+                <p class="mt-2"><b>Total Calories:</b> <span class="text-gray-600">${recipe.total_calories} KCAL</span></p>
+                <p class="mt-2"><b>Dietary requirements:</b> <span class="text-gray-600">${recipe.allergies.join(', ') || 'None'}</span></p>
+                <p class="mt-2"><b>Cook Time:</b> <span class="text-gray-600">${recipe.cookTime || 'Not specified'} minutes</span></p>
+                <form action="/saveRecipe" method="POST" class="mt-4">
+                    <input type="hidden" name="recipeName" value="${recipe.title}">
+                    <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
+                    <input type="hidden" name="instructions" value='${JSON.stringify(recipe.instructions)}'>
+                    <input type="hidden" name="dietaryReq" value='${JSON.stringify(recipe.allergies) || 'none'}'>
+                    <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
+                    <input type="hidden" name="TotalCalories" value='${JSON.stringify(recipe.total_calories)}'>
+                    <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
+                    <input type="hidden" name="image" value="${recipe.image}">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Save Recipe</button>
+                </form>
+            </div>
+        </div>
     `;
     const recipeDiv = document.createElement("div");
-    recipeDiv.classList.add("recipe-card");
     recipeDiv.innerHTML = recipeText;
     return recipeDiv;
 }
