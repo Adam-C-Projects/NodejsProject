@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+// const multer = require('multer');
 const loginRouter = require('./routes/loginRoutes');
 const registerRouter = require('./routes/registerRoutes');
 const savedRecipeRouter = require('./routes/savedRecipeRoutes');
@@ -26,6 +27,32 @@ app.use(session({
     },
 }));
 app.use(express.urlencoded({ extended: true }));
+
+// Set up multer
+/*const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    }
+    filename: (req, file, cb) => {
+        cb(null, 'avatar_' + req.UID + path.extname(file.originalname)); // Save as avatar_<UID>
+    }
+})
+
+const upload = multer({
+    storage: storage,
+    limits: { filesize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const allowed = /jpeg|jpg|png/;
+        const extension = allowed.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = allowed.test(file.mimetype);
+
+        if (extension && mimeType) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only .jpeg, .jpg, and .png files can be uploaded!'));
+        }
+    }
+})*/
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -60,14 +87,24 @@ app.use('/createRecipes',createRecipesRouter(db));
 app.use('/recommendation', recommendationRoutes());
 // Main routes
 app.get('/', (req, res) => {
-    res.render('mainPage');
+    const username = req.session.username;
+
+    res.render('mainPage', {username});
     console.log(req.session);
     console.log(req.session.id);
     req.session.visited = true;
 });
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
 app.get('/userProfile', (req, res) => {
-    res.render('userProfile');
-})
+    const username = req.session.username;
+
+    res.render('userProfile', {username});
+});
 
 app.post('/saveRecipe', (req, res) => {
     const recipe = req.body;

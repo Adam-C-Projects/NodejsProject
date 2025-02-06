@@ -4,16 +4,19 @@
 	<meta charset="UTF-8">
     <title>User Profile</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
 </head>
 <body>
 	<header>
 		<h1>User Profile</h1>
+		<button id="headerBtn" onclick="window.location.href='/'">Home</button>
+		<button id="logoutBtn" onclick="window.location.href='/logout'">Log Out</button>
 	</header>
 	<main class="userProfile">
 		<div class="userProfileDiv">
 			<h2>Basic info</h2>
 			<div>
-				<p>Username:</p><p>TestUser</p>
+				<p>Username:</p><p><%= username %></p>
 			</div>
 			<div>
 				<p>Password:</p><p>********</p>

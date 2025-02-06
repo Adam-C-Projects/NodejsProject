@@ -14,11 +14,18 @@
             <span class="text-gray-500">|</span>
             <a href="/allRecipes" class="text-gray-800">View All Recipes</a>
             <span class="text-gray-500">|</span>
-            <div class="relative" id="userProfileIcon">
-                <a href="login" class="flex items-center space-x-2">
-                    <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
-                    <p class="text-gray-700">Login</p>
-                </a>
+            <div class="relative">
+                <% if (username != null) { %>    
+                    <a href="userProfile" class="flex items-center space-x-2">
+                        <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+                        <p class="text-gray-700"><%= username %></p>
+                    </a> 
+                <% } else { %>
+                    <a href="login" class="flex items-center space-x-2">
+                        <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+                        <p class="text-gray-700">Login</p>
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>
