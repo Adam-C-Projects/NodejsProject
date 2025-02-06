@@ -8,8 +8,8 @@ router.get('/allRecipes', (req, res) => {
             console.error('Error fetching all recipes: ', err);
             return res.status(500).send('Error fetching all recipes');
         }
-    
-        res.render('allRecipes', { recipes: results });
+        const username = req.session.username || null;
+        res.render('allRecipes', { recipes: results, username: username  });
     });
 });
 

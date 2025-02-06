@@ -5,10 +5,12 @@ const bcrypt = require('bcrypt');
 module.exports = (db) => {
     
     router.get('/', (req, res) => {
-        res.render('generateRecipe');
+        const username = req.session.username || null;
+        res.render('generateRecipe', {username: username} );
     });
     router.get('/userProfile', (req, res) => {
-        res.render('userProfile');
+        const username = req.session.username || null;
+        res.render('userProfile', {username: username} );
     })
     
     router.post('/saveRecipe', (req, res) => {

@@ -22,7 +22,19 @@
                 </nav>
                 <div class="flex items-center space-x-4">
                     <a href="#" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
-                    <a href="/login" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Sign In</a>
+                    <div class="relative">
+                        <% if (username != null) { %>    
+                            <a href="userProfile" class="flex items-center space-x-2">
+                                <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+                                <p class="text-gray-700"><%= username %></p>
+                            </a> 
+                        <% } else { %>
+                            <a href="login" class="flex items-center space-x-2">
+                                <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+                                <p class="text-gray-700">Login</p>
+                            </a>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         </header>

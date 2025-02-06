@@ -42,7 +42,8 @@ module.exports = (db) => {
                     }
                 });
                 console.log(recipeResults);
-                res.render('savedRecipes', { recipes: recipeResults });
+                const username = req.session.username || null;
+                res.render('savedRecipes', { recipes: recipeResults, username: username });
             }
         );
     });

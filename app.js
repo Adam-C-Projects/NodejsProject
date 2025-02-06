@@ -128,7 +128,6 @@ app.post('/saveRecipe', (req, res) => {
         }
         return value;
     };
-    console.log(recipe.TotalCalories);
     recipe.recipeName = trimBrackets(recipe.recipeName);
     recipe.ingredientName = trimBrackets(recipe.ingredientName);
     recipe.instructions = trimBrackets(recipe.instructions);
@@ -186,8 +185,6 @@ app.get('/allRecipes', (req, res) => {
             res.status(500).send("Error fetching data from the database.");
             return;
         }
-        console.log("Query results:", results);
-
         
         results.forEach(recipe => {
             if (recipe.macros) {
@@ -206,7 +203,9 @@ app.get('/allRecipes', (req, res) => {
                 .map(ingredientName => ingredientName.trim());
             }
         });
-        res.render('allRecipes', { recipes: results });
+        const username = req.session.username || null;
+        console.log(username)
+        res.render('allRecipes', { recipes: results, username: username });
     });
 });
 

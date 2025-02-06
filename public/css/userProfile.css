@@ -1,25 +1,6 @@
 /* User Profile Page styles */
 
 /* These buttons are temporary */
-#headerBtn {
-    min-width: 45px;
-    min-height: 45px;
-    position: absolute;
-    right: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 32px;
-}
-
-#logoutBtn {
-    min-width: 45px;
-    min-height: 45px;
-    position: absolute;
-    right: 170px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 32px;
-}
 
 .userProfile {
     display: flex;

@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8">
     <title>User Profile</title>
-    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/userProfile.css">
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -23,11 +22,21 @@
 			</nav>
 			<div class="flex items-center space-x-4">
 				<a href="#" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
-				<a href="/login" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Sign In</a>
+				<div class="relative">
+					<% if (username != null) { %>    
+						<a href="userProfile" class="flex items-center space-x-2">
+							<img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+							<p class="text-gray-700"><%= username %></p>
+						</a> 
+					<% } else { %>
+						<a href="login" class="flex items-center space-x-2">
+							<img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
+							<p class="text-gray-700">Login</p>
+						</a>
+					<% } %>
+				</div>
 			</div>
 		</div>
-		<button id="headerBtn" onclick="window.location.href='/'">Home</button>
-		<button id="logoutBtn" onclick="window.location.href='/logout'">Log Out</button>
 	</header>
 	<main class="userProfile">
 		<div class="userProfileDiv">
@@ -66,6 +75,11 @@
 			<div>
 				<p>Dark mode:</p><p>OFF</p>
 			</div>
+		</div>
+		<div class="flex mt-6 px-3">
+		<button id="logoutBtn" onclick="window.location.href='/logout'" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+			Log Out
+		</button>
 		</div>
 	</main>
 </body>

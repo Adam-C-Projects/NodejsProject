@@ -4,7 +4,8 @@ const router = express.Router();
 
 module.exports = (db) => {
     router.get('/', (req, res) => {
-        res.render('RestaurantAdviser', { recipes : null });
+        const username = req.session.username || null;
+        res.render('RestaurantAdviser', { recipes : null , username : username});
         });
     router.post('/advisersubmit', (req, res) => {
         const { recipeText } = req.body;
@@ -28,14 +29,14 @@ module.exports = (db) => {
                 console.error("Error fetching recommendations: ", err);
                 return res.status(500).send("An error occurred while fetching recommendations.");
             }
-
             // Handle case where no recommendations are found
             if (!recommendations || recommendations.length === 0) {
                 return res.status(404).send("No restaurants found matching the recipe ingredients.");
             }
 
             // Render the recommendations
-            res.render('RestaurantAdviser', { recipes: recommendations });
+            const username = req.session.username || null;
+            res.render('RestaurantAdviser', { recipes: recommendations, username: username});
 
         });
     });
