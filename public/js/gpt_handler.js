@@ -99,7 +99,7 @@ function renderRecipe(recipe, index) {
                 <p class="mt-2"><b>Total Calories:</b> <span class="text-gray-600">${recipe.total_calories} KCAL</span></p>
                 <p class="mt-2"><b>Dietary requirements:</b> <span class="text-gray-600">${recipe.allergies.join(', ') || 'None'}</span></p>
                 <p class="mt-2"><b>Cook Time:</b> <span class="text-gray-600">${recipe.cookTime || 'Not specified'} minutes</span></p>
-                <form action="/saveRecipe" method="POST" class="mt-4">
+                <form action="generateRecipe/saveRecipe" method="POST" class="mt-4">
                     <input type="hidden" name="recipeName" value="${recipe.title}">
                     <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
                     <input type="hidden" name="instructions" value='${JSON.stringify(recipe.instructions)}'>

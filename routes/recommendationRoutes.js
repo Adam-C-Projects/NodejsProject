@@ -3,7 +3,9 @@ const axios = require("axios");
 const router = express.Router();
 
 module.exports = (db) => {
-    // Route to handle POST requests to /advisersubmit
+    router.get('/', (req, res) => {
+        res.render('RestaurantAdviser', { recipes : null });
+        });
     router.post('/advisersubmit', (req, res) => {
         const { recipeText } = req.body;
 

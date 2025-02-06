@@ -3,19 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>RestaurantAdviser</title>
-        <link rel="stylesheet" href="css/styles.css">
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                padding: 20px;
-                background-color: #f9f9f9;
-            }
-            header {
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 20px;
-            }
+           
             .restaurant-list {
                 list-style-type: none;
                 padding: 0;
@@ -36,26 +26,75 @@
                 font-size: 16px;
                 color: #555;
             }
+
+            .back-btn {
+                display: block;
+                margin: 20px auto;
+                padding: 12px 20px;
+                font-size: 18px;
+                font-weight: bold;
+                background-color: #ff4d4d; /* Red button */
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .back-btn:hover {
+                background-color: #cc0000;
+            }
         </style>
     </head>
-    <body>
-        <header>🍽️ Here are your recommended Restaurants 🍽️</header>
-        <div>
-            <% if (recipes.length > 0) { %>
-                <ul class="restaurant-list">
-                    <% recipes.forEach(recipe => { %>
-                        <li class="restaurant-item">
-                            <h2><%= recipe.name %></h2>
-                            <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
-                            <p><strong>Address:</strong> <%= recipe.address %></p>
-                            <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>     
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p>No restaurant recommendations found.</p>
-            <% } %>   
-        </div> 
+
+    <body class="bg-gray-100">
+        <header class="bg-green-600 text-white border-b-4 border-gray-300">
+            <div class="container mx-auto flex justify-between items-center py-4 px-6">
+                <div class="flex items-center space-x-4">
+                    <!-- Adjust the logo size as needed -->
+                    <img src="images/AdobeStock_286219820.png" alt="Logo" class="h-16 w-auto object-contain mb-0" />
+                    <span class="font-semibold text-2xl">Meastro</span>
+                </div>
+                <nav class="flex space-x-2">
+                    <a href="/" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Home</a>
+                    <a href="/generateRecipe" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a recipe</a>
+                    <a href="/recommendation" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a restaurant</a>
+                    <a href="/savedRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Saved Recipes</a>
+                    <a href="/allRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">All recipes</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
+                    <a href="/login" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Sign In</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="text-center mb-8">
+            <h2 class="text-2xl text-gray-800">🍽️ Need a place to eat?</h2>
+            <p class="text-gray-600">If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
+            <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex justify-center">
+                <input type="text" name="recipeText"placeholder="Enter an ingredient..." class="px-4 py-2 border rounded-l-lg focus:outline-none">
+                <button type="submit" class="px-4 py-2 border rounded-r-lg text-gray-800">Find Restaurants</button>
+            </form>
+        </div>
+        <%if( recipes  != null) {%>
+            <div>
+                <% if (recipes != null) { %>
+                    <ul class="restaurant-list">
+                        <% recipes.forEach(recipe => { %>
+                            <li class="restaurant-item">
+                                <h2><%= recipe.name %></h2>
+                                <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
+                                <p><strong>Address:</strong> <%= recipe.address %></p>
+                                <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>     
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <p>No restaurant recommendations found.</p>
+                <% } %>   
+            </div>
+        <% } %>     
     </body>
 </html>
 <button class="back-btn" onclick="goBack()">🔙 Go Back</button>
@@ -65,23 +104,3 @@
         window.history.back();
     }
 </script>
-
-<style>
-    .back-btn {
-        display: block;
-        margin: 20px auto;
-        padding: 12px 20px;
-        font-size: 18px;
-        font-weight: bold;
-        background-color: #ff4d4d; /* Red button */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .back-btn:hover {
-        background-color: #cc0000;
-    }
-</style>

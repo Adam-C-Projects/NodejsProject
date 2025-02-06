@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Maestro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <header class="bg-green-600 text-white border-b-4 border-gray-300">
+    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+        <div class="flex items-center space-x-4">
+            <img src="images/AdobeStock_286219820.png" alt="Logo" class="h-16 w-auto object-contain mb-0" />
+            <span class="font-semibold text-2xl">Meastro</span>
+        </div>
+        <nav class="flex space-x-2">
+            <a href="/" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Home</a>
+            <a href="/generateRecipe" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a recipe</a>
+            <a href="/recommendation" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a restaurant</a>
+            <a href="/savedRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Saved Recipes</a>
+            <a href="/allRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">All recipes</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <a href="#" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
+            <a href="/login" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Sign In</a>
+        </div>
+    </div>
+</header>
+<main class="container mx-auto px-6 py-8">
+    
+    <div class="text-center mb-8">
+        <b class="text-xl text-gray-800">Fill in the box below with ingredients that you own!</b>
+        <p class="text-gray-600">We can find you available recipes based on your input.</p>
+        <div class="mt-4 flex justify-center">
+            <textarea id="ingredients-input" class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none" rows="3" placeholder="Enter your ingredients here..."></textarea>
+            <button id="enter-button" class="ml-2 px-4 py-2 border rounded-lg text-gray-800">Enter</button>
+        </div>
+    </div>
+
+    <div class="text-center mb-8">
+        <label for="recipe-count" class="text-gray-800">Number of recipes</label>
+        <input type="number" id="recipeCount" min="1" max="10" value="1" class="px-4 py-2 border rounded-lg focus:outline-none">
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-2xl text-gray-800">Generated Recipe:</h2>
+        <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg">
+        </div>
+    </div>
+</main>
+<script type="module" src="js/gpt_handler.js"></script>
+<script src="js/mainPage.js"></script>
+</body>
+</html>
