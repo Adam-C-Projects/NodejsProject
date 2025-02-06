@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+// const multer = require('multer');
 const loginRouter = require('./routes/loginRoutes');
 const registerRouter = require('./routes/registerRoutes');
 const savedRecipeRouter = require('./routes/savedRecipeRoutes');
@@ -27,6 +28,32 @@ app.use(session({
     },
 }));
 app.use(express.urlencoded({ extended: true }));
+
+// Set up multer
+/*const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    }
+    filename: (req, file, cb) => {
+        cb(null, 'avatar_' + req.UID + path.extname(file.originalname)); // Save as avatar_<UID>
+    }
+})
+
+const upload = multer({
+    storage: storage,
+    limits: { filesize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const allowed = /jpeg|jpg|png/;
+        const extension = allowed.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = allowed.test(file.mimetype);
+
+        if (extension && mimeType) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only .jpeg, .jpg, and .png files can be uploaded!'));
+        }
+    }
+})*/
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
@@ -63,10 +90,92 @@ app.use('/generateRecipe',generateRecipeRouter(db));
 // Main routes
 
 app.get('/', (req, res) => {
-    res.render('mainPage');
+    const username = req.session.username;
+
+    res.render('mainPage', {username});
     console.log(req.session);
     console.log(req.session.id);
     req.session.visited = true;
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+app.get('/userProfile', (req, res) => {
+    const username = req.session.username;
+
+    res.render('userProfile', {username});
+});
+
+app.post('/saveRecipe', (req, res) => {
+    const recipe = req.body;
+    const UID = req.session.UID; 
+    console.log('Incoming request body:', req.body)
+
+    if (!UID) {
+        return res.status(401).send("Unauthorized: No user logged in.");
+    }
+
+    if(recipe.dietaryReq = []){
+        recipe.dietaryReq = "None"
+    }
+
+    const trimBrackets = (value) => {
+        if (typeof value === 'string') {
+            return value.replace(/[\[\]{}"]/g, '').trim();
+        }
+        return value;
+    };
+    console.log(recipe.TotalCalories);
+    recipe.recipeName = trimBrackets(recipe.recipeName);
+    recipe.ingredientName = trimBrackets(recipe.ingredientName);
+    recipe.instructions = trimBrackets(recipe.instructions);
+    recipe.dietaryReq = recipe.dietaryReq && recipe.dietaryReq.length ? trimBrackets(recipe.dietaryReq) : "None";
+    recipe.macros = trimBrackets(recipe.macros);
+    recipe.cookingTime = trimBrackets(recipe.cookingTime);
+    recipe.TotalCalories = trimBrackets(recipe.TotalCalories);
+
+    const insertRecipeQuery = `
+        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories,image)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
+    `;
+    const recipeValues = [
+        recipe.recipeName,
+        recipe.ingredientName,
+        recipe.dietaryReq,
+        recipe.macros,
+        recipe.cookingTime,
+        recipe.instructions,
+        recipe.TotalCalories,
+        recipe.image
+    ];
+
+    db.query(insertRecipeQuery, recipeValues, (recipeError, recipeResults) => {
+        if (recipeError) {
+            console.error('Error saving recipe:', recipeError);
+            return res.status(500).send("Failed to save recipe.");
+        }
+
+        const RID = recipeResults.insertId;
+
+        const saveRecipeQuery = `
+            INSERT INTO SavedRecipes (UID, RID, saved_at)
+            VALUES (?, ?, NOW())
+        `;
+        const saveRecipeValues = [UID, RID];
+
+        db.query(saveRecipeQuery, saveRecipeValues, (saveError) => {
+            if (saveError) {
+                console.error('Error saving recipe to SavedRecipes:', saveError);
+                return res.status(500).send("Failed to save recipe.");
+            }
+
+            res.redirect('/');
+        });
+    });
 });
 app.get('/allRecipes', (req, res) => {
     const query = 'SELECT * FROM Recipes';

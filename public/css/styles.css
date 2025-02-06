@@ -63,7 +63,9 @@ main {
     font-size: 1.1rem;
 }
 
+/* Currently obsolete */
 /* User Profile Icon */
+/*
 #userProfileIcon {
     position: absolute;
     width: 140px;
@@ -95,6 +97,7 @@ main {
 
 /* User Profile Dropdown */
 
+/*
 #userProfileDropdown {
     display: none;
     cursor: default;
@@ -122,6 +125,8 @@ main {
     font-size: 16px;
     text-align: left;
 }
+
+*/
 
 /* Search Bar Styles */
 .search-bar {
@@ -350,40 +355,4 @@ textarea:focus {
     right: 10px;
     text-decoration: none;
     font-size: 16px;
-}
-
-/* User Profile Page styles */
-
-.userProfile {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    gap: 15px;
-}
-
-.userProfileDiv {
-    display: flex;
-    width: 45%;
-    flex-direction: column;
-    border: 2px solid azure;
-    border-radius: 8px;
-    background-color: azure;
-    padding: 16px;
-}
-
-.userProfileDiv h2 {
-    text-decoration: underline;
-}
-
-.userProfileDiv img {
-    max-width: 64px;
-    max-height: 64px;
-    cursor: pointer;
-}
-
-.userProfileDiv div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 40px;
 }
