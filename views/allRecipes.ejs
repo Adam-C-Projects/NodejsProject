@@ -215,6 +215,8 @@
                 <p>No recipes found</p>
             <% } %>
         </div>-->
+
+
         <div class="container bg-gray-100">
             <div class="name-box">
                 <label><strong>Filter by Name</strong></label>
@@ -324,54 +326,48 @@
                 <button class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold" onclick="resetFilters()">Reset Filters</button>
             </div>
             <!--Table method-->
-            <div>
+            <div class="recipe-container">
                 <% if (recipes && recipes.length > 0) { %>
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Recipe Name</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Ingredients</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Dietary Requirements</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Macros</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Cooking Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <ul id="recipe-list" class="grid grid-cols-1 gap-4">
                         <% recipes.forEach((recipe, index) => { %>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="py-3 px-4 text-sm text-gray-900">
-                                <span id="recipeName-<%= index %>">
-                                    <%= recipe.recipeName %>
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 text-sm text-gray-700">
-                                <span id="ingredients-<%= index %>">
-                                    <%= recipe.ingredientName %>
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 text-sm text-gray-700">
-                                <span id="dietaryRequirements-<%= index %>">
-                                    <%= recipe.dietaryReq %>
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 text-sm text-gray-700">
-                                <span id="macros-<%= index %>">
-                                    <%= recipe.macros %>
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 text-sm text-gray-700">
-                                <span id="cookingTime-<%= index %>">
-                                    <%= recipe.cookingTime %>
-                                </span>
-                            </td>
-                        </tr>
+                            <li data-id="<%= recipe.RID || index %>" class="bg-white shadow-md rounded-lg overflow-hidden">
+                                <button class="w-full text-left px-4 py-2 bg-green-500 text-white rounded-t-lg hover:bg-green-600 focus:outline-none" onclick="toggleRecipeDetails(event)">
+                                    <h3 class="text-lg font-bold"><%= recipe.recipeName %></h3>
+                                </button>
+                                <% if (recipe.image) { %>
+                                    <img src="<%= recipe.image %>" alt="Image for <%= recipe.recipeName %>" class="w-full h-auto" />
+                                <% } %>
+                                <div class="recipe-details hidden px-4 py-2">
+                                    <p>
+                                        <strong>Ingredients:</strong>
+                                        <% if (Array.isArray(recipe.ingredientName)) { %>
+                                    <ul class="list-disc ml-4">
+                                        <% recipe.ingredientName.forEach(function(ingredient) { %>
+                                            <li><%= ingredient %></li>
+                                        <% }); %>
+                                    </ul>
+                                    <% } else { %>
+                                        <%= recipe.ingredientName %>
+                                    <% } %>
+                                    </p>
+                                    <p class="mt-2"><strong>Dietary Requirements:</strong> <%= recipe.dietaryReq %></p>
+                                    <p class="mt-2"><strong>Macros:</strong> <%= recipe.macros %></p>
+                                    <p class="mt-2"><strong>Cooking Time:</strong> <%= recipe.cookingTime %> minutes</p>
+                                </div>
+                            </li>
                         <% }); %>
-                    </tbody>
-                </table>
+                    </ul>
                 <% } else { %>
-                    <p class="text-gray-700 text-lg">No recipes found!</p>
+                    <p class="text-center text-gray-600">No recipes found.</p>
                 <% } %>
             </div>
         </main>
+
+        <script>
+            function toggleRecipeDetails(event) {
+                const details = event.target.closest('li').querySelector('.recipe-details');
+                details.classList.toggle('hidden');
+            }
+        </script>
     </body>
 </html>
