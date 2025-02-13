@@ -173,37 +173,7 @@
     </head>
 
     <body>
-        <header class="bg-green-600 text-white">
-            <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <div class="flex items-center space-x-4">
-                <img src="images/AdobeStock_286219820.png" alt="Logo" class="h-16 w-auto object-contain" />
-                <span class="font-semibold text-2xl">Maestro</span>
-            </div>
-            <nav class="flex space-x-2">
-                <a href="/" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Home</a>
-                <a href="/generateRecipe" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a recipe</a>
-                <a href="/recommendation" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a restaurant</a>
-                <a href="/savedRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Saved Recipes</a>
-                <a href="/allRecipes" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">All recipes</a>
-            </nav>
-            <div class="flex items-center space-x-4">
-                <a href="#" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
-                <div class="relative">
-              <% if (username) { %>    
-                  <a href="userProfile" class="flex items-center space-x-2">
-                      <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
-                      <p class="text-gray-700"><%= username %></p>
-                  </a> 
-              <% } else { %>
-                  <a href="login" class="flex items-center space-x-2">
-                      <img src="images/user.png" alt="User" class="w-8 h-8 rounded-full">
-                      <p class="text-gray-700">Login</p>
-                  </a>
-              <% } %>
-          </div>
-            </div>
-            </div>
-        </header>
+        <%- include('partials/header') %>
         <main>
 
         <!--debug, pastes into page in json -->
