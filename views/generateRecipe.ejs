@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Maestro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <!-- Ensure proper scaling on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maestro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
-<%- include('partials/header') %>
-<main class="container mx-auto px-6 py-8">
-    
+  <% if (isMobile) { %>
+    <%- include('partials/header_mobile') %>
+  <% } else { %>
+    <%- include('partials/header_desktop') %>
+  <% } %>
+  
+  <main class="w-full max-w-screen-xl mx-auto px-6 py-8">
     <div class="text-center mb-8">
-        <b class="text-xl text-gray-800">Fill in the box below with ingredients that you own!</b>
-        <p class="text-gray-600">We can find you available recipes based on your input.</p>
-        <div class="mt-4 flex justify-center">
-            <textarea id="ingredients-input" class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none" rows="3" placeholder="Enter your ingredients here..."></textarea>
-            <button id="enter-button" class="ml-2 px-4 py-2 border rounded-lg text-gray-800">Enter</button>
-        </div>
+      <b class="text-2xl sm:text-3xl text-gray-800">
+        Fill in the box below with ingredients that you own!
+      </b>
+      <p class="mt-2 text-lg sm:text-xl text-gray-600">
+        We can find you available recipes based on your input.
+      </p>
+      <div class="mt-4 flex flex-col sm:flex-row justify-center items-center">
+        <textarea id="ingredients-input" class="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:outline-none" rows="3" placeholder="Enter your ingredients here..."></textarea>
+        <button id="enter-button" class="mt-2 sm:mt-0 sm:ml-2 px-4 py-2 border rounded-lg bg-white text-gray-800 hover:bg-gray-200 transition">
+          Enter
+        </button>
+      </div>
     </div>
 
     <div class="text-center mb-8">
-        <label for="recipe-count" class="text-gray-800">Number of recipes</label>
-        <input type="number" id="recipeCount" min="1" max="10" value="1" class="px-4 py-2 border rounded-lg focus:outline-none">
+      <label for="recipe-count" class="text-lg sm:text-xl text-gray-800">Number of recipes</label>
+      <input type="number" id="recipeCount" min="1" max="10" value="1" class="mt-2 w-24 px-4 py-2 border rounded-lg focus:outline-none">
     </div>
 
     <div class="mb-8">
-        <h2 class="text-2xl text-gray-800">Generated Recipe:</h2>
-        <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg">
-        </div>
+      <h2 class="text-2xl sm:text-3xl text-gray-800 mb-4">Generated Recipe:</h2>
+      <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg text-lg">
+        <!-- Generated recipe content will appear here -->
+      </div>
     </div>
-</main>
-<script type="module" src="js/gpt_handler.js"></script>
-<script src="js/mainPage.js"></script>
+  </main>
+  
+  <script type="module" src="js/gpt_handler.js"></script>
+  <script src="js/mainPage.js"></script>
 </body>
 </html>

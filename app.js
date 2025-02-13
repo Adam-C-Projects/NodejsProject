@@ -29,6 +29,13 @@ app.use(session({
 }));
 app.use(express.urlencoded({ extended: true }));
 
+//check if mobile
+app.use((req, res, next) => {
+    const ua = req.headers['user-agent'];
+    // This simple regex test checks if the user agent string contains 'mobile'
+    res.locals.isMobile = /mobile/i.test(ua);
+    next();
+  });
 // Set up multer
 /*const storage = multer.diskStorage({
     destination: (req, file, cb) => {

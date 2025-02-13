@@ -1,0 +1,87 @@
+<header class="bg-green-600 text-white border-b-4 border-gray-300">
+  <div class="container mx-auto flex justify-between items-center py-4 px-6">
+    <!-- Logo and Brand -->
+    <div class="flex items-center space-x-4">
+      <img src="/images/AdobeStock_286219820.png" alt="Logo" class="h-16 w-auto object-contain mb-0" />
+      <span class="font-semibold text-2xl">Meastro</span>
+    </div>
+    
+    <!-- Right Side: Login/User Button and Mobile Menu Button -->
+    <div class="flex items-center space-x-4">
+      <!-- Login/User Button -->
+      <% if (username) { %>
+        <!-- When logged in, clicking toggles a dropdown -->
+        <div class="relative">
+          <button id="login-button" class="flex items-center space-x-2 px-3 py-2 rounded-lg focus:outline-none active:bg-green-700 transition">
+            <img src="/images/user.png" alt="User" class="w-8 h-8 rounded-full">
+            <p class="text-gray-200"><%= username %></p>
+          </button>
+          <!-- Dropdown menu hidden by default -->
+          <div id="login-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-green-600 rounded-lg shadow-lg z-10">
+            <a href="/userProfile" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Profile</a>
+            <a href="/logout" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Logout</a>
+          </div>
+        </div>
+      <% } else { %>
+        <!-- Not logged in: simple link to login page -->
+        <a href="/login" class="flex items-center space-x-2 px-3 py-2 rounded-lg active:bg-green-700 transition">
+          <img src="/images/user.png" alt="User" class="w-8 h-8 rounded-full">
+          <p class="text-gray-200">Login</p>
+        </a>
+      <% } %>
+      
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-button" class="text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+             xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Mobile Navigation Menu (hidden by default) -->
+  <div id="mobile-menu" class="hidden bg-green-600">
+    <nav class="flex flex-col space-y-2 px-6 pb-4">
+      <a href="/" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition font-bold">Home</a>
+      <a href="/generateRecipe" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition font-bold">Find a recipe</a>
+      <a href="/recommendation" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition font-bold">Find a restaurant</a>
+      <a href="/savedRecipes" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition font-bold">Saved Recipes</a>
+      <a href="/allRecipes" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition font-bold">All recipes</a>
+      <a href="#" class="px-3 py-2 rounded-lg hover:bg-green-700 active:bg-green-700 transition text-sm">Español</a>
+    </nav>
+  </div>
+  
+  <!-- Scripts: Toggle Mobile Menu and Login Dropdown on click -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle Mobile Menu
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+      
+      // Toggle Login Dropdown if user is logged in
+      const loginButton = document.getElementById('login-button');
+      const loginDropdown = document.getElementById('login-dropdown');
+      if (loginButton && loginDropdown) {
+        loginButton.addEventListener('click', (e) => {
+          // Prevent the click from propagating so it doesn't close immediately
+          e.stopPropagation();
+          loginDropdown.classList.toggle('hidden');
+        });
+        
+        // Optionally, clicking anywhere else closes the dropdown
+        document.addEventListener('click', () => {
+          if (!loginDropdown.classList.contains('hidden')) {
+            loginDropdown.classList.add('hidden');
+          }
+        });
+      }
+    });
+  </script>
+</header>

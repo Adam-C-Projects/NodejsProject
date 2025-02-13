@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>RestaurantAdviser</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
@@ -47,7 +48,11 @@
     </head>
 
     <body class="bg-gray-100">
-        <%- include('partials/header') %>
+        <% if (isMobile) { %>
+            <%- include('partials/header_mobile') %>
+          <% } else { %>
+            <%- include('partials/header_desktop') %>
+          <% } %>
         <div class="text-center mb-8">
             <h2 class="text-2xl text-gray-800">🍽️ Find Your Perfect Restaurant</h2>
             <p class="text-gray-600">Use filters to narrow down your search!</p>

@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="/css/userProfile.css">
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-	<%- include('partials/header') %>
-	<div id="header"></div>
-	<script>
-  	fetch('header.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('header').innerHTML = data;
-    });
-	</script>
+	<% if (isMobile) { %>
+		<%- include('partials/header_mobile') %>
+	  <% } else { %>
+		<%- include('partials/header_desktop') %>
+	  <% } %>
 	<main class="userProfile">
 		<div class="userProfileDiv">
 			<h2>Basic info</h2>
