@@ -7,17 +7,28 @@
     flex-direction: column;
     justify-content: start;
     gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .userProfileDiv {
     display: flex;
-    width: 45%;
+    flex-direction: column;
+    width: 100%;
     flex-direction: column;
     border: 2px solid azure;
     border-radius: 8px;
     background-color: azure;
     padding: 16px;
 }
+
+@media (min-width: 768px) {
+    .userProfileDiv {
+        width: 60%; /* Adjust the width for desktop */
+        margin: 0 auto; /* Centers the div */
+    }
+}
+
 
 .userProfileDiv h2 {
     text-decoration: underline;
