@@ -5,7 +5,6 @@
         <title>RestaurantAdviser</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-           
             .restaurant-list {
                 list-style-type: none;
                 padding: 0;
@@ -81,37 +80,73 @@
         </header>
 
         <div class="text-center mb-8">
-            <h2 class="text-2xl text-gray-800">🍽️ Need a place to eat?</h2>
-            <p class="text-gray-600">If you're not in the mood to cook, let us suggest a restaurant based on your ingredients!</p>
-            <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex justify-center">
-                <input type="text" name="recipeText"placeholder="Enter an ingredient..." class="px-4 py-2 border rounded-l-lg focus:outline-none">
-                <button type="submit" class="px-4 py-2 border rounded-r-lg text-gray-800">Find Restaurants</button>
+            <h2 class="text-2xl text-gray-800">🍽️ Find Your Perfect Restaurant</h2>
+            <p class="text-gray-600">Use filters to narrow down your search!</p>
+            
+            <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex flex-col items-center">
+                <input type="text" name="recipeText" placeholder="Enter an ingredient..." class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none">
+                
+                <div class="mt-4">
+                    <label class="text-gray-800 font-bold">Filter by Rating:</label>
+                    <select name="filterRating" class="px-4 py-2 border rounded-lg">
+                        <option value="">Any</option>
+                        <option value="4">4 and above</option>
+                        <option value="3">3 and below</option>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <label class="text-gray-800 font-bold">Filter by Cuisine:</label>
+                    <input type="text" name="filterCuisine" placeholder="e.g., Chinese, Italian" class="px-4 py-2 border rounded-lg">
+                </div>
+
+                <div class="mt-4">
+                    <label class="text-gray-800 font-bold">Filter by Price:</label>
+                    <select name="filterPrice" class="px-4 py-2 border rounded-lg">
+                        <option value="">Any</option>
+                        <option value="1">$ (Cheap)</option>
+                        <option value="2">$$ (Moderate)</option>
+                        <option value="3">$$$ (Expensive)</option>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <label class="text-gray-800 font-bold">Filter by Type:</label>
+                    <input type="text" name="filterRestaurantType" placeholder="e.g., Fast Food, Fine Dining" class="px-4 py-2 border rounded-lg">
+                </div>
+
+                <button type="submit" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg">Find Restaurants</button>
             </form>
         </div>
-        <%if( recipes  != null) {%>
-            <div>
-                <% if (recipes != null) { %>
-                    <ul class="restaurant-list">
-                        <% recipes.forEach(recipe => { %>
-                            <li class="restaurant-item">
-                                <h2><%= recipe.name %></h2>
-                                <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
-                                <p><strong>Address:</strong> <%= recipe.address %></p>
-                                <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>     
-                            </li>
-                        <% }) %>
-                    </ul>
-                <% } else { %>
-                    <p>No restaurant recommendations found.</p>
-                <% } %>   
+
+        <% if (message) { %>
+            <p class="text-red-500 text-lg text-center"><%= message %></p>
+        <% } %>
+
+        <% if (recipes && recipes.length > 0) { %>
+            <div class="container mx-auto">
+                <ul class="restaurant-list mx-auto max-w-3xl mt-4">
+                    <% recipes.forEach(recipe => { %>
+                        <li class="restaurant-item bg-white p-4 rounded-lg shadow-md text-left mb-4">
+                            <h2 class="text-xl font-bold"><%= recipe.name %></h2>
+                            <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
+                            <p><strong>Address:</strong> <%= recipe.address %></p>
+                            <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>
+                            <p><strong>Price Level:</strong> <%= recipe.price_level || "Unknown" %></p>
+                        </li>
+                    <% }) %>
+                </ul>
             </div>
-        <% } %>     
+        <% } else if (!message) { %>
+            <p class="text-gray-600 text-lg text-center">No restaurant recommendations found.</p>
+        <% } %>
+
+        <button class="back-btn" onclick="goBack()">🔙 Go Back</button>
+
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
     </body>
 </html>
-<button class="back-btn" onclick="goBack()">🔙 Go Back</button>
-
-<script>
-    function goBack() {
-        window.history.back();
-    }
-</script>

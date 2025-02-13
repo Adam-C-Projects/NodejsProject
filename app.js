@@ -85,7 +85,7 @@ app.use('/register', registerRouter(db));
 app.use('/savedRecipes', savedRecipeRouter(db));
 app.use('/allRecipes', allRecipesRouter);
 app.use('/createRecipes',createRecipesRouter(db));
-app.use('/recommendation', recommendationRoutes());
+app.use('/recommendation', recommendationRoutes(db));
 app.use('/generateRecipe',generateRecipeRouter(db));
 // Main routes
 

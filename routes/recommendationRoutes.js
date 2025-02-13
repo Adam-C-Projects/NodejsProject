@@ -2,111 +2,111 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
+
 module.exports = (db) => {
-    router.get('/', (req, res) => {
+    router.get("/", (req, res) => {
+        // Ensure username is passed from the session
         const username = req.session.username || null;
-        res.render('RestaurantAdviser', { recipes : null , username : username});
-        });
-    router.post('/advisersubmit', (req, res) => {
-        const { recipeText } = req.body;
 
-        // Validate recipeText input
-        if (!recipeText || recipeText.trim() === "") {
-            return res.status(400).send("Please provide a recipe.");
-        }
-
-        // Extract key ingredients from the recipe text
-        const keyIngredients = extractKeyIngredients(recipeText);
-        
-        // Debugging logs
-        console.log("Extracted Ingredients:", keyIngredients);
-        console.log("Type of keyIngredients:", typeof keyIngredients);
-        console.log("Is keyIngredients an Array?", Array.isArray(keyIngredients));
-
-        // Query the database for matching restaurants
-        fetchRestaurantRecommendations(keyIngredients, (err, recommendations) => {
-            if (err) {
-                console.error("Error fetching recommendations: ", err);
-                return res.status(500).send("An error occurred while fetching recommendations.");
-            }
-            // Handle case where no recommendations are found
-            if (!recommendations || recommendations.length === 0) {
-                return res.status(404).send("No restaurants found matching the recipe ingredients.");
-            }
-
-            // Render the recommendations
-            const username = req.session.username || null;
-            res.render('RestaurantAdviser', { recipes: recommendations, username: username});
-
+        res.render("RestaurantAdviser", { 
+            recipes: [], 
+            message: null, 
+            username: username // ✅ Pass username to EJS
         });
     });
 
     return router;
 };
+router.post('/advisersubmit', (req, res) => {
+    const { recipeText, filterRating, filterCuisine, filterPrice, filterRestaurantType } = req.body;
 
-// Helper function to extract key ingredients
-function extractKeyIngredients(recipeText) {
-    console.log("Raw recipeText input:", recipeText);
-
-    if (!recipeText || typeof recipeText !== "string") {
-        console.log("Error: Invalid recipeText input");
-        return [];
+    if (!recipeText || recipeText.trim() === "") {
+        return res.status(400).send('Please provide a recipe.');
     }
 
-    // Automatically extract ingredients based on words in the input
-    const words = recipeText
-        .toLowerCase()
-        .replace(/[^a-z\s]/g, "") // Remove punctuation
-        .split(" ") // Split into words
-        .filter(word => word.length > 2); // Remove very short words
+    const keyIngredients = extractKeyIngredients(recipeText);
+    console.log("Extracted Ingredients:", keyIngredients);
 
-    console.log("Extracted ingredients:", words);
-    return words.length > 0 ? words : []; // Ensure no default ingredient
+    fetchRestaurantRecommendations(keyIngredients, (err, recommendations) => {
+        if (err) {
+            console.error("Error fetching recommendations:", err);
+            return res.status(500).send("An error occurred while fetching recommendations.");
+        }
+
+        if (!recommendations || recommendations.length === 0) {
+            return res.render("RestaurantAdviser", { 
+                recipes: [], 
+                message: "No restaurants found matching the provided criteria.",
+                username: req.session.username || null // ✅ Ensure username is passed
+            });
+        }
+
+        // Apply filters
+        let filteredRecommendations = recommendations;
+
+        if (filterRating) {
+            filteredRecommendations = filteredRecommendations.filter(r => parseFloat(r.rating) >= parseFloat(filterRating));
+        }
+
+        if (filterCuisine) {
+            filteredRecommendations = filteredRecommendations.filter(r => r.cuisine.toLowerCase().includes(filterCuisine.toLowerCase()));
+        }
+
+        if (filterPrice) {
+            filteredRecommendations = filteredRecommendations.filter(r => r.price_level == filterPrice);
+        }
+
+        if (filterRestaurantType) {
+            filteredRecommendations = filteredRecommendations.filter(r => r.types.includes(filterRestaurantType));
+        }
+
+        res.render("RestaurantAdviser", { 
+            recipes: filteredRecommendations, 
+            message: null,
+            username: req.session.username || null // ✅ Ensure username is passed
+        });
+    });
+});
+
+
+
+// Extract ingredients function
+function extractKeyIngredients(recipeText) {
+    return recipeText.toLowerCase().replace(/[^a-z\s]/g, "").split(" ").filter(word => word.length > 2);
 }
 
-
-// Helper function to fetch restaurant recommendations from Google Places API
+// Fetch real restaurant data from Google Places API
 function fetchRestaurantRecommendations(ingredients, callback) {
-    const GOOGLE_API_KEY = 'AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo';
-    const GOOGLE_API_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
+    const GOOGLE_API_KEY = "AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo"; 
+    const GOOGLE_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
 
-    // Ensure `ingredients` is an array before calling `.join()`
     if (!Array.isArray(ingredients) || ingredients.length === 0) {
-        console.error("Error: Invalid or empty ingredients array", ingredients);
         return callback(new Error("Invalid or empty ingredients array"), null);
     }
 
-    // Join the ingredients into a search query string
     const searchQuery = ingredients.join(", ") + " restaurant";
-    console.log("Google Places API Search Query:", searchQuery);
 
-    // Make the API call to Google Places
     axios.get(GOOGLE_API_URL, {
-        params: {
-            query: searchQuery,
-            key: GOOGLE_API_KEY,
-        },
+        params: { query: searchQuery, key: GOOGLE_API_KEY },
     })
     .then((response) => {
-        console.log("Google API Response:", response.data);
-
         if (response.data.status !== "OK") {
-            console.error("Google API returned an error:", response.data.status);
             return callback(new Error("Google API error: " + response.data.status), null);
         }
 
-        const results = response.data.results;
-        const recommendations = results.map((place) => ({
+        const results = response.data.results.map((place) => ({
             name: place.name,
             cuisine: place.types.includes("restaurant") ? "Restaurant" : "Unknown",
             address: place.formatted_address,
             rating: place.rating || "No rating available",
+            price_level: place.price_level || "Unknown",
+            types: place.types || [],
         }));
 
-        callback(null, recommendations);
+        callback(null, results);
     })
     .catch((error) => {
-        console.error("Error calling Google Places API:", error.response ? error.response.data : error.message);
+        console.error("Error calling Google Places API:", error.message);
         callback(error, null);
     });
 }
