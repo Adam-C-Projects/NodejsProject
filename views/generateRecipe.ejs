@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maestro</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-gray-100">
   <% if (isMobile) { %>
@@ -36,11 +37,17 @@
     </div>
 
     <div class="mb-8">
-      <h2 class="text-2xl sm:text-3xl text-gray-800 mb-4">Generated Recipe:</h2>
-      <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg text-lg">
+      <div id="loading-indicator" class="text-left hidden text-lg">
+        <span class="text-gray-800 text-2xl sm:text-3xl inline-block">
+          Generating Recipes<span id="dots" class="inline-block w-6"></span>
+        </span>
+      </div>
+      <h2 id="recipe-gen-text" class="text-2xl sm:text-3xl text-gray-800 mb-4 hidden">Generated Recipes:</h2>
+      <div id="recipe-text" class="mt-4 p-6 bg-white rounded-lg shadow-lg text-lg hidden">
         <!-- Generated recipe content will appear here -->
       </div>
     </div>
+    
   </main>
   
   <script type="module" src="js/gpt_handler.js"></script>

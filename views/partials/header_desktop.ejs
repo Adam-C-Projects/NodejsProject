@@ -3,7 +3,7 @@
       <!-- Logo and Brand -->
       <div class="flex items-center space-x-4">
         <img src="/images/AdobeStock_286219820.png" alt="Logo" class="h-16 w-auto object-contain mb-0" />
-        <span class="font-semibold text-2xl">Meastro</span>
+        <a href="/" class="font-semibold text-2xl">Maestro</a>
       </div>
       
       <!-- Desktop Navigation -->
@@ -11,23 +11,29 @@
         <a href="/" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Home</a>
         <a href="/generateRecipe" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a recipe</a>
         <a href="/recommendation" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Find a restaurant</a>
-        <a href="/savedRecipes" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Saved Recipes</a>
         <a href="/allRecipes" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">All recipes</a>
       </nav>
       
       <!-- Desktop User Section -->
       <div class="flex items-center space-x-4">
-        <a href="#" class="px-3 py-2 rounded-lg hover:bg-green-700 transition text-sm">Español</a>
+        <a href="#" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Español</a>
         <div class="relative">
-          <% if (username) { %>    
-            <a href="/userProfile" class="flex items-center space-x-2">
+          <% if (username) { %>
+            <!-- When logged in, clicking toggles a dropdown -->
+            <button id="login-button" class="flex items-center space-x-2 px-3 py-2 rounded-lg focus:outline-none active:bg-green-700 transition">
               <img src="/images/user.png" alt="User" class="w-8 h-8 rounded-full">
-              <p class="text-gray-700"><%= username %></p>
-            </a> 
+              <p class="font-bold"><%= username %></p>
+            </button>
+            <!-- Dropdown menu hidden by default -->
+            <div id="login-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-green-600 rounded-lg shadow-lg z-10">
+              <a href="/userProfile" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Profile</a>
+              <a href="/savedRecipes" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Saved Recipes</a>
+              <a href="/logout" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Logout</a>
+            </div>
           <% } else { %>
-            <a href="/login" class="flex items-center space-x-2">
-              <img src="/images/user.png" alt="User" class="w-8 h-8 rounded-full">
-              <p class="text-gray-700">Login</p>
+            <!-- Not logged in: simple link to login page -->
+            <a href="/login" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 focus:outline-none active:bg-orange-700 transition">
+              <p class="font-bold text-white">Login</p>
             </a>
           <% } %>
         </div>
@@ -35,3 +41,24 @@
     </div>
   </header>
   
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle Login Dropdown if user is logged in
+      const loginButton = document.getElementById('login-button');
+      const loginDropdown = document.getElementById('login-dropdown');
+      if (loginButton && loginDropdown) {
+        loginButton.addEventListener('click', (e) => {
+          // Prevent the click from propagating so it doesn't close immediately
+          e.stopPropagation();
+          loginDropdown.classList.toggle('hidden');
+        });
+        
+        // Optionally, clicking anywhere else closes the dropdown
+        document.addEventListener('click', () => {
+          if (!loginDropdown.classList.contains('hidden')) {
+            loginDropdown.classList.add('hidden');
+          }
+        });
+      }
+    });
+  </script>

@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
     const ua = req.headers['user-agent'];
     // This simple regex test checks if the user agent string contains 'mobile'
-    res.locals.isMobile = /mobile/i.test(ua);
+    res.locals.isMobile = /Mobi|Android|iPhone|iPad|iPod|Kindle|Silk/i.test(ua);
     next();
   });
 // Set up multer

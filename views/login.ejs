@@ -1,25 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class ="login">
-    <div class="wrapper">
-        <form class= "login-form" action="/login/submit" method="POST">
-            <h1>Login</h1>
-            <div class="input-box">
-                <input type="text" name="username" placeholder="Username" required>
-            </div>
-            <div class = "input-box">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
+<body class="relative bg-gray-200 min-h-screen">
+  <!-- "Maestro" title positioned absolutely; default: 25% from top -->
+  <div class="maestro-title absolute top-[12%] left-1/2 transform -translate-x-1/2">
+    <h1 class="text-6xl font-bold">Maestro</h1>
+  </div>
 
-            <button class="btn "type="submit">Login</button>
-        </form>
-        <p class="register-link">Don't have an account? <a href="register">Register here</a>.</p>
+  <!-- Login widget centered with flexbox -->
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white rounded-2xl text-center p-8 shadow-lg">
+      <form class="space-y-6" action="/login/submit" method="POST">
+        <h1 class="text-2xl font-bold">Login</h1>
+        <div class="space-y-4">
+          <div class="flex items-center w-11/12 h-12 mx-auto">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              required
+              class="w-full h-full px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700"
+            >
+          </div>
+          <div class="flex items-center w-11/12 h-12 mx-auto">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+              class="w-full h-full px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700"
+            >
+          </div>
+        </div>
+        <button
+          type="submit"
+          class="w-11/12 h-12 mx-auto bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 transition"
+        >
+          Login
+        </button>
+      </form>
+      <p class="text-sm mt-6">
+        Don't have an account?
+        <a href="register" class="text-blue-500 hover:underline">Register here</a>.
+      </p>
     </div>
+  </div>
 </body>
 </html>
