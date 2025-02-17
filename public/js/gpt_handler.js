@@ -75,16 +75,21 @@ async function callOpenAI(ingredients) {
     }
 }
 function renderRecipe(recipe, index) {
+    
+    //really annoying to deal with would be great if we could move this functionality into ejs
+    const isMobile = window.innerWidth < 768;
     const recipeText = `
         <div data-id="${index}" class="bg-gray-100 shadow-md rounded-lg relative w-full mx-auto md:mx-0 mb-6 pt-2 pl-2">
-            <img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-t-lg md:rounded-lg shadow-md absolute top-0 right-0 mt-2 mr-2" />
+            ${isMobile 
+                ? `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md mb-4 ml-4"/>`
+                : `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md absolute top-2 right-2" />`
+            }
             <div class="p-4">
                 <h3 class="text-2xl font-bold">${recipe.title}</h3>
-
                 <div class="py-2">
                     <p class="mt-2"><b>Ingredients:</b></p>
                     <ul class="list-disc list-inside text-sm text-gray-600">
-                         ${recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                        ${recipe.ingredients.map((ingredient) => `<li>${ingredient}</li>`).join('')}
                     </ul>
                     <p class="mt-2"><b>Instructions:</b></p>
                     <p class="text-sm text-gray-600">${recipe.instructions.join('<br>')}</p>
