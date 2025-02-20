@@ -1,126 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>RestaurantAdviser</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-            .restaurant-list {
-                list-style-type: none;
-                padding: 0;
-            }
-            .restaurant-item {
-                background: white;
-                padding: 15px;
-                margin: 10px 0;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-            .restaurant-item h2 {
-                font-size: 20px;
-                margin-bottom: 5px;
-            }
-            .restaurant-item p {
-                margin: 5px 0;
-                font-size: 16px;
-                color: #555;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Adviser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-            .back-btn {
-                display: block;
-                margin: 20px auto;
-                padding: 12px 20px;
-                font-size: 18px;
-                font-weight: bold;
-                background-color: #ff4d4d; /* Red button */
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
+    <style>
+        .restaurant-list { list-style-type: none; padding: 0; }
+        .restaurant-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .back-btn:hover { background-color: #cc0000; }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
 
-            .back-btn:hover {
-                background-color: #cc0000;
-            }
-        </style>
-    </head>
+<body class="bg-gray-100">
+    <%- include('partials/header_desktop') %>
 
-    <body class="bg-gray-100">
-        <% if (isMobile) { %>
-            <%- include('partials/header_mobile') %>
-          <% } else { %>
-            <%- include('partials/header_desktop') %>
-          <% } %>
-        <div class="text-center mb-8">
-            <h2 class="text-2xl text-gray-800">🍽️ Find Your Perfect Restaurant</h2>
-            <p class="text-gray-600">Use filters to narrow down your search!</p>
+    <div class="text-center mb-8">
+        <h2 class="text-2xl text-gray-800">🍽️ Find Your Perfect Restaurant</h2>
+        <p class="text-gray-600">Use filters to narrow down your search!</p>
+
+        <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex flex-col items-center">
+            <input type="text" name="recipeText" placeholder="Enter an ingredient..." class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none">
             
-            <form action="/recommendation/advisersubmit" method="POST" class="mt-4 flex flex-col items-center">
-                <input type="text" name="recipeText" placeholder="Enter an ingredient..." class="w-1/2 px-4 py-2 border rounded-lg focus:outline-none">
-                
-                <div class="mt-4">
-                    <label class="text-gray-800 font-bold">Filter by Rating:</label>
-                    <select name="filterRating" class="px-4 py-2 border rounded-lg">
-                        <option value="">Any</option>
-                        <option value="4">4 and above</option>
-                        <option value="3">3 and below</option>
-                    </select>
-                </div>
+            <div class="mt-4">
+                <label class="text-gray-800 font-bold">Filter by Rating:</label>
+                <select name="filterRating" class="px-4 py-2 border rounded-lg">
+                    <option value="">Any</option>
+                    <option value="4">4 and above</option>
+                    <option value="3">3 and below</option>
+                </select>
+            </div>
 
-                <div class="mt-4">
-                    <label class="text-gray-800 font-bold">Filter by Cuisine:</label>
-                    <input type="text" name="filterCuisine" placeholder="e.g., Chinese, Italian" class="px-4 py-2 border rounded-lg">
-                </div>
+            <div class="mt-4">
+                <label class="text-gray-800 font-bold">Filter by Cuisine:</label>
+                <input type="text" name="filterCuisine" placeholder="e.g., Chinese, Italian" class="px-4 py-2 border rounded-lg">
+            </div>
 
-                <div class="mt-4">
-                    <label class="text-gray-800 font-bold">Filter by Price:</label>
-                    <select name="filterPrice" class="px-4 py-2 border rounded-lg">
-                        <option value="">Any</option>
-                        <option value="1">$ (Cheap)</option>
-                        <option value="2">$$ (Moderate)</option>
-                        <option value="3">$$$ (Expensive)</option>
-                    </select>
-                </div>
+            <div class="mt-4">
+                <label class="text-gray-800 font-bold">Filter by Price:</label>
+                <select name="filterPrice" class="px-4 py-2 border rounded-lg">
+                    <option value="">Any</option>
+                    <option value="1">$ (Cheap)</option>
+                    <option value="2">$$ (Moderate)</option>
+                    <option value="3">$$$ (Expensive)</option>
+                </select>
+            </div>
 
-                <div class="mt-4">
-                    <label class="text-gray-800 font-bold">Filter by Type:</label>
-                    <input type="text" name="filterRestaurantType" placeholder="e.g., Fast Food, Fine Dining" class="px-4 py-2 border rounded-lg">
-                </div>
+            <div class="mt-4">
+                <label class="text-gray-800 font-bold">Filter by Type:</label>
+                <input type="text" name="filterRestaurantType" placeholder="e.g., Fast Food, Fine Dining" class="px-4 py-2 border rounded-lg">
+            </div>
 
-                <button type="submit" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg">Find Restaurants</button>
-            </form>
+            <button type="submit" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg">Find Restaurants</button>
+        </form>
+    </div>
+
+    <% if (message) { %>
+        <p class="text-red-500 text-lg text-center"><%= message %></p>
+    <% } %>
+
+    <% if (recipes && recipes.length > 0) { %>
+        <div class="container mx-auto">
+            <ul class="restaurant-list mx-auto max-w-3xl mt-4">
+                <% recipes.forEach(recipe => { %>
+                    <li class="restaurant-item bg-white p-4 rounded-lg shadow-md text-left mb-4">
+                        <h2 class="text-xl font-bold"><%= recipe.name %></h2>
+                        <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
+                        <p><strong>Address:</strong> <%= recipe.address %></p>
+                        <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>
+                        <p><strong>Price Level:</strong> <%= recipe.price_level || "Unknown" %></p>
+                    </li>
+                <% }) %>
+            </ul>
         </div>
 
-        <% if (message) { %>
-            <p class="text-red-500 text-lg text-center"><%= message %></p>
-        <% } %>
+        <div id="map"></div> <!-- ✅ Google Map Section -->
+    <% } else { %>
+        <p class="text-gray-600 text-lg text-center">No restaurant recommendations found.</p>
+    <% } %>
 
-        <% if (recipes && recipes.length > 0) { %>
-            <div class="container mx-auto">
-                <ul class="restaurant-list mx-auto max-w-3xl mt-4">
-                    <% recipes.forEach(recipe => { %>
-                        <li class="restaurant-item bg-white p-4 rounded-lg shadow-md text-left mb-4">
-                            <h2 class="text-xl font-bold"><%= recipe.name %></h2>
-                            <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
-                            <p><strong>Address:</strong> <%= recipe.address %></p>
-                            <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>
-                            <p><strong>Price Level:</strong> <%= recipe.price_level || "Unknown" %></p>
-                        </li>
-                    <% }) %>
-                </ul>
-            </div>
-        <% } else if (!message) { %>
-            <p class="text-gray-600 text-lg text-center">No restaurant recommendations found.</p>
-        <% } %>
+    <button class="back-btn" onclick="goBack()">🔙 Go Back</button>
 
-        <button class="back-btn" onclick="goBack()">🔙 Go Back</button>
-
-        <script>
-            function goBack() {
-                window.history.back();
+    <script>
+        function initMap() {
+            console.log("Google Maps is initializing...");
+    
+            window.map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: { lat: 51.2802, lng: 1.0789 } // Default to Canterbury, UK
+            });
+    
+            let restaurants;
+            try {
+                restaurants = <%- JSON.stringify(recipes) %>;
+            } catch (error) {
+                console.error("Error parsing restaurant data:", error);
+                restaurants = [];
             }
-        </script>
-    </body>
+    
+            if (!restaurants || restaurants.length === 0) {
+                console.warn("No restaurant data available.");
+                return;
+            }
+    
+            restaurants.forEach(restaurant => {
+                if (restaurant.lat && restaurant.lng) {
+                    const marker = new google.maps.Marker({
+                        position: { lat: restaurant.lat, lng: restaurant.lng },
+                        map: window.map,
+                        title: restaurant.name
+                    });
+    
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `<div><h3>${restaurant.name}</h3><p>${restaurant.address}</p><p>⭐ ${restaurant.rating}</p></div>`
+                    });
+    
+                    marker.addListener("click", () => {
+                        infoWindow.open(window.map, marker);
+                    });
+                }
+            });
+    
+            console.log("Google Maps successfully loaded.");
+        }
+
+        // ✅ Ensure `initMap` is globally available before Google loads
+        window.initMap = initMap;
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+    <!-- ✅ Load Google Maps Only Once -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo&callback=initMap"></script>
+
+</body>
 </html>

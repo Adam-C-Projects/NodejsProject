@@ -13,7 +13,7 @@ const recommendationRoutes = require('./routes/recommendationRoutes');
 const generateRecipeRouter = require('./routes/generateRecipeRoutes');
 
 const app = express();
-const PORT = 3001;
+const PORT = 3015;
 
 // Set up middleware
 app.use(express.static(path.join(__dirname, 'public')));
