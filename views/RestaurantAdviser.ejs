@@ -40,7 +40,11 @@
 </head>
 
 <body class="bg-gray-100">
-    <%- include('partials/header_desktop') %>
+    <% if (isMobile) { %>
+        <%- include('partials/header_mobile') %>
+      <% } else { %>
+        <%- include('partials/header_desktop') %>
+      <% } %>
 
     <div class="text-center mb-8">
         <h2 class="text-2xl text-gray-800">🍽️ Find Your Perfect Restaurant</h2>
