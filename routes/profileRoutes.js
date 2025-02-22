@@ -79,6 +79,9 @@ module.exports = (db) => {
             if (results.length === 0) {
                 return res.status(301).send('No user with that username');
             }
+            if(results.UID == req.cookies.UID){
+                return res.status(301).send('you cannot follow yourself');
+            }
     
             const receivingUid = results[0].UID;
             console.log(receivingUid);
