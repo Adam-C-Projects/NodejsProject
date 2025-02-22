@@ -52,10 +52,104 @@
 			</div>
 		</div>
 		<div class="flex mt-6 px-3">
-		<button id="logoutBtn" onclick="window.location.href='/logout'" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+		<button id="logoutBtn" onclick="window.location.href='userProfile/logout'" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
 			Log Out
 		</button>
 		</div>
+		
+
+
+		<!-- Add Friend Form -->
+		<div class="mt-6 px-3">
+			<form action="userProfile/sendFriendRequest" method="post" class="flex flex-col">
+				<label for="receivingUsername" class="mb-2">Add Friend:</label>
+				<input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
+				<button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+					Send Request
+				</button>
+			</form>
+		</div>
+
+		<div class="mt-6 px-3">
+			<h2 class="text-xl font-bold mb-2">Pending Requests</h2>
+			<% if(friendRequests != null) { %>
+				<% if (friendRequests.length > 0) { %>
+				<ul class="list-disc list-inside">
+					<% friendRequests.forEach(request => { %>
+						<li>
+							From: <%= request.username %> - Status: <%= request.status %>
+							<!-- Accept Button -->
+							<% if (request.status === 'pending') { %>
+								<button class="accept-btn ml-4" onclick="acceptRequest('<%= request.fromUserId %>')">Accept</button>
+							<% } %>
+						</li>
+					<% }); %>
+				</ul>
+				<% } else { %>
+					<p>No pending friend requests.</p>
+				<% } %>
+			<% } %>
+		
+			<h2 class="text-xl font-bold mb-2 mt-6">Your Following</h2>
+			<% if(following != null) { %>
+				<% if (following.length > 0) { %>
+				<ul class="list-disc list-inside">
+					<% following.forEach(user => { %>
+						<li>
+							<%= user.username %> 
+							<!-- Optionally add an unfollow button or any other action -->
+						</li>
+					<% }); %>
+				</ul>
+				<% } else { %>
+					<p>You are not following anyone yet.</p>
+				<% } %>
+			<% } %>
+		
+			<h2 class="text-xl font-bold mb-2 mt-6">Your Followers</h2>
+			<% if(followers != null) { %>
+				<% if (followers.length > 0) { %>
+				<ul class="list-disc list-inside">
+					<% followers.forEach(user => { %>
+						<li>
+							<%= user.username %> 
+							<!-- Optionally add an unfollow button or any other action -->
+						</li>
+					<% }); %>
+				</ul>
+				<% } else { %>
+					<p>You have no followers yet.</p>
+				<% } %>
+			<% } %>
+		</div>
+		
 	</main>
+	<script>
+		function acceptRequest(fromUserId) {
+			fetch('/userProfile/acceptFriendRequest', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ fromUserId }),
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.status === 'success') {
+					// Update the UI to reflect that the friend request has been accepted
+					alert('Friend request accepted!');
+					location.reload(); // Reload the page to reflect the changes, or you can update the UI dynamically
+				} else {
+					alert('Error: ' + data.message);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('An error occurred');
+			});
+		}
+
+
+	</script>
 </body>
 </html>

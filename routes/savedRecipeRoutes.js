@@ -20,10 +20,6 @@ module.exports = (db) => {
                     return res.status(500).send('Error fetching saved recipes');
                 }
     
-                if (recipeResults.length === 0) {
-                    return res.send('No saved recipes found for this user.');
-                }
-                
                 recipeResults.forEach(recipe => {
                     if (recipe.macros) {
                         recipe.macros = recipe.macros

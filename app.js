@@ -11,6 +11,7 @@ const allRecipesRouter = require('./routes/allRecipesRoutes');
 const createRecipesRouter = require('./routes/createRecipesRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const generateRecipeRouter = require('./routes/generateRecipeRoutes');
+const profileRouter = require('./routes/profileRoutes');
 
 const app = express();
 const PORT = 3015;
@@ -28,7 +29,7 @@ app.use(session({
     },
 }));
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 //check if mobile
 app.use((req, res, next) => {
     const ua = req.headers['user-agent'];
@@ -90,10 +91,11 @@ db.connect(error => {
 app.use('/login', loginRouter(db));
 app.use('/register', registerRouter(db));
 app.use('/savedRecipes', savedRecipeRouter(db));
-app.use('/allRecipes', allRecipesRouter);
+app.use('/allRecipes', allRecipesRouter(db));
 app.use('/createRecipes',createRecipesRouter(db));
 app.use('/recommendation', recommendationRoutes(db));
 app.use('/generateRecipe',generateRecipeRouter(db));
+app.use('/userProfile', profileRouter(db));
 // Main routes
 
 app.get('/', (req, res) => {
@@ -103,116 +105,5 @@ app.get('/', (req, res) => {
     console.log(req.session);
     console.log(req.session.id);
     req.session.visited = true;
-});
-
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-});
-
-app.get('/userProfile', (req, res) => {
-    const username = req.session.username;
-
-    res.render('userProfile', {username});
-});
-
-app.post('/saveRecipe', (req, res) => {
-    const recipe = req.body;
-    const UID = req.session.UID; 
-    console.log('Incoming request body:', req.body)
-
-    if (!UID) {
-        return res.status(401).send("Unauthorized: No user logged in.");
-    }
-
-    if(recipe.dietaryReq = []){
-        recipe.dietaryReq = "None"
-    }
-
-    const trimBrackets = (value) => {
-        if (typeof value === 'string') {
-            return value.replace(/[\[\]{}"]/g, '').trim();
-        }
-        return value;
-    };
-    recipe.recipeName = trimBrackets(recipe.recipeName);
-    recipe.ingredientName = trimBrackets(recipe.ingredientName);
-    recipe.instructions = trimBrackets(recipe.instructions);
-    recipe.dietaryReq = recipe.dietaryReq && recipe.dietaryReq.length ? trimBrackets(recipe.dietaryReq) : "None";
-    recipe.macros = trimBrackets(recipe.macros);
-    recipe.cookingTime = trimBrackets(recipe.cookingTime);
-    recipe.TotalCalories = trimBrackets(recipe.TotalCalories);
-
-    const insertRecipeQuery = `
-        INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories,image)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
-    `;
-    const recipeValues = [
-        recipe.recipeName,
-        recipe.ingredientName,
-        recipe.dietaryReq,
-        recipe.macros,
-        recipe.cookingTime,
-        recipe.instructions,
-        recipe.TotalCalories,
-        recipe.image
-    ];
-
-    db.query(insertRecipeQuery, recipeValues, (recipeError, recipeResults) => {
-        if (recipeError) {
-            console.error('Error saving recipe:', recipeError);
-            return res.status(500).send("Failed to save recipe.");
-        }
-
-        const RID = recipeResults.insertId;
-
-        const saveRecipeQuery = `
-            INSERT INTO SavedRecipes (UID, RID, saved_at)
-            VALUES (?, ?, NOW())
-        `;
-        const saveRecipeValues = [UID, RID];
-
-        db.query(saveRecipeQuery, saveRecipeValues, (saveError) => {
-            if (saveError) {
-                console.error('Error saving recipe to SavedRecipes:', saveError);
-                return res.status(500).send("Failed to save recipe.");
-            }
-
-            res.redirect('/');
-        });
-    });
-});
-app.get('/allRecipes', (req, res) => {
-    const query = 'SELECT * FROM Recipes';
-
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error("An error occurred while fetching data:", err);
-            res.status(500).send("Error fetching data from the database.");
-            return;
-        }
-        
-        results.forEach(recipe => {
-            if (recipe.macros) {
-                recipe.macros = recipe.macros
-                .replace(/"/g, '')
-                .split(',')
-                .map(macro => macro.trim());
-            }
-        });
-
-        results.forEach(recipe => {
-            if (recipe.ingredientName) {
-                recipe.ingredientName = recipe.ingredientName
-                .replace(/"/g, '')
-                .split(',')
-                .map(ingredientName => ingredientName.trim());
-            }
-        });
-        const username = req.session.username || null;
-        console.log(username)
-        res.render('allRecipes', { recipes: results, username: username });
-    });
 });
 
