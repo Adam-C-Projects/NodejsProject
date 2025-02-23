@@ -15,14 +15,24 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    flex-direction: column;
-    border: 2px solid azure;
-    border-radius: 8px;
+    height: 100%;
+    padding: 20px;
+    font-size: 1.5rem;
+    border: 1px solid azure;
     background-color: azure;
-    padding: 16px;
+    line-height: 1.5;
 }
 
-@media (min-width: 768px) {
+.userProfileDiv h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+.userProfileDiv p{
+    font-size: 1.5rem;
+    margin: 5px 0;
+}
+
+@media (min-width: 2000px) {
     .userProfileDiv {
         width: 60%; /* Adjust the width for desktop */
         margin: 0 auto; /* Centers the div */

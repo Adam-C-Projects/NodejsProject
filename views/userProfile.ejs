@@ -7,149 +7,169 @@
     <link rel="stylesheet" href="/css/userProfile.css">
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class = "overflow-hidden">
 	<% if (isMobile) { %>
 		<%- include('partials/header_mobile') %>
-	  <% } else { %>
+	<% } else { %>
 		<%- include('partials/header_desktop') %>
-	  <% } %>
-	<main class="userProfile">
-		<div class="userProfileDiv">
-			<h2>Basic info</h2>
-			<div>
-				<p>Username:</p><p><%= username %></p>
-			</div>
-			<div>
-				<p>Password:</p><p>********</p>
-			</div>
-			<div>
-				<p>Profile picture:</p>
-				<img src="images/user.png">
-			</div>
-			<div>
-				<p>Birthday:</p><p>January 1st, 1970</p>
-			</div>
-			<div>
-				<p>Gender:</p><p>Male</p>
-			</div>
-		</div>
-		<div class="userProfileDiv">
-			<h2>Contact info</h2>
-			<div>
-				<p>Email:</p><p>user@example.com</p>
-			</div>
-			<div>
-				<p>Phone:</p><p>01234 111222</p>
-			</div>
-		</div>
-		<div class="userProfileDiv">
-			<h2>Preferences</h2>
-			<div>
-				<p>Language:</p><p>English</p>
-			</div>
-			<div>
-				<p>Dark mode:</p><p>OFF</p>
-			</div>
-		</div>
-		<div class="flex mt-6 px-3">
-		<button id="logoutBtn" onclick="window.location.href='userProfile/logout'" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
-			Log Out
-		</button>
-		</div>
-		
+	<% } %>
 
 
-		<!-- Add Friend Form -->
-		<div class="mt-6 px-3">
-			<form action="userProfile/sendFriendRequest" method="post" class="flex flex-col">
-				<label for="receivingUsername" class="mb-2">Add Friend:</label>
-				<input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
-				<button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-					Send Request
-				</button>
-			</form>
-		</div>
+  <div class="flex h-screen">
+    <!-- Sidebar Panel -->
+    <aside class="w-1/4 pl-4 pt-4 bg-gray-200">
+      <button id="profile-btn" onclick="showSection('profile')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Profile</button>
+      <button id="following-btn" onclick="showSection('following')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Following</button>
+      <button id="followers-btn" onclick="showSection('followers')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Followers</button>
+      <button id="pending-btn" onclick="showSection('pending')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Pending Requests</button>
+	  <button id="add-btn" onclick="showSection('add')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Add Friend</button>
+    </aside>
 
-		<div class="mt-6 px-3">
-			<h2 class="text-xl font-bold mb-2">Pending Requests</h2>
-			<% if(friendRequests != null) { %>
-				<% if (friendRequests.length > 0) { %>
-				<ul class="list-disc list-inside">
-					<% friendRequests.forEach(request => { %>
-						<li>
-							From: <%= request.username %> - Status: <%= request.status %>
-							<!-- Accept Button -->
-							<% if (request.status === 'pending') { %>
-								<button class="accept-btn ml-4" onclick="acceptRequest('<%= request.fromUserId %>')">Accept</button>
-							<% } %>
-						</li>
-					<% }); %>
-				</ul>
-				<% } else { %>
-					<p>No pending friend requests.</p>
-				<% } %>
-			<% } %>
-		
-			<h2 class="text-xl font-bold mb-2 mt-6">Your Following</h2>
-			<% if(following != null) { %>
-				<% if (following.length > 0) { %>
-				<ul class="list-disc list-inside">
-					<% following.forEach(user => { %>
-						<li>
-							<%= user.username %> 
-							<!-- Optionally add an unfollow button or any other action -->
-						</li>
-					<% }); %>
-				</ul>
-				<% } else { %>
-					<p>You are not following anyone yet.</p>
-				<% } %>
-			<% } %>
-		
-			<h2 class="text-xl font-bold mb-2 mt-6">Your Followers</h2>
-			<% if(followers != null) { %>
-				<% if (followers.length > 0) { %>
-				<ul class="list-disc list-inside">
-					<% followers.forEach(user => { %>
-						<li>
-							<%= user.username %> 
-							<!-- Optionally add an unfollow button or any other action -->
-						</li>
-					<% }); %>
-				</ul>
-				<% } else { %>
-					<p>You have no followers yet.</p>
-				<% } %>
-			<% } %>
-		</div>
-		
-	</main>
-	<script>
-		function acceptRequest(fromUserId) {
-			fetch('/userProfile/acceptFriendRequest', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ fromUserId }),
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === 'success') {
-					// Update the UI to reflect that the friend request has been accepted
-					alert('Friend request accepted!');
-					location.reload(); // Reload the page to reflect the changes, or you can update the UI dynamically
-				} else {
-					alert('Error: ' + data.message);
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert('An error occurred');
-			});
-		}
+    <!-- Main Content Panel -->
+    <main class="w-3/4">
+      <!-- Profile Section -->
+        <div id="profile-section" class="userProfileDiv">
+          <h2>Basic info</h2>
+          <div>
+            <p>Username:</p><p><%= username %></p>
+          </div>
+          <div>
+            <p>Password:</p><p>********</p>
+          </div>
+          <div>
+            <p>Profile picture:</p>
+            <img src="images/user.png" alt="User Profile Picture">
+          </div>
+          <div>
+            <p>Birthday:</p><p>January 1st, 1970</p>
+          </div>
+          <div>
+            <p>Gender:</p><p>Male</p>
+          </div>
+          <h2>Contact info</h2>
+          <div>
+            <p>Email:</p><p>user@example.com</p>
+          </div>
+          <div>
+            <p>Phone:</p><p>01234 111222</p>
+          </div>
+          <h2>Preferences</h2>
+          <div>
+            <p>Language:</p><p>English</p>
+          </div>
+          <div>
+            <p>Dark mode:</p><p>OFF</p>
+          </div>
+        </div>
+	 <!-- Add Friend Form -->
+	 <div id = "add-section" class="hidden p-3">
+		<form action="userProfile/sendFriendRequest" method="post" class="flex flex-col">
+		  <label for="receivingUsername" class="text-xl font-bold mb-2">Add Friend:</label>
+		  <input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
+		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+			Send Request
+		  </button>
+		</form>
+	  </div>
+      <!-- Following Section -->
+      <div id="following-section" class="hidden p-3">
+        <h2 class="text-xl font-bold mb-2">Your Following:</h2>
+        <% if(following != null) { %>
+          <% if (following.length > 0) { %>
+            <ul class="list-disc list-inside">
+              <% following.forEach(user => { %>
+                <li>
+                  <%= user.username %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p>You are not following anyone yet.</p>
+          <% } %>
+        <% } %>
+      </div>
 
+      <!-- Followers Section -->
+      <div id="followers-section" class="hidden p-3">
+        <h2 class="text-xl font-bold mb-2">Your Followers:</h2>
+        <% if(followers != null) { %>
+          <% if (followers.length > 0) { %>
+            <ul class="list-disc list-inside">
+              <% followers.forEach(user => { %>
+                <li>
+                  <%= user.username %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p>You have no followers yet.</p>
+          <% } %>
+        <% } %>
+      </div>
 
-	</script>
+      <!-- Pending Requests Section -->
+      <div id="pending-section" class="hidden p-3">
+        <h2 class="text-xl font-bold mb-2">Pending Requests:</h2>
+        <% if(friendRequests != null) { %>
+          <% if (friendRequests.length > 0) { %>
+            <ul class="list-disc list-inside">
+              <% friendRequests.forEach(request => { %>
+                <li>
+                  From: <%= request.username %> - Status: <%= request.status %> <% console.log(request.status);%>
+                  <% if (request.status === 'pending') { %>
+                    <button class="accept-btn ml-4" onclick="acceptRequest('<%= request.fromUserId %>')">Accept</button>
+                  <% } %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } %>
+        <% } %>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Function to toggle between sections
+    function showSection(section) {
+      const sections = ['profile', 'following', 'followers', 'pending', 'add'];
+      
+      // Hide all sections and remove active style from all buttons
+      sections.forEach(sec => {
+        document.getElementById(sec + '-section').classList.add('hidden');
+        document.getElementById(sec + '-btn').classList.remove('bg-gray-300');
+      });
+
+      // Show the selected section and mark its button as active
+      document.getElementById(section + '-section').classList.remove('hidden');
+      document.getElementById(section + '-btn').classList.add('bg-gray-300')
+    }
+    // Show profile section by default on page load
+    showSection('profile');
+  </script>
+
+  <script>
+    function acceptRequest(fromUserId) {
+      fetch('/userProfile/acceptFriendRequest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fromUserId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Friend request accepted!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+      });
+    }
+  </script>
 </body>
 </html>
