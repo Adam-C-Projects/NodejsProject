@@ -27,7 +27,6 @@ module.exports = (db) => {
                 WHERE r.toUserId = ? AND r.status = ?`, 
                 [UID, 'pending']
             );
-
             const followingResults = await query(`
                 SELECT r.fromUserId, u.username
                 FROM relationships r
@@ -45,11 +44,15 @@ module.exports = (db) => {
             );
             console.log(followerResults);
             console.log(followingResults);
+
+            //if two users are following echother make sure the correct entry is used.
+            const filteredFollowing = followingResults.filter(user => user.toUserId !== UID);
+            const filteredFollowers = followerResults.filter(user => user.fromUserId !== UID);
             res.render('userProfile', {
                 username: userinfo.username,
                 friendRequests: friendResults.length ? friendResults : null,
-                following: followingResults.length ? followingResults : null,
-                followers: followerResults.length ? followerResults : null
+                following: filteredFollowing.length ? followingResults : null,
+                followers: filteredFollowers.length ? followerResults : null
 
             });
 
@@ -79,7 +82,9 @@ module.exports = (db) => {
             if (results.length === 0) {
                 return res.status(301).send('No user with that username');
             }
-            if(results.UID == req.cookies.UID){
+            if(results[0].UID == req.cookies.UID){
+                console.log(req.cookies.UID);
+                console.log(results.UID);
                 return res.status(301).send('you cannot follow yourself');
             }
     

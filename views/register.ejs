@@ -12,39 +12,29 @@
     <h1 class="text-6xl font-bold">Maestro</h1>
   </div>
 
+  <!-- Dropdown error pop-up, hidden by default -->
+  <div id="errorDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
+
   <!-- Register widget centered with flexbox -->
   <div class="flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md bg-white rounded-2xl text-center p-8 shadow-lg">
-      <form class="space-y-6" action="register/registerSubmit" method="POST">
+      <form id="registerForm" class="space-y-6">
         <h1 class="text-2xl font-bold">Register</h1>
         <div class="space-y-4">
-          <div class="flex items-center w-11/12 h-12 mx-auto">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              required
-              class="w-full h-full px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+          <div class="flex flex-col w-11/12 mx-auto">
+            <input type="text" id="username" name="username" placeholder="Username" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
           </div>
-          <div class="flex items-center w-11/12 h-12 mx-auto">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              required
-              class="w-full h-full px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+          <div class="flex flex-col w-11/12 mx-auto">
+            <input type="email" id="email" name="email" placeholder="Email" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
           </div>
-          <div class="flex items-center w-11/12 h-12 mx-auto">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              required
-              class="w-full h-full px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+          <div class="flex flex-col w-11/12 mx-auto">
+            <input type="password" id="password" name="password" placeholder="Password" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
           </div>
         </div>
-        <button
-          type="submit"
+        <button type="submit"
           class="w-11/12 h-12 mx-auto bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 transition">
           Register
         </button>
@@ -55,6 +45,62 @@
       </p>
     </div>
   </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async function (event) {
+      event.preventDefault(); // Prevent full-page reload
+
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      function showError(message) {
+        const errorDropdown = document.getElementById("errorDropdown");
+        errorDropdown.innerText = message;
+        errorDropdown.classList.remove("hidden");
+        // Hide the error dropdown after 3 seconds
+        setTimeout(() => {
+          errorDropdown.classList.add("hidden");
+        }, 3000);
+      }
+
+      try {
+        // Adjust the URL if your router is mounted at a different path.
+        const response = await fetch("/register/registerSubmit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        if (response.ok) {
+          window.location.href = "/"; // Redirect on success
+        } 
+        else {
+          const errorMessage = await response.text();
+          if (response.status === 400) {
+            showError("Invalid email format.");
+          } 
+          else if (response.status === 409) {
+            console.log(errorMessage);  
+            if(errorMessage === "User already exists"){
+                showError("Username already exists.");
+              }
+              else if (errorMessage === "Email already exists") {
+                showError("Email already exists.")
+              }
+              else{
+                console.log(errorMessage);  
+                showError("An unexpected error occurred. Please try again.");  
+              }
+          }else {
+              showError("An unexpected error occurred. Please try again.");
+          }
+        }
+      } catch (error) {
+        console.error("Request failed:", error);
+        showError("Could not connect to the server. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
-

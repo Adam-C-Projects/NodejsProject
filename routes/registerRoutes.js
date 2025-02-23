@@ -14,7 +14,7 @@ module.exports = (db) => {
 
         // Validate email format
         if (!isValidEmail(email)) {
-            return res.status(400).send("Invalid email");
+            return res.status(400).json("Invalid email");
         }
 
         try {
@@ -22,16 +22,26 @@ module.exports = (db) => {
             const password_hash = await bcrypt.hash(password, 10);
 
             // Check if username already exists
-            db.query("SELECT * FROM User WHERE username = ?", [username], (err, results) => {
+            db.query("SELECT * FROM User WHERE username = ? OR email = ?", [username,email], (err, results) => {
                 if (err) {
                     console.error("Database query error:", err);
-                    return res.status(500).send("Database error");
+                    return res.status(500).json("Database error");
                 }
 
                 if (results.length > 0) {
-                    return res.status(409).send("User already exists");
-                }
+                    const usernameExists = results.some(user => user.username === username);
+                    const emailExists = results.some(user => user.email === email);
+                    console.log(usernameExists);
+                    if (usernameExists) {
+                        console.log("here");
+                        return res.status(409).send("User already exists");
+                    }
+                    if (emailExists) {
 
+                        return res.status(409).send("Email already exists");
+                    }
+                }
+                
                 // Insert new user into the database
                 db.query(
                     "INSERT INTO User (username, password_hash, email, created_at) VALUES (?, ?, ?, NOW())",
@@ -39,11 +49,12 @@ module.exports = (db) => {
                     (err, results) => {
                         if (err) {
                             console.error("Database query error:", err);
-                            return res.status(500).send("Database error");
+                            return res.status(500).json("Database error");
                         }
-
+                        let UID = results.insertId;
                         // Set session and redirect to homepage
                         req.session.username = username;
+                        req.session.UID = UID;
                         req.session.loggedIn = true;
                         res.redirect("/");
                     }
