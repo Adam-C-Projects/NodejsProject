@@ -28,21 +28,19 @@ module.exports = (db) => {
                 [UID, 'pending']
             );
             const followingResults = await query(`
+                SELECT r.toUserId, u.username
+                FROM relationships r
+                JOIN User u ON r.toUserId = u.UID
+                WHERE r.fromUserId = ? AND r.status = ?`,
+                [UID, 'confirmed']
+            );
+            const followerResults = await query(`
                 SELECT r.fromUserId, u.username
                 FROM relationships r
                 JOIN User u ON r.fromUserId = u.UID
                 WHERE r.toUserId = ? AND r.status = ?`,
                 [UID, 'confirmed']
             );
-
-            const followerResults = await query(`
-                SELECT r.toUserId, u.username
-                FROM relationships r
-                JOIN User u ON r.fromUserId = u.UID
-                WHERE r.toUserId = ? AND r.status = ?`,
-                [UID, 'confirmed']
-            );
-            console.log(followerResults);
             console.log(followingResults);
 
             //if two users are following echother make sure the correct entry is used.
