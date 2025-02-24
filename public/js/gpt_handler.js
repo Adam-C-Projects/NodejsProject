@@ -47,7 +47,7 @@ async function callOpenAI(ingredients) {
     const apiBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are a chef who creates recipes based on a list of ingredients. Please return a JSON object with the following structure: {title, ingredients[], instructions[], macros: {protein, carbs, fat, fiber, sugar, sodium}, total_calories, allergies[], prepTime, cookTime, servings}. Don't leave any field undefined or null." },
+            { role: "system", content: "You are a chef who creates recipes based on a list of ingredients. Please return a JSON object with the following structure: {title, ingredients[], instructions[], macros: {protein, carbs, fat, fiber, sugar, sodium}, calories, diet, allergies[], prepTime, cookTime, servings}. Don't leave any field undefined or null." },
             { role: "user", content: `Generate a recipe for these ingredients: ${ingredients}` },
         ],
     };
@@ -109,9 +109,10 @@ function renderRecipe(recipe, index) {
                         <input type="hidden" name="recipeName" value="${recipe.title}">
                         <input type="hidden" name="ingredientName" value='${JSON.stringify(recipe.ingredients)}'>
                         <input type="hidden" name="instructions" value='${JSON.stringify(recipe.instructions)}'>
-                        <input type="hidden" name="dietaryReq" value='${JSON.stringify(recipe.allergies) || 'none'}'>
+                        <input type="hidden" name="diet" value="None">
+                        <input type="hidden" name="allergies" value='${JSON.stringify(recipe.allergies) || "[]"}'>
                         <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
-                        <input type="hidden" name="TotalCalories" value='${JSON.stringify(recipe.total_calories)}'>
+                        <input type="hidden" name="calories" value='${JSON.stringify(recipe.total_calories)}'>
                         <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
                         <input type="hidden" name="image" value="${recipe.image}">
                         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full md:w-auto">

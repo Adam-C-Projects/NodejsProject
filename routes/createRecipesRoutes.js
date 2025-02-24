@@ -5,12 +5,13 @@ const bcrypt = require('bcrypt');
 module.exports = (db) => {
     
     router.post('/', (req, res) => {
-        const { title, ingredients, instructions } = req.body;
+        const { recipeName, ingredientName, diet, allergies, macros, cookingTime, instructions, calories, image } = req.body;
         const userID = req.session.username; // Ensure you get the correct user ID from session
         const query = `
-            INSERT INTO Recipes (title, ingredients, instructions, macros, allergies, user_id)
-            VALUES (?, ?, ?, ?, ?, ?)`;
-        db.query(query, [title, ingredients, instructions, userId], (err, result) => {
+            INSERT INTO Recipes (recipeName, ingredientName, diet, allergies, macros, cookingTime, instructions, calories, image)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        db.query(query, [recipeName, ingredientName, diet, allergies, macros, cookingTime, instructions, calories, image], (err, result) => {
             if (err) {
                 console.error('Error inserting recipe: ', err);
                 return res.status(500).send('Error saving recipe');

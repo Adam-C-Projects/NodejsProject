@@ -21,11 +21,15 @@ module.exports = (db) => {
         if (!UID) {
             return res.status(401).send("Unauthorized: No user logged in.");
         }
-    
-        if(recipe.dietaryReq = []){
-            recipe.dietaryReq = "None"
+
+        if (!recipe.diet || recipe.diet.length === 0) {
+            recipe.diet = "None";
         }
-    
+        if (!recipe.allergies || recipe.allergies.length === 0) {
+            recipe.allergies = "None";
+        }
+
+
         const trimBrackets = (value) => {
             if (typeof value === 'string') {
                 return value.replace(/[\[\]{}"]/g, '').trim();
@@ -33,27 +37,30 @@ module.exports = (db) => {
             return value;
         };
         console.log(recipe.TotalCalories);
-        recipe.recipeName = trimBrackets(recipe.recipeName);
+        recipe.recipeName     = trimBrackets(recipe.recipeName);
         recipe.ingredientName = trimBrackets(recipe.ingredientName);
-        recipe.instructions = trimBrackets(recipe.instructions);
-        recipe.dietaryReq = recipe.dietaryReq && recipe.dietaryReq.length ? trimBrackets(recipe.dietaryReq) : "None";
-        recipe.macros = trimBrackets(recipe.macros);
-        recipe.cookingTime = trimBrackets(recipe.cookingTime);
-        recipe.TotalCalories = trimBrackets(recipe.TotalCalories);
-    
+        recipe.instructions   = trimBrackets(recipe.instructions);
+        recipe.diet           = recipe.diet && recipe.diet.length ? trimBrackets(recipe.diet) : "None";
+        recipe.allergies      = recipe.allergies && recipe.allergies.length ? trimBrackets(recipe.allergies) : "None";
+        recipe.macros         = trimBrackets(recipe.macros);
+        recipe.cookingTime    = trimBrackets(recipe.cookingTime);
+        recipe.calories       = trimBrackets(recipe.calories);
+
+
         const insertRecipeQuery = `
-            INSERT INTO Recipes (recipeName, ingredientName, dietaryReq, macros, cookingTime, instructions,calories,image)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
+            INSERT INTO Recipes (recipeName, ingredientName, diet, allergies, macros, cookingTime, instructions, calories, image)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE RID = LAST_INSERT_ID(RID)
         `;
         const recipeValues = [
             recipe.recipeName,
             recipe.ingredientName,
-            recipe.dietaryReq,
+            recipe.diet,
+            recipe.allergies,
             recipe.macros,
             recipe.cookingTime,
             recipe.instructions,
-            recipe.TotalCalories,
+            recipe.calories,
             recipe.image
         ];
     
