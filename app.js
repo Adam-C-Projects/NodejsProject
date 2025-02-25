@@ -1,4 +1,4 @@
-    const express = require('express');
+const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
 const session = require('express-session');
@@ -12,6 +12,7 @@ const createRecipesRouter = require('./routes/createRecipesRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const generateRecipeRouter = require('./routes/generateRecipeRoutes');
 const profileRouter = require('./routes/profileRoutes');
+const macroTrackerRouter = require('./routes/macroTrackerRoutes');
 
 const app = express();
 const PORT = 3015;
@@ -96,6 +97,7 @@ app.use('/createRecipes',createRecipesRouter(db));
 app.use('/recommendation', recommendationRoutes(db));
 app.use('/generateRecipe',generateRecipeRouter(db));
 app.use('/userProfile', profileRouter(db));
+app.use('/macroTracker' , macroTrackerRouter(db));
 // Main routes
 
 app.get('/', (req, res) => {
