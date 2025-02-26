@@ -12,25 +12,33 @@
   <% } else { %>
     <%- include('partials/header_desktop') %>
   <% } %>
-  <div id = "createDailyMacros" class="p-3">
-		<form action="macroTracker/insertDailyMacros" method="post" class="flex flex-col">
-		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-			create daily
-		  </button>
-		</form>
-	</div>
-  <div id = "updateDailyMacros" class="p-3">
-		<form action="macroTracker/updateDailyMacros" method="post" class="flex flex-col">
-		  <label for="updateDaily" class="text-xl font-bold mb-2">update daily</label>
-		  <input type="number" name="calories" id="calories" placeholder="calories" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="protein" id="protien" placeholder="protein" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="fats" id="fats" placeholder="fats" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="carbs" id="carbs" placeholder="carbs" required  class="mb-2 border rounded px-2 py-1">
-		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-			update
-		  </button>
-		</form>
-	</div>
+  <div id="container-div" class="flex flex-row">
+    <div id="pieChart" class="p-6">
+
+    </div>
+    <div id="update-createButtons">
+      <div id = "updateDailyMacros" class="p-3 py-3 max-w-md mx-auto">
+        <form action="macroTracker/updateDailyMacros" method="post" class="flex flex-col">
+          <label for="updateDaily" class="text-xl font-bold mb-2">update daily</label>
+          <input type="number" name="calories" id="calories" placeholder="calories" required  class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="protein" id="protien" placeholder="protein" required  class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="fats" id="fats" placeholder="fats" required  class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="carbs" id="carbs" placeholder="carbs" required  class="mb-2 border rounded px-2 py-1">
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+          update
+          </button>
+        </form>
+      </div>
+      <div id = "createDailyMacros" class="p-3">
+        <form action="macroTracker/insertDailyMacros" method="post" class="text-center">
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition w-full">
+          create daily
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
   <footer class="bg-green-600 text-white py-6">
     <div class="container mx-auto text-center">
     </div>
