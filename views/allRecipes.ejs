@@ -34,8 +34,12 @@
             if (sodiumMatch) {
                 sodium = parseInt(sodiumMatch[1]);
             }
+            const caloriesMatch = text.match(/calories?\s*[:\-]?\s*(\d+)/i);
+            if (caloriesMatch) {
+                calories = parseInt(caloriesMatch[1]);
+            }
 
-            return { protein, carb, fat, fiber, sugar, sodium };
+            return { protein, carb, fat, fiber, sugar, sodium, calories };
         }
 
         function resetFilters() {
@@ -73,14 +77,10 @@
             const allergyFilters = Array.from(allergyCheckboxes).map(cb => cb.value.toLowerCase());
 
             // Get selected macro filters
-            const proteinFilterEl = document.querySelector('input[name="protein-filter"]:checked');
-            const proteinFilter = proteinFilterEl ? proteinFilterEl.value : "";
-            const carbFilterEl = document.querySelector('input[name="carb-filter"]:checked');
-            const carbFilter = carbFilterEl ? carbFilterEl.value : "";
-            const fatFilterEl = document.querySelector('input[name="fat-filter"]:checked');
-            const fatFilter = fatFilterEl ? fatFilterEl.value : "";
-            const calorieFilterEl = document.querySelector('input[name="calorie-filter"]:checked');
-            const calorieFilter = calorieFilterEl ? calorieFilterEl.value : "";
+            const proteinFilter = document.getElementById("protein-select").value;
+            const carbFilter= document.getElementById("carb-select").value;
+            const fatFilter= document.getElementById("fat-select").value;
+            const calorieFilter= document.getElementById("calorie-select").value;
 
             // Get all recipe list items
             const recipeItems = document.querySelectorAll("#recipe-list > li");
@@ -224,29 +224,30 @@
             </div>
 
             <!-- Diet Filter -->
-            <div class="flex flex-col">
-                <label class="font-semibold mb-2">Filter by Diet</label>
-                <div>
+
+            <fieldset class=" relative bg-white shadow-md rounded-lg p-4 mb-4">
+                <legend class="absolute -top-2 left-4 bg-white px-2 font-semibold">Filter by Diet</legend>
+                <div class="flex items-center mb-2">
                     <input type="checkbox" id="vegetarian" name="diet-filter" value="Vegetarian" class="mr-2" onchange="filterList()">
-                    <label for="vegetarian" class="mr-4">Vegetarian</label>
+                    <label for="vegetarian" class="text-gray-700">Vegetarian</label>
                 </div>
-                <div>
+                <div class="flex items-center mb-2">
                     <input type="checkbox" id="vegan" name="diet-filter" value="Vegan" class="mr-2" onchange="filterList()">
-                    <label for="vegan" class="mr-4">Vegan</label>
+                    <label for="vegan" class="text-gray-700">Vegan</label>
                 </div>
-                <div>
+                <div class="flex items-center mb-2">
                     <input type="checkbox" id="gluten-free" name="diet-filter" value="Gluten-Free" class="mr-2" onchange="filterList()">
-                    <label for="gluten-free" class="mr-4">Gluten Free</label>
+                    <label for="gluten-free" class="text-gray-700">Gluten Free</label>
                 </div>
-                <div>
+                <div class="flex items-center mb-2">
                     <input type="checkbox" id="keto" name="diet-filter" value="Keto" class="mr-2" onchange="filterList()">
-                    <label for="keto" class="mr-4">Keto</label>
+                    <label for="keto" class="text-gray-700">Keto</label>
                 </div>
-                <div>
+                <div class="flex items-center mb-2">
                     <input type="checkbox" id="low-carb" name="diet-filter" value="Low-Carb" class="mr-2" onchange="filterList()">
-                    <label for="low-carb" class="mr-4">Low Carb</label>
+                    <label for="low-carb" class="text-gray-700">Low Carb</label>
                 </div>
-            </div>
+            </fieldset>
 
             <!-- Allergy Filter -->
             <div class="flex flex-col">
@@ -275,42 +276,34 @@
 
             <!-- Macros Filter -->
             <div class="flex flex-col">
-                <label class="font-semibold mb-2">Filter by Macros</label>
-                <div>
-                    <input type="radio" id="high-protein" name="protein-filter" value="high-protein" class="mr-2" onchange="handleCheckbox(this, 'low-protein')">
-                    <label for="high-protein" class="mr-4">High-protein (>= 20g)</label>
-                </div>
-                <div>
-                    <input type="radio" id="low-protein" name="protein-filter" value="low-protein" class="mr-2" onchange="handleCheckbox(this, 'high-protein')">
-                    <label for="low-protein" class="mr-4">Low-protein (< 10g)</label>
-                </div>
 
-                <div>
-                    <input type="radio" id="high-carb" name="carb-filter" value="high-carb" class="mr-2" onchange="handleCheckbox(this, 'low-carb')">
-                    <label for="high-carb" class="mr-4">High-carb (>= 30g)</label>
-                </div>
-                <div>
-                    <input type="radio" id="low-carb" name="carb-filter" value="low-carb" class="mr-2" onchange="handleCheckbox(this, 'high-carb')">
-                    <label for="low-carb" class="mr-4">Low-carb (< 10g)</label>
-                </div>
+                <label for = "protein-select" class="font-semibold mb-2">Protein Filter</label>
+                <select id="protein-select" name="protein-filter" class="p-2 border rounded-md" onchange="filterList()">
+                    <option value="">Filter by Protein</option>
+                    <option value="high-protein">High Protein (>= 20g)</option>
+                    <option value="low-protein">Low Protein (< 10g)</option>
+                </select>
 
-                <div>
-                    <input type="radio" id="high-fat" name="fat-filter" value="high-fat" class="mr-2" onchange="handleCheckbox(this, 'low-fat')">
-                    <label for="high-fat" class="mr-4">High-fat (>= 15g)</label>
-                </div>
-                <div>
-                    <input type="radio" id="low-fat" name="fat-filter" value="low-fat" class="mr-2" onchange="handleCheckbox(this, 'high-fat')">
-                    <label for="low-fat" class="mr-4">Low-fat (< 5g)</label>
-                </div>
+                <label for = "carb-select" class="font-semibold mb-2">Carb Filter</label>
+                <select id="carb-select" name="carb-filter" class="p-2 border rounded-md" onchange="filterList()">
+                    <option value="">Filter by Carb</option>
+                    <option value="high-carb">High-carb (>= 30g)</option>
+                    <option value="low-carb">Low-carb (< 10g)</option>
+                </select>
 
-                <div>
-                    <input type="radio" id="high-calorie" name="calorie-filter" value="high-calorie" class="mr-2" onchange="handleCheckbox(this, 'low-calorie')">
-                    <label for="high-calorie" class="mr-4">High-calorie (>= 500g)</label>
-                </div>
-                <div>
-                    <input type="radio" id="low-calorie" name="calorie-filter" value="low-calorie" class="mr-2" onchange="handleCheckbox(this, 'high-calorie')">
-                    <label for="low-calorie" class="mr-4">Low-calorie (< 200g)</label>
-                </div>
+                <label for = "fat-select" class="font-semibold mb-2">Fat Filter</label>
+                <select id="fat-select" name="fat-filter" class="p-2 border rounded-md" onchange="filterList()">
+                    <option value="">Filter by Fat</option>
+                    <option value="high-carb">High-fat (>= 15g)</option>
+                    <option value="low-carb">Low-fat (< 5g)</option>
+                </select>
+
+                <label for = "calorie-select" class="font-semibold mb-2">Calorie Filter</label>
+                <select id="calorie-select" name="calorie-filter" class="p-2 border rounded-md" onchange="filterList()">
+                    <option value="">Filter by Calories</option>
+                    <option value="high-calorie">High-calorie (>= 500g)</option>
+                    <option value="low-calorie">Low-calorie (< 200g)</option>
+                </select>
             </div>
         </div>
 
@@ -344,13 +337,22 @@
                                 <p><%= recipe.ingredientName %></p>
                             <% } %>
                             <p class="mt-2 dietary-req"><strong>Dietary Requirements:</strong> <%= recipe.diet %></p>
-                            <p class="mt-2"><strong>Macronutrients</strong>
-                            <ul class="list-disc list-inside">
-                                <% recipe.macros.forEach((macro, index) => { %>
-                                    <li><%= macro %></li>
-                                <% }) %>
-                            </ul>
-                            <p class="mt-2"><strong>Cooking Time:</strong> <%= recipe.cookingTime %> minutes</p>
+                            <div class="w-1/2">
+                                <div class="w-1/2">
+                                    <strong>Calories:</strong>
+                                    <p><%= recipe.calories %></p>
+                                </div>
+                                <strong>Macros</strong>
+
+                                <ul class="list-disc list-inside">
+                                    <% recipe.macros.forEach((macro) => { %>
+                                        <li><%= macro %></li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+
+                            <strong>Cooking Time:</strong>
+                            <p><%= recipe.cookingTime %> minutes</p>
                         </div>
                     </li>
                 <% }); %>
