@@ -6,9 +6,26 @@
     <title>All Recipes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Parse macros to numeric values
+        //Parse macros to numeric values
+        let allOpen = false;
+        function toggleAllRecipeDetails() {
+            const recipeDetails = document.querySelectorAll(".recipe-details");
+            recipeDetails.forEach(details => {
+                if(allOpen){
+                    details.classList.add("hidden");
+                }
+                else{
+                    details.classList.remove("hidden");
+                }
+            });
+            allOpen = !allOpen;
+        }
+        function toggleRecipeDetails(event) {
+            const details = event.target.closest('li').querySelector('.recipe-details');
+            details.classList.toggle('hidden');
+        }
         function parseMacros(text) {
-            let protein = 0, carb = 0, fat = 0, fiber = 0, sugar = 0, sodium = 0;
+            let protein = 0, carb = 0, fat = 0, fiber = 0, sugar = 0, sodium = 0, calories = 0;
 
             const proteinMatch = text.match(/protein\s*[:\-]?\s*(\d+)/i);
             if (proteinMatch) {
@@ -47,7 +64,7 @@
             document.getElementById("name-search").value = "";
             document.getElementById("ingredient-search").value = "";
 
-            // Uncheck all diet checkboxes
+            //Uncheck all diet checkboxes
             const dietCheckboxes = document.querySelectorAll('input[name="diet-filter"]');
             dietCheckboxes.forEach(cb => cb.checked = false);
 
@@ -55,20 +72,22 @@
             const allergyCheckboxes = document.querySelectorAll('input[name="allergy-filter"]');
             allergyCheckboxes.forEach(cb => cb.checked = false);
 
-            // Reset all macro filters
-            const macroRadioButtons = document.querySelectorAll('input[name="protein-filter"], input[name="carb-filter"], input[name="fat-filter"], input[name="calorie-filter"]');
-            macroRadioButtons.forEach(radio => radio.checked = false);
+            //Reset all macro filters
+            document.getElementById("protein-select").value = "";
+            document.getElementById("carb-select").value = "";
+            document.getElementById("fat-select").value = "";
+            document.getElementById("calorie-select").value = "";
 
             // Call filterList to reapply the filters
             filterList();
         }
 
         function filterList() {
-            // Get the text filters
+            //Get the text filters
             const nameFilter = document.getElementById("name-search").value.toLowerCase().trim();
             const ingredientFilter = document.getElementById("ingredient-search").value.toLowerCase().trim();
 
-            // Get checked diet filters
+            //Get checked diet filters
             const dietCheckboxes = document.querySelectorAll('input[name="diet-filter"]:checked');
             const dietFilters = Array.from(dietCheckboxes).map(cb => cb.value.toLowerCase());
 
@@ -76,25 +95,27 @@
             const allergyCheckboxes = document.querySelectorAll('input[name="allergy-filter"]:checked');
             const allergyFilters = Array.from(allergyCheckboxes).map(cb => cb.value.toLowerCase());
 
+            console.log("Allergy filters: " + allergyFilters);
+
             // Get selected macro filters
             const proteinFilter = document.getElementById("protein-select").value;
             const carbFilter= document.getElementById("carb-select").value;
             const fatFilter= document.getElementById("fat-select").value;
             const calorieFilter= document.getElementById("calorie-select").value;
 
-            // Get all recipe list items
+            //Get all recipe list items
             const recipeItems = document.querySelectorAll("#recipe-list > li");
 
             recipeItems.forEach(function(item) {
-                // Read data from each recipe item
+                //Read data from each recipe item
                 const recipeName = item.querySelector("h3").textContent.toLowerCase();
                 const ingredients = Array.from(item.querySelectorAll(".recipe-details ul li"))
                     .map(li => li.textContent.toLowerCase())
                     .join(" ");
                 const dietText = item.querySelector(".recipe-details .dietary-req").textContent.toLowerCase();
-                console.log("Diet text :"+dietText)
+                //console.log("Diet text :"+dietText)
 
-                const macrosList = item.querySelector(".recipe-details ul:nth-of-type(2)"); // The second ul should contain macros
+                const macrosList = item.querySelector(".recipe-details ul.list-inside");
                 const macrosText = macrosList ?
                     Array.from(macrosList.querySelectorAll("li"))
                         .map(li => li.textContent.toLowerCase())
@@ -102,13 +123,13 @@
                     : "";
                  //console.log(macrosText);
 
-                // Name Filter
+                //Name Filter
                 if (nameFilter && recipeName.indexOf(nameFilter) === -1) {
                     item.style.display = "none";
                     return;
                 }
 
-                // Ingredient Filter
+                //Ingredient Filter
                 if (ingredientFilter && ingredients.indexOf(ingredientFilter) === -1) {
                     item.style.display = "none";
                     return;
@@ -123,6 +144,16 @@
                         item.style.display = "none";
                         return;
                     }
+                }
+                //allergy filter
+                const allergyTextElement = item.querySelector(".recipe-allergies");
+                const allergyText = allergyTextElement ? allergyTextElement.textContent.toLowerCase() : "";
+                const containsAllergen = allergyFilters.some(function(allergen) {
+                    return allergyText.indexOf(allergen) !== -1;
+                });
+                if (containsAllergen) {
+                    item.style.display = "none";
+                    return;
                 }
 
                 // Macros Filter
@@ -294,8 +325,8 @@
                 <label for = "fat-select" class="font-semibold mb-2">Fat Filter</label>
                 <select id="fat-select" name="fat-filter" class="p-2 border rounded-md" onchange="filterList()">
                     <option value="">Filter by Fat</option>
-                    <option value="high-carb">High-fat (>= 15g)</option>
-                    <option value="low-carb">Low-fat (< 5g)</option>
+                    <option value="high-fat">High-fat (>= 15g)</option>
+                    <option value="low-fat">Low-fat (< 5g)</option>
                 </select>
 
                 <label for = "calorie-select" class="font-semibold mb-2">Calorie Filter</label>
@@ -311,6 +342,11 @@
         <div class="mt-4 flex justify-center">
             <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-bold" onclick="resetFilters()">Reset Filters</button>
         </div>
+        <!--Open cards Button -->
+        <div class="flex justify-center mt-4">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-bold" onclick="toggleAllRecipeDetails()">Toggle Recipes</button>
+        </div>
+
     </div>
 
     <!--Table method-->
@@ -353,6 +389,8 @@
 
                             <strong>Cooking Time:</strong>
                             <p><%= recipe.cookingTime %> minutes</p>
+                            <strong> Contains:</strong>
+                            <p class="recipe-allergies"><%= recipe.allergies %></p>
                         </div>
                     </li>
                 <% }); %>
