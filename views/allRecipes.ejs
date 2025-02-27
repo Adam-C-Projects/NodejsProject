@@ -243,21 +243,21 @@
     <div class="w-full bg-gray-100 p-0 px-2 pb-2">
         <div class="container mx-auto p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <!-- Name Filter -->
-            <div class="flex flex-col">
+            <div class="flex flex-col  relative shadow-md rounded-lg p-4 mb-4">
                 <label for="name-search" class="font-semibold mb-2">Filter by Name</label>
                 <input type="text" id="name-search" name="name-filter" class="p-2 border rounded-md" oninput="filterList()">
             </div>
 
             <!-- Ingredient Filter -->
-            <div class="flex flex-col">
+            <div class="flex flex-col  relative shadow-md rounded-lg p-4 mb-4">
                 <label for="ingredient-search" class="font-semibold mb-2">Filter by Ingredient</label>
                 <input type="text" id="ingredient-search" name="ingredient-filter" class="p-2 border rounded-md" oninput="filterList()">
             </div>
 
             <!-- Diet Filter -->
 
-            <fieldset class=" relative bg-white shadow-md rounded-lg p-4 mb-4">
-                <legend class="absolute -top-2 left-4 bg-white px-2 font-semibold">Filter by Diet</legend>
+            <div class=" relative shadow-md rounded-lg p-4 mb-4">
+                <div class="font-semibold mb-2">Filter by Diet</div>
                 <div class="flex items-center mb-2">
                     <input type="checkbox" id="vegetarian" name="diet-filter" value="Vegetarian" class="mr-2" onchange="filterList()">
                     <label for="vegetarian" class="text-gray-700">Vegetarian</label>
@@ -278,10 +278,10 @@
                     <input type="checkbox" id="low-carb" name="diet-filter" value="Low-Carb" class="mr-2" onchange="filterList()">
                     <label for="low-carb" class="text-gray-700">Low Carb</label>
                 </div>
-            </fieldset>
+            </div>
 
             <!-- Allergy Filter -->
-            <div class="flex flex-col">
+            <div class="flex flex-col  relative shadow-md rounded-lg p-4 mb-4">
                 <label class="font-semibold mb-2">Exclude Ingredients</label>
                 <div>
                     <input type="checkbox" id="dairy" name="allergy-filter" value="dairy" class="mr-2" onchange="filterList()">
@@ -306,7 +306,7 @@
             </div>
 
             <!-- Macros Filter -->
-            <div class="flex flex-col">
+            <div class="flex flex-col relative shadow-md rounded-lg p-4 mb-4">
 
                 <label for = "protein-select" class="font-semibold mb-2">Protein Filter</label>
                 <select id="protein-select" name="protein-filter" class="p-2 border rounded-md" onchange="filterList()">
