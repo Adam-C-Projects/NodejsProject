@@ -5,14 +5,32 @@ const util = require("util");
 module.exports = (db) => {
    
     const query = util.promisify(db.query).bind(db);
-    router.get('/', (req, res) => {
-        const username = req.session.username || null;
+    router.get('/', async (req, res) => {
         const UID = req.session.UID;
+        const username = req.session.username;
+        const today = new Date().toISOString().split("T")[0]; // Get today's date
         if (!UID) {
             return res.status(400).json({ error: "Missing UID" });
         }
-
-        res.render('macroTracker.ejs', {username: username} );    
+        
+        try {
+            const rows = await query(
+              `SELECT totalcalories, totalprotein, totalfats, totalcarbs 
+               FROM dailymacros 
+               WHERE UID = ? AND date = ?`,
+              [UID, today]
+            );
+            
+            if (rows.length === 0) {
+              return res.render('macroTracker', { username:username, chartData: null });
+            }
+            const chartData = rows[0];
+            console.log(chartData);
+            res.render('macroTracker', { username:username, chartData: chartData }); // Send first row
+          } catch (error) {
+            console.error("Database error:", error);
+            res.status(500).send("Internal Server Error");
+          }  
     });
 
     router.post("/insertDailyMacros", async (req, res) => {
@@ -31,7 +49,7 @@ module.exports = (db) => {
             );
     
             if (existing.length > 0) {
-                return res.status(400).json({ message: "Today's entry already exists" });
+                return res.status(400).send("Today's entry already exists");
             }
     
             // Insert new daily macros record
@@ -40,11 +58,11 @@ module.exports = (db) => {
                 [today, UID]
             );
     
-            return res.status(201).json({ message: "Daily macros inserted successfully" });
+            return res.status(201).send("Daily macros inserted successfully");
     
         } catch (error) {
             console.error("Database error:", error);
-            return res.status(500).json({ error: "Database error" });
+            return res.status(500).send("Database error");
         }
     });
 
@@ -65,7 +83,7 @@ module.exports = (db) => {
             );
     
             if (existing.length === 0) {
-                return res.status(400).json({ message: "create an entry first!" });
+                return res.status(400).send("create an entry first!");
             }
             
             //update the macros
@@ -85,11 +103,11 @@ module.exports = (db) => {
                 [updatedCalories, updatedProtein, updatedFats, updatedCarbs, UID, today]
             );
     
-            return res.status(201).json({ message: "Daily macros updated successfully" });
+            return res.status(201).send("Daily macros updated successfully");
     
         } catch (error) {
             console.error("Database error:", error);
-            return res.status(500).json({ error: "Database error" });
+            return res.status(500).send("Database error");
         }    
     });
 
