@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meastro</title>
+  <title>Maestro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -12,28 +12,125 @@
   <% } else { %>
     <%- include('partials/header_desktop') %>
   <% } %>
-  <div id = "createDailyMacros" class="p-3">
-		<form action="macroTracker/insertDailyMacros" method="post" class="flex flex-col">
-		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-			create daily
-		  </button>
-		</form>
-	</div>
-  <div id = "updateDailyMacros" class="p-3">
-		<form action="macroTracker/updateDailyMacros" method="post" class="flex flex-col">
-		  <label for="updateDaily" class="text-xl font-bold mb-2">update daily</label>
-		  <input type="number" name="calories" id="calories" placeholder="calories" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="protein" id="protien" placeholder="protein" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="fats" id="fats" placeholder="fats" required  class="mb-2 border rounded px-2 py-1">
-      <input type="number" name="carbs" id="carbs" placeholder="carbs" required  class="mb-2 border rounded px-2 py-1">
-		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-			update
-		  </button>
-		</form>
-	</div>
-  <footer class="bg-green-600 text-white py-6">
-    <div class="container mx-auto text-center">
+  <div id="container-div" class="flex flex-col md:flex-row items-center justify-center p-6 ">
+    <div id="pieChart">
+      <canvas id="pie-chart" class="w-96 h-96 pb-3"></canvas>
+      <div class="text-center">
+        <h1><%= chartData ? 'Daily Calories: ' + chartData.totalcalories : 'no data for today. Create an entry.' %></h1>
+      </div>
     </div>
-  </footer>
+    <div id="update-createButtons" class="space-y-6 md:w-1/2 w-full">
+      <div id="updateDailyMacros" class="p-3 py-3 max-w-md mx-auto">
+        <form id="updateMacrosForm" class="flex flex-col">
+          <input type="number" name="calories" id="calories" placeholder="Calories" required class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="protein" id="protein" placeholder="Protein" required class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="fats" id="fats" placeholder="Fats" required class="mb-2 border rounded px-2 py-1">
+          <input type="number" name="carbs" id="carbs" placeholder="Carbs" required class="mb-2 border rounded px-2 py-1">
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+            Update
+          </button>
+        </form>
+        <form id="createMacrosForm" class="text-center flex flex-col py-4">
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+            Create Daily
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div id="successDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
+  <div id="errorDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let chartData = <%- JSON.stringify(chartData) %>;
+    console.log(chartData);
+    if (chartData) {
+      new Chart(document.getElementById('pie-chart'), {
+        type: 'pie',
+        data: {
+          labels: ['Protein', 'Carbohydrates', 'Fat'],
+          datasets: [{
+            backgroundColor: ['#e53d19', '#3ee519', '#1944e5'],
+            data: [chartData.totalprotein, chartData.totalcarbs, chartData.totalfats]
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Daily Macros Pie Chart'
+          },
+          responsive: true
+        }
+      });
+    }
+
+    function showError(message) {
+      const errorDropdown = document.getElementById("errorDropdown");
+      errorDropdown.innerText = message;
+      errorDropdown.classList.remove("hidden");
+      setTimeout(() => {
+        errorDropdown.classList.add("hidden");
+      }, 3000);
+    }
+
+    function showSuccess(message) {
+      const successDropdown = document.getElementById("successDropdown");
+      successDropdown.innerText = message;
+      successDropdown.classList.remove("hidden");
+      setTimeout(() => {
+        successDropdown.classList.add("hidden");
+      }, 3000);
+    }
+
+    document.getElementById('createMacrosForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('/macroTracker/insertDailyMacros', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+          showSuccess('Daily macros created successfully!');
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } else {
+          const errorMessage = await response.text();
+          showError('Error: ' + errorMessage);
+        }
+      } catch (error) {
+        console.error('Request failed:', error);
+        showError('Could not connect to the server. Please try again.');
+      }
+    });
+
+    document.getElementById('updateMacrosForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const calories = document.getElementById('calories').value;
+      const protein = document.getElementById('protein').value;
+      const fats = document.getElementById('fats').value;
+      const carbs = document.getElementById('carbs').value;
+      try {
+        const response = await fetch('/macroTracker/updateDailyMacros', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ calories, protein, fats, carbs })
+        });
+        if (response.ok) {
+          showSuccess('Daily macros updated successfully!');
+          setTimeout(() => {
+            location.reload();
+          }, 3000);
+        } else {
+          const errorMessage = await response.text();
+          showError('Error: ' + errorMessage);
+        }
+      } catch (error) {
+        console.error('Request failed:', error);
+        showError('Could not connect to the server. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>
+
