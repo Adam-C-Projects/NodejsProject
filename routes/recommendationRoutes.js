@@ -13,7 +13,7 @@ module.exports = (db) => {
     });
 
     router.post('/advisersubmit', async (req, res) => {
-        const { recipeText, filterRating, filterCuisine, filterPrice, filterRestaurantType } = req.body;
+        const { recipeText, filterRating, filterPrice } = req.body; // ✅ Removed filterCuisine & filterRestaurantType
 
         if (!recipeText || recipeText.trim() === "") {
             return res.status(400).send('Please provide a recipe.');
@@ -43,16 +43,8 @@ module.exports = (db) => {
                 filteredRecommendations = filteredRecommendations.filter(r => parseFloat(r.rating) >= parseFloat(filterRating));
             }
 
-            if (filterCuisine) {
-                filteredRecommendations = filteredRecommendations.filter(r => r.cuisine.toLowerCase().includes(filterCuisine.toLowerCase()));
-            }
-
             if (filterPrice) {
                 filteredRecommendations = filteredRecommendations.filter(r => r.price_level == filterPrice);
-            }
-
-            if (filterRestaurantType) {
-                filteredRecommendations = filteredRecommendations.filter(r => r.types.includes(filterRestaurantType));
             }
 
             res.render("RestaurantAdviser", { 
@@ -92,11 +84,9 @@ function fetchRestaurantRecommendations(ingredients, callback) {
 
         const results = response.data.results.map((place) => ({
             name: place.name,
-            cuisine: place.types.includes("restaurant") ? "Restaurant" : "Unknown",
             address: place.formatted_address,
             rating: place.rating || "No rating available",
             price_level: place.price_level || "Unknown",
-            types: place.types || [],
             lat: place.geometry?.location?.lat || null,  // ✅ Ensure lat exists
             lng: place.geometry?.location?.lng || null  // ✅ Ensure lng exists
         })).filter(place => place.lat !== null && place.lng !== null); // ✅ Filter out invalid locations
