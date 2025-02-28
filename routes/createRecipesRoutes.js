@@ -16,7 +16,8 @@ module.exports = (db) => {
                 console.error('Error inserting recipe: ', err);
                 return res.status(500).send('Error saving recipe');
             }
-            res.status(200).send('Recipe created successfully');
+
+            res.redirect('/generateRecipe');
         });
     });
     
