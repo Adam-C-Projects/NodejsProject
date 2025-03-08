@@ -80,7 +80,7 @@
             <ul class="list-disc list-inside">
               <% following.forEach(user => { %>
                 <li>
-                  <%= user.username %>
+                  <%= user.username %> <a href="/savedRecipes/<%= user.username %>" class="text-blue-500 hover:underline">Saved Recipes</a>
                 </li>
               <% }); %>
             </ul>

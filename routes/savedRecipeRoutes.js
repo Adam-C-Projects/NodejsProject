@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-    router.get('/', (req, res) => {
-        const username = req.session.username;
+    router.get('/:username?', (req, res) => {
+        let username = req.params.username || req.session.username;
+        
         if (!username) {
             return res.redirect('/login'); // If the user is not logged in, redirect to login
         }
