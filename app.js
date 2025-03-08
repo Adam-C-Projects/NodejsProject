@@ -9,13 +9,12 @@ const registerRouter = require('./routes/registerRoutes');
 const savedRecipeRouter = require('./routes/savedRecipeRoutes');
 const allRecipesRouter = require('./routes/allRecipesRoutes');
 const createRecipesRouter = require('./routes/createRecipesRoutes');
-const recommendationRoutes = require('./routes/recommendationRoutes');
 const generateRecipeRouter = require('./routes/generateRecipeRoutes');
 const profileRouter = require('./routes/profileRoutes');
 const macroTrackerRouter = require('./routes/macroTrackerRoutes');
 
 const app = express();
-const PORT = 3015;
+const PORT = 3031;
 
 // Set up middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -83,7 +82,7 @@ db.connect(error => {
         throw error;
     }
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '', () => {
         console.log("Database connection is ready and server is listening on port", PORT);
     });
 });
@@ -94,7 +93,7 @@ app.use('/register', registerRouter(db));
 app.use('/savedRecipes', savedRecipeRouter(db));
 app.use('/allRecipes', allRecipesRouter(db));
 app.use('/createRecipes',createRecipesRouter(db));
-app.use('/recommendation', recommendationRoutes(db));
+app.use('/recommendation', require('./routes/recommendationRoutes')(db));
 app.use('/generateRecipe',generateRecipeRouter(db));
 app.use('/userProfile', profileRouter(db));
 app.use('/macroTracker' , macroTrackerRouter(db));

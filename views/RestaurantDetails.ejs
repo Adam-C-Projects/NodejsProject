@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="text-center p-4 bg-blue-500 text-white text-xl font-bold">📌 Restaurant Details</header>
+    
+    <div class="container mx-auto p-4 max-w-3xl bg-white shadow-md rounded-lg">
+        <h2 class="text-2xl font-bold"><%= restaurant.restaurant_name %></h2>
+        <p><strong>Address:</strong> <%= restaurant.address %></p>
+        <p><strong>Rating:</strong> ⭐ <%= restaurant.rating || "No rating available" %></p>
+        <p><strong>Price Level:</strong> <%= restaurant.price_level || "Unknown" %></p>
+        <p><strong>Latitude:</strong> <%= restaurant.lat %></p>
+        <p><strong>Longitude:</strong> <%= restaurant.lng %></p>
+
+        <!-- 🔹 Google Maps Location -->
+        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+
+        <a href="/recommendation/savedRestaurants" class="bg-gray-500 text-white px-4 py-2 rounded-lg mt-4 inline-block">
+            🔙 Back to Saved Restaurants
+        </a>
+    </div>
+
+    <script>
+        function initMap() {
+            var lat = <%= restaurant.lat %>;
+            var lng = <%= restaurant.lng %>;
+
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: { lat: lat, lng: lng }
+            });
+
+            new google.maps.Marker({
+                position: { lat: lat, lng: lng },
+                map: map,
+                title: "<%= restaurant.restaurant_name %>"
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <!-- 🔹 Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&callback=initMap"></script>
+</body>
+</html>

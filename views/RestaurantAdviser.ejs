@@ -7,11 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        .restaurant-list { list-style-type: none; padding: 0; }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .restaurant-list {
+            list-style-type: none;
+            padding: 0;
+            width: 60%;
+        }
         .restaurant-item {
             background: white;
             padding: 15px;
             margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            width: 35%;
+            min-width: 300px;
+            height: 500px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -29,13 +46,6 @@
             transition: 0.3s;
         }
         .back-btn:hover { background-color: #cc0000; }
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-top: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
 
@@ -62,7 +72,6 @@
                 </select>
             </div>
 
-
             <div class="mt-4">
                 <label class="text-gray-800 font-bold">Filter by Price:</label>
                 <select name="filterPrice" class="px-4 py-2 border rounded-lg">
@@ -72,7 +81,6 @@
                     <option value="3">$$$ (Expensive)</option>
                 </select>
             </div>
-
 
             <button type="submit" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg">Find Restaurants</button>
         </form>
@@ -84,35 +92,46 @@
 
     <% if (recipes && recipes.length > 0) { %>
         <div class="container mx-auto">
-            <ul class="restaurant-list mx-auto max-w-3xl mt-4">
+            <!-- Restaurant List -->
+            <ul class="restaurant-list">
                 <% recipes.forEach(recipe => { %>
-                    <li class="restaurant-item bg-white p-4 rounded-lg shadow-md text-left mb-4">
+                    <li class="restaurant-item">
                         <h2 class="text-xl font-bold"><%= recipe.name %></h2>
                         <p><strong>Type:</strong> <%= recipe.cuisine || "Restaurant" %></p>
                         <p><strong>Address:</strong> <%= recipe.address %></p>
                         <p><strong>Rating:</strong> ⭐ <%= recipe.rating || "No rating available" %></p>
                         <p><strong>Price Level:</strong> <%= recipe.price_level || "Unknown" %></p>
+                        <button class="save-btn bg-blue-500 text-white px-3 py-1 rounded-lg mt-2" 
+                                onclick="saveRestaurant('<%= recipe.name %>', '<%= recipe.address %>', '<%= recipe.rating %>', '<%= recipe.price_level %>', '<%= recipe.lat %>', '<%= recipe.lng %>')">
+                            ❤️ Save
+                        </button>
                     </li>
                 <% }) %>
             </ul>
-        </div>
 
-        <div id="map"></div> <!-- ✅ Google Map Section -->
+            <!-- Google Maps Container -->
+            <div id="map" class="map-container"></div>
+        </div>
     <% } else { %>
         <p class="text-gray-600 text-lg text-center">No restaurant recommendations found.</p>
     <% } %>
+
+    <!-- 🔹 View Saved Restaurants Button -->
+    <div class="text-center mt-6">
+        <a href="/recommendation/savedRestaurants" class="bg-yellow-500 text-white px-4 py-2 rounded-lg">⭐ View Favorite Restaurants</a>
+    </div>
 
     <button class="back-btn" onclick="goBack()">🔙 Go Back</button>
 
     <script>
         function initMap() {
             console.log("Google Maps is initializing...");
-    
+
             window.map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
-                center: { lat: 51.2802, lng: 1.0789 } // Default to Canterbury, UK
+                center: { lat: 51.2802, lng: 1.0789 } // Default center (Canterbury, UK)
             });
-    
+
             let restaurants;
             try {
                 restaurants = <%- JSON.stringify(recipes) %>;
@@ -120,43 +139,58 @@
                 console.error("Error parsing restaurant data:", error);
                 restaurants = [];
             }
-    
+
             if (!restaurants || restaurants.length === 0) {
                 console.warn("No restaurant data available.");
                 return;
             }
-    
+
             restaurants.forEach(restaurant => {
                 if (restaurant.lat && restaurant.lng) {
                     const marker = new google.maps.Marker({
-                        position: { lat: restaurant.lat, lng: restaurant.lng },
+                        position: { lat: parseFloat(restaurant.lat), lng: parseFloat(restaurant.lng) },
                         map: window.map,
                         title: restaurant.name
                     });
-    
+
                     const infoWindow = new google.maps.InfoWindow({
                         content: `<div><h3>${restaurant.name}</h3><p>${restaurant.address}</p><p>⭐ ${restaurant.rating}</p></div>`
                     });
-    
+
                     marker.addListener("click", () => {
                         infoWindow.open(window.map, marker);
                     });
                 }
             });
-    
+
             console.log("Google Maps successfully loaded.");
         }
 
-        // ✅ Ensure `initMap` is globally available before Google loads
         window.initMap = initMap;
+
+        function saveRestaurant(name, address, rating, price_level, lat, lng) {
+            fetch('/recommendation/saveRestaurant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, address, rating, price_level, lat, lng })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Restaurant saved successfully!");
+                } else {
+                    alert("Error saving restaurant.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
 
         function goBack() {
             window.history.back();
         }
     </script>
 
-    <!-- ✅ Load Google Maps Only Once -->
+    <!-- Load Google Maps API -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo&callback=initMap"></script>
-
 </body>
 </html>
