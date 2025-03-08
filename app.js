@@ -14,7 +14,7 @@ const profileRouter = require('./routes/profileRoutes');
 const macroTrackerRouter = require('./routes/macroTrackerRoutes');
 
 const app = express();
-const PORT = 3031;
+const PORT = 3045;
 
 // Set up middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -62,6 +62,8 @@ const upload = multer({
         }
     }
 })*/
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+//upload image profile
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');

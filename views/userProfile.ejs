@@ -1,176 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="/css/userProfile.css">
-	<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class = "overflow-hidden">
-	<% if (isMobile) { %>
-		<%- include('partials/header_mobile') %>
-	<% } else { %>
-		<%- include('partials/header_desktop') %>
-	<% } %>
+<body class="overflow-hidden">
+    <% if (isMobile) { %>
+        <%- include('partials/header_mobile') %>
+    <% } else { %>
+        <%- include('partials/header_desktop') %>
+    <% } %>
 
+    <div class="flex h-screen">
+        <!-- Sidebar Panel -->
+        <aside class="w-1/4 pl-4 pt-4 bg-gray-200">
+            <button id="profile-btn" onclick="showSection('profile')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Profile</button>
+            <button id="following-btn" onclick="showSection('following')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Following</button>
+            <button id="followers-btn" onclick="showSection('followers')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Followers</button>
+            <button id="pending-btn" onclick="showSection('pending')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Pending Requests</button>
+            <button id="add-btn" onclick="showSection('add')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Add Friend</button>
+        </aside>
+    <!-- Display User Details -->
+    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold">User Details</h3>
+        <p><strong>Username:</strong> <%= username %></p>
+        <p><strong>Email:</strong> <%= email %></p>
+        <p><strong>Weight:</strong> <%= weight %> kg</p>
+        <p><strong>Height:</strong> <%= height %> cm</p>
+        <p><strong>Goal:</strong> <%= goal %></p>
+    </div>
+ 
+    <!-- Display Saved Recipes & Saved Restaurants Count -->
+    <div class="text-center mb-4">
+        <p class="text-lg font-semibold">Saved Recipes: <span class="text-blue-500 font-bold"><%= savedRecipes %></span></p>
+        <p class="text-lg font-semibold">Saved Restaurants: <span class="text-red-500 font-bold"><%= savedRestaurants %></span></p>
+    </div>
+        <!-- Main Content Panel -->
+        <main class="w-3/4 p-6 bg-white shadow-lg rounded-lg">
+            <!-- Profile Section -->
+            <div id="profile-section">
+                <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
 
-  <div class="flex h-screen">
-    <!-- Sidebar Panel -->
-    <aside class="w-1/4 pl-4 pt-4 bg-gray-200">
-      <button id="profile-btn" onclick="showSection('profile')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Profile</button>
-      <button id="following-btn" onclick="showSection('following')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Following</button>
-      <button id="followers-btn" onclick="showSection('followers')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Followers</button>
-      <button id="pending-btn" onclick="showSection('pending')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Pending Requests</button>
-	  <button id="add-btn" onclick="showSection('add')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Add Friend</button>
-    </aside>
+                <!-- Display Current Profile Picture -->
+                <div class="mb-4 text-center">
+                    <img src="<%= profile_pic %>" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto border">
+                </div>
 
-    <!-- Main Content Panel -->
-    <main class="w-3/4">
-      <!-- Profile Section -->
-        <div id="profile-section" class="userProfileDiv">
-          <h2>Basic info</h2>
-          <div>
-            <p>Username:</p><p><%= username %></p>
-          </div>
-          <div>
-            <p>Password:</p><p>********</p>
-          </div>
-          <div>
-            <p>Profile picture:</p>
-            <img src="images/user.png" alt="User Profile Picture">
-          </div>
-          <div>
-            <p>Birthday:</p><p>January 1st, 1970</p>
-          </div>
-          <div>
-            <p>Gender:</p><p>Male</p>
-          </div>
-          <h2>Contact info</h2>
-          <div>
-            <p>Email:</p><p>user@example.com</p>
-          </div>
-          <div>
-            <p>Phone:</p><p>01234 111222</p>
-          </div>
-          <h2>Preferences</h2>
-          <div>
-            <p>Language:</p><p>English</p>
-          </div>
-          <div>
-            <p>Dark mode:</p><p>OFF</p>
-          </div>
+                <!-- Upload Profile Picture Form -->
+                <form action="/userProfile/uploadProfilePic" method="POST" enctype="multipart/form-data" class="mb-4">
+                    <label class="font-bold block mb-2">Upload New Profile Picture:</label>
+                    <input type="file" name="profilePic" accept="image/*" class="border px-2 py-1 rounded w-full mb-2" required>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Upload Picture</button>
+                </form>
+
+                <!-- User Profile Update Form -->
+                <form action="/userProfile/update" method="POST" class="space-y-4">
+                    <div>
+                        <label class="font-bold">Username:</label>
+                        <input type="text" name="username" value="<%= username %>" class="border px-2 py-1 rounded w-full" readonly>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Email:</label>
+                        <input type="email" name="email" value="<%= email %>" class="border px-2 py-1 rounded w-full" required>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Weight (kg):</label>
+                        <input type="number" step="0.1" name="weight" value="<%= weight %>" class="border px-2 py-1 rounded w-full" required>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Height (cm):</label>
+                        <input type="number" step="0.1" name="height" value="<%= height %>" class="border px-2 py-1 rounded w-full" required>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Goal:</label>
+                        <select name="goal" class="border px-2 py-1 rounded w-full">
+                            <option value="Lose Weight" <%= goal === 'Lose Weight' ? 'selected' : '' %>>Lose Weight</option>
+                            <option value="Maintain" <%= goal === 'Maintain' ? 'selected' : '' %>>Maintain</option>
+                            <option value="Gain Muscle" <%= goal === 'Gain Muscle' ? 'selected' : '' %>>Gain Muscle</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Add Friend Section -->
+            <div id="add-section" class="hidden p-3">
+                <form action="/userProfile/sendFriendRequest" method="post" class="flex flex-col">
+                    <label for="receivingUsername" class="text-xl font-bold mb-2">Add Friend:</label>
+                    <input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
+                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">Send Request</button>
+                </form>
+            </div>
+
+            <!-- Followers and Following Section -->
+            <div id="following-section" class="hidden p-3">
+                <h2 class="text-xl font-bold mb-2">Your Following:</h2>
+                <% if (following && following.length > 0) { %>
+                    <ul class="list-disc list-inside">
+                        <% following.forEach(user => { %>
+                            <li><%= user.username %></li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>You are not following anyone yet.</p>
+                <% } %>
+            </div>
+
+            <div id="followers-section" class="hidden p-3">
+                <h2 class="text-xl font-bold mb-2">Your Followers:</h2>
+                <% if (followers && followers.length > 0) { %>
+                    <ul class="list-disc list-inside">
+                        <% followers.forEach(user => { %>
+                            <li><%= user.username %></li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>You have no followers yet.</p>
+                <% } %>
+            </div>
+
+            <!-- Pending Requests Section -->
+            <div id="pending-section" class="hidden p-3">
+                <h2 class="text-xl font-bold mb-2">Pending Requests:</h2>
+                <% if (friendRequests && friendRequests.length > 0) { %>
+                    <ul class="list-disc list-inside">
+                        <% friendRequests.forEach(request => { %>
+                            <li>
+                                From: <%= request.username %> - Status: <%= request.status %>
+                                <% if (request.status === 'pending') { %>
+                                    <button class="accept-btn ml-4 bg-green-500 text-white px-3 py-1 rounded" onclick="acceptRequest('<%= request.fromUserId %>')">Accept</button>
+                                <% } %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>No pending friend requests.</p>
+                <% } %>
+            </div>
+        </main>
+    </div>
+    <aside class="w-1/4 pl-4 pt-4 bg-gray-200 flex flex-col items-center">
+        <!-- Profile Picture on Sidebar -->
+        <div class="w-16 h-16 mb-2">
+            <img src="<%= profile_pic %>" alt="Profile Picture" class="w-16 h-16 rounded-full border">
         </div>
-	 <!-- Add Friend Form -->
-	 <div id = "add-section" class="hidden p-3">
-		<form action="userProfile/sendFriendRequest" method="post" class="flex flex-col">
-		  <label for="receivingUsername" class="text-xl font-bold mb-2">Add Friend:</label>
-		  <input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
-		  <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-			Send Request
-		  </button>
-		</form>
-	  </div>
-      <!-- Following Section -->
-      <div id="following-section" class="hidden p-3">
-        <h2 class="text-xl font-bold mb-2">Your Following:</h2>
-        <% console.log(followers)%>
-        <% if(following != null) { %>
-          <% if (following.length > 0) { %>
-            <ul class="list-disc list-inside">
-              <% following.forEach(user => { %>
-                <li>
-                  <%= user.username %> <a href="/savedRecipes/<%= user.username %>" class="text-blue-500 hover:underline">Saved Recipes</a>
-                </li>
-              <% }); %>
-            </ul>
-          <% } else { %>
-            <p>You are not following anyone yet.</p>
-          <% } %>
-        <% } %>
-      </div>
-
-      <!-- Followers Section -->
-      <div id="followers-section" class="hidden p-3">
-        <h2 class="text-xl font-bold mb-2">Your Followers:</h2>
-        <% if(followers != null) { %>
-          <% if (followers.length > 0) { %>
-            <ul class="list-disc list-inside">
-              <% followers.forEach(user => { %>
-                <li>
-                  <%= user.username %>
-                </li>
-              <% }); %>
-            </ul>
-          <% } else { %>
-            <p>You have no followers yet.</p>
-          <% } %>
-        <% } %>
-      </div>
-
-      <!-- Pending Requests Section -->
-      <div id="pending-section" class="hidden p-3">
-        <h2 class="text-xl font-bold mb-2">Pending Requests:</h2>
-        <% if(friendRequests != null) { %>
-          <% if (friendRequests.length > 0) { %>
-            <ul class="list-disc list-inside">
-              <% friendRequests.forEach(request => { %>
-                <li>
-                  From: <%= request.username %> - Status: <%= request.status %> <% console.log(request.status);%>
-                  <% if (request.status === 'pending') { %>
-                    <button class="accept-btn ml-4" onclick="acceptRequest('<%= request.fromUserId %>')">Accept</button>
-                  <% } %>
-                </li>
-              <% }); %>
-            </ul>
-          <% } %>
-        <% } %>
-      </div>
-    </main>
-  </div>
-
-  <script>
-    // Function to toggle between sections
-    function showSection(section) {
-      const sections = ['profile', 'following', 'followers', 'pending', 'add'];
-      
-      // Hide all sections and remove active style from all buttons
-      sections.forEach(sec => {
-        document.getElementById(sec + '-section').classList.add('hidden');
-        document.getElementById(sec + '-btn').classList.remove('bg-gray-300');
-      });
-
-      // Show the selected section and mark its button as active
-      document.getElementById(section + '-section').classList.remove('hidden');
-      document.getElementById(section + '-btn').classList.add('bg-gray-300')
-    }
-    // Show profile section by default on page load
-    showSection('profile');
-  </script>
-
-  <script>
-    function acceptRequest(fromUserId) {
-      fetch('/userProfile/acceptFriendRequest', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fromUserId }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          alert('Friend request accepted!');
-          location.reload();
-        } else {
-          alert('Error: ' + data.message);
+        <h2 class="text-lg font-semibold"><%= username %></h2>
+        
+        <button id="profile-btn" onclick="showSection('profile')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Profile</button>
+        <button id="following-btn" onclick="showSection('following')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Following</button>
+        <button id="followers-btn" onclick="showSection('followers')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Followers</button>
+        <button id="pending-btn" onclick="showSection('pending')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Pending Requests</button>
+        <button id="add-btn" onclick="showSection('add')" class="w-full text-left py-2 px-4 mb-2 hover:bg-gray-300">Add Friend</button>
+    </aside>
+    
+    <script>
+        function showSection(section) {
+            const sections = ['profile', 'following', 'followers', 'pending', 'add'];
+            sections.forEach(sec => {
+                document.getElementById(sec + '-section').classList.add('hidden');
+                document.getElementById(sec + '-btn').classList.remove('bg-gray-300');
+            });
+            document.getElementById(section + '-section').classList.remove('hidden');
+            document.getElementById(section + '-btn').classList.add('bg-gray-300');
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred');
-      });
-    }
-  </script>
+        showSection('profile');
+    </script>
 </body>
 </html>
