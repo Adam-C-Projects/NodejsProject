@@ -16,54 +16,120 @@
     <div id="pieChart">
       <canvas id="pie-chart" class="w-96 h-96 pb-3"></canvas>
       <div class="text-center">
-        <h1><%= chartData ? 'Daily Calories: ' + chartData.totalcalories : 'no data for today. Create an entry.' %></h1>
-      </div>
-    </div>
-    <div id="update-createButtons" class="space-y-6 md:w-1/2 w-full">
-      <div id="updateDailyMacros" class="p-3 py-3 max-w-md mx-auto">
-        <form id="updateMacrosForm" class="flex flex-col">
-          <input type="number" name="calories" id="calories" placeholder="Calories" required class="mb-2 border rounded px-2 py-1">
-          <input type="number" name="protein" id="protein" placeholder="Protein" required class="mb-2 border rounded px-2 py-1">
-          <input type="number" name="fats" id="fats" placeholder="Fats" required class="mb-2 border rounded px-2 py-1">
-          <input type="number" name="carbs" id="carbs" placeholder="Carbs" required class="mb-2 border rounded px-2 py-1">
-          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-            Update
-          </button>
-        </form>
-        <form id="createMacrosForm" class="text-center flex flex-col py-4">
-          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-            Create Daily
-          </button>
-        </form>
+        <h1>
+          <%= chartData ? 'Daily Calories: ' + chartData.totalcalories : 'no data for today. Create an entry.' %>
+        </h1>
       </div>
     </div>
   </div>
+
+  <div class="max-w-4xl mx-auto px-6 py-6">
+    <h2 class="text-2xl font-bold mb-4">Add Food Entries</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div class="meal-section bg-gray-50 p-4 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Breakfast</h3>
+        <div class="add-food-button border-2 border-dotted border-gray-400 p-4 my-2 cursor-pointer" onclick="addFoodInput('breakfast')"> + Add Food </div>
+        <div id="breakfast-foods"></div>
+        <button type="button" onclick="submitMeal('breakfast')" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+          Submit
+        </button>
+      </div>
+
+      <div class="meal-section bg-gray-50 p-4 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Lunch</h3>
+        <div class="add-food-button border-2 border-dotted border-gray-400 p-4 my-2 cursor-pointer" onclick="addFoodInput('lunch')">+ Add Food</div>
+        <div id="lunch-foods"></div>
+        <button type="button" onclick="submitMeal('lunch')" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+          Submit
+        </button>
+      </div>
+
+      <div class="meal-section bg-gray-50 p-4 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Dinner</h3>
+        <div class="add-food-button border-2 border-dotted border-gray-400 p-4 my-2 cursor-pointer" onclick="addFoodInput('dinner')">+ Add Food</div>
+        <div id="dinner-foods"></div>
+        <button type="button" onclick="submitMeal('dinner')" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+          Submit
+        </button>
+      </div>
+
+      <div class="meal-section bg-gray-50 p-4 rounded shadow">
+        <h3 class="text-xl font-bold mb-2">Snacks</h3>
+        <div class="add-food-button border-2 border-dotted border-gray-400 p-4 my-2 cursor-pointer" onclick="addFoodInput('snacks')">+ Add Food</div>
+        <div id="snacks-foods"></div>
+        <button type="button" onclick="submitMeal('snacks')" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+          Submit
+        </button>
+      </div>
+    </div>
+
+
+
+  </div>
+
+
+
   <div id="successDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
   <div id="errorDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    window.macroChart=null;
+
     let chartData = <%- JSON.stringify(chartData) %>;
     console.log(chartData);
-    if (chartData) {
-      new Chart(document.getElementById('pie-chart'), {
-        type: 'pie',
-        data: {
-          labels: ['Protein', 'Carbohydrates', 'Fat'],
-          datasets: [{
-            backgroundColor: ['#e53d19', '#3ee519', '#1944e5'],
-            data: [chartData.totalprotein, chartData.totalcarbs, chartData.totalfats]
-          }]
-        },
-        options: {
-          title: {
-            display: true,
-            text: 'Daily Macros Pie Chart'
-          },
-          responsive: true
-        }
-      });
-    }
 
+    window.macroChart = new Chart(document.getElementById('pie-chart'), {
+
+      type: 'pie',
+      data: {
+        labels: ['Protein', 'Carbohydrates', 'Fat'],
+        datasets: [{
+          backgroundColor: ['#e53d19', '#3ee519', '#1944e5'],
+          data: [
+            chartData ? chartData.totalprotein : 0,
+            chartData ? chartData.totalcarbs : 0,
+            chartData ? chartData.totalfats : 0
+          ]
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Daily Macros Pie Chart'
+        },
+        responsive: true
+      }
+    });
+
+    function recalcMacros(){
+      let baseProtein = chartData ? chartData.totalprotein : 0;
+      let baseCarbs   = chartData ? chartData.totalcarbs   : 0;
+      let baseFats    = chartData ? chartData.totalfats    : 0;
+
+      let addedProtein = 0;
+      let addedCarbs   = 0;
+      let addedFats    = 0;
+      //Protein sum
+      document.querySelectorAll("input[name$='_protein[]']").forEach(input => {
+        addedProtein+=parseFloat(input.value) || 0;
+      });
+      //Carb sum
+      document.querySelectorAll("input[name$='_carbs[]']").forEach(input => {
+        addedCarbs+=parseFloat(input.value) || 0;
+      });
+      //Fat sum
+      document.querySelectorAll("input[name$='_fats[]']").forEach(input => {
+        addedFats+=parseFloat(input.value) || 0;
+      });
+      window.macroChart.data.datasets[0].data = [
+        baseProtein + addedProtein,
+        baseCarbs + addedCarbs,
+        baseFats + addedFats
+      ];
+      window.macroChart.update();
+    }
     function showError(message) {
       const errorDropdown = document.getElementById("errorDropdown");
       errorDropdown.innerText = message;
@@ -82,46 +148,64 @@
       }, 3000);
     }
 
-    document.getElementById('createMacrosForm').addEventListener('submit', async function (event) {
-      event.preventDefault();
-      try {
-        const response = await fetch('/macroTracker/insertDailyMacros', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        if (response.ok) {
-          showSuccess('Daily macros created successfully!');
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        } else {
-          const errorMessage = await response.text();
-          showError('Error: ' + errorMessage);
-        }
-      } catch (error) {
-        console.error('Request failed:', error);
-        showError('Could not connect to the server. Please try again.');
-      }
-    });
+    function addFoodInput(mealType){
+    const container= document.getElementById(`${mealType}-foods`);
+    const foodDiv = document.createElement('div');
+    foodDiv.classList.add('food-entry', 'my-2', 'p-2', 'bg-white', 'shadow');
+    foodDiv.innerHTML = `
+    <input type="text" name="${mealType}_food_name[]" placeholder="Food Name" class="border p-1 mr-2" />
+    <input type="number" name="${mealType}_calories[]" placeholder="Calories" class="border p-1 mr-2" />
+        <input type="number" name="${mealType}_protein[]" placeholder="Protein" class="border p-1 mr-2" />
+        <input type="number" name="${mealType}_fats[]" placeholder="Fats" class="border p-1 mr-2" />
+        <input type="number" name="${mealType}_carbs[]" placeholder="Carbs" class="border p-1" />
+    `;
+    container.appendChild(foodDiv);
 
-    document.getElementById('updateMacrosForm').addEventListener('submit', async function (event) {
-      event.preventDefault();
-      const calories = document.getElementById('calories').value;
-      const protein = document.getElementById('protein').value;
-      const fats = document.getElementById('fats').value;
-      const carbs = document.getElementById('carbs').value;
+    foodDiv.querySelectorAll("input[type='number']").forEach(input => {
+      input.addEventListener('input', recalcMacros);
+    });
+    recalcMacros();
+    }
+    async function submitMeal(mealType) {
+      const container = document.getElementById(`${mealType}-foods`);
+      const foodEntries = container.querySelectorAll('.food-entry');
+      if (foodEntries.length === 0) {
+        showError('Please add at least one food entry for ' + mealType);
+        return;
+      }
+      let totalCalories = 0, totalProtein = 0, totalFats = 0, totalCarbs = 0;
+      foodEntries.forEach(entry => {
+        const calories = parseFloat(entry.querySelector(`input[name="${mealType}_calories[]"]`).value) || 0;
+        const protein  = parseFloat(entry.querySelector(`input[name="${mealType}_protein[]"]`).value) || 0;
+        const fats     = parseFloat(entry.querySelector(`input[name="${mealType}_fats[]"]`).value) || 0;
+        const carbs    = parseFloat(entry.querySelector(`input[name="${mealType}_carbs[]"]`).value) || 0;
+        totalCalories += calories;
+        totalProtein  += protein;
+        totalFats     += fats;
+        totalCarbs    += carbs;
+      });
       try {
         const response = await fetch('/macroTracker/updateDailyMacros', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ calories, protein, fats, carbs })
+          body: JSON.stringify({
+            calories: totalCalories,
+            protein: totalProtein,
+            fats: totalFats,
+            carbs: totalCarbs,
+            meal: mealType
+          })
         });
         if (response.ok) {
-          showSuccess('Daily macros updated successfully!');
-          setTimeout(() => {
-            location.reload();
-          }, 3000);
-        } else {
+          const data = await response.json();
+          window.macroChart.data.datasets[0].data = [
+            data.totalprotein,
+            data.totalcarbs,
+            data.totalfats];
+          window.macroChart.update();
+          showSuccess(mealType.charAt(0).toUpperCase() + mealType.slice(1) + ' macros updated successfully!');
+        }
+        else {
           const errorMessage = await response.text();
           showError('Error: ' + errorMessage);
         }
@@ -129,7 +213,8 @@
         console.error('Request failed:', error);
         showError('Could not connect to the server. Please try again.');
       }
-    });
+    }
+
   </script>
 </body>
 </html>

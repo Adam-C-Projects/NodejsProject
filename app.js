@@ -98,7 +98,7 @@ app.use('/recommendation', recommendationRoutes(db));
 app.use('/generateRecipe',generateRecipeRouter(db));
 app.use('/userProfile', profileRouter(db));
 app.use('/macroTracker' , macroTrackerRouter(db));
-app.use('/createRecipes', createRecipesRouter(db));
+
 // Main routes
 
 app.get('/', (req, res) => {
