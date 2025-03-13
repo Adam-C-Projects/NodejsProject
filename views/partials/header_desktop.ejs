@@ -16,7 +16,6 @@
       
       <!-- Desktop User Section -->
       <div class="flex items-center space-x-4">
-        <a href="#" class="px-3 py-2 rounded-lg hover:bg-green-700 transition font-bold">Español</a>
         <div class="relative">
           <% if (username) { %>
             <!-- When logged in, clicking toggles a dropdown -->
@@ -29,7 +28,7 @@
               <a href="/userProfile" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Profile</a>
               <a href="/savedRecipes" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Saved Recipes</a>
               <a href="/macroTracker" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Daily Calories</a>
-              <a href="userProfile/logout" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Logout</a>
+              <a href="/userProfile/logout" class="block px-4 py-2 text-white hover:bg-green-700 active:bg-green-700 transition">Logout</a>
             </div>
             
           <% } else { %>

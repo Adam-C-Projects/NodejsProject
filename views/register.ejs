@@ -20,6 +20,7 @@
     <div class="w-full max-w-md bg-white rounded-2xl text-center p-8 shadow-lg">
       <form id="registerForm" class="space-y-6">
         <h1 class="text-2xl font-bold">Register</h1>
+
         <div class="space-y-4">
           <div class="flex flex-col w-11/12 mx-auto">
             <input type="text" id="username" name="username" placeholder="Username" required
@@ -33,12 +34,31 @@
             <input type="password" id="password" name="password" placeholder="Password" required
               class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
           </div>
+          <div class="flex flex-col w-11/12 mx-auto">
+            <input type="number" id="weight" name="weight" placeholder="Weight (kg)" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+          </div>
+          <div class="flex flex-col w-11/12 mx-auto">
+            <input type="number" id="height" name="height" placeholder="Height (cm)" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+          </div>
+          <div class="flex flex-col w-11/12 mx-auto">
+            <select id="goal" name="goal" required
+              class="w-full h-12 px-4 rounded-full bg-gray-50 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500 text-gray-700">
+              <option value="" disabled selected>Select Goal</option>
+              <option value="Lose Weight">Lose Weight</option>
+              <option value="Maintain">Maintain</option>
+              <option value="Gain Muscle">Gain Muscle</option>
+            </select>
+          </div>
         </div>
+
         <button type="submit"
           class="w-11/12 h-12 mx-auto bg-green-600 text-white rounded-full shadow-md hover:bg-green-700 transition">
           Register
         </button>
       </form>
+
       <p class="text-sm mt-6">
         Already have an account?
         <a href="login" class="text-blue-500 hover:underline">Login here</a>.
@@ -53,47 +73,42 @@
       const username = document.getElementById("username").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      const weight = document.getElementById("weight").value;
+      const height = document.getElementById("height").value;
+      const goal = document.getElementById("goal").value;
 
       function showError(message) {
         const errorDropdown = document.getElementById("errorDropdown");
         errorDropdown.innerText = message;
         errorDropdown.classList.remove("hidden");
-        // Hide the error dropdown after 3 seconds
         setTimeout(() => {
           errorDropdown.classList.add("hidden");
         }, 3000);
       }
 
       try {
-        // Adjust the URL if your router is mounted at a different path.
         const response = await fetch("/register/registerSubmit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password })
+          body: JSON.stringify({ username, email, password, weight, height, goal })
         });
 
         if (response.ok) {
-          window.location.href = "/"; // Redirect on success
-        } 
-        else {
+          window.location.href = "/userProfile"; // Redirect on success
+        } else {
           const errorMessage = await response.text();
           if (response.status === 400) {
             showError("Invalid email format.");
-          } 
-          else if (response.status === 409) {
-            console.log(errorMessage);  
-            if(errorMessage === "User already exists"){
-                showError("Username already exists.");
-              }
-              else if (errorMessage === "Email already exists") {
-                showError("Email already exists.")
-              }
-              else{
-                console.log(errorMessage);  
-                showError("An unexpected error occurred. Please try again.");  
-              }
-          }else {
+          } else if (response.status === 409) {
+            if (errorMessage === "User already exists") {
+              showError("Username already exists.");
+            } else if (errorMessage === "Email already exists") {
+              showError("Email already exists.");
+            } else {
               showError("An unexpected error occurred. Please try again.");
+            }
+          } else {
+            showError("An unexpected error occurred. Please try again.");
           }
         }
       } catch (error) {

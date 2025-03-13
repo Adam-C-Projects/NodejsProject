@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Restaurants</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="text-center p-4 bg-green-500 text-white text-xl font-bold">❤️ Your Favorite Restaurants</header>
+
+    
+    <div class="container mx-auto p-4">
+        <% if (savedRestaurants.length > 0) { %>
+            <ul class="restaurant-list mx-auto max-w-3xl mt-4">
+                <% savedRestaurants.forEach(restaurant => { %>
+                    <li class="restaurant-item bg-white p-4 rounded-lg shadow-md text-left mb-4">
+                        <h2 class="text-xl font-bold"><%= restaurant.restaurant_name %></h2>
+                        <p><strong>Address:</strong> <%= restaurant.address %></p>
+                        <p><strong>Rating:</strong> ⭐ <%= restaurant.rating || "No rating available" %></p>
+                        <p><strong>Price Level:</strong> <%= restaurant.price_level || "Unknown" %></p>
+
+                        <!-- 🔹 Button to Open Restaurant Details Page -->
+                        <a href="/recommendation/restaurantDetails/<%= restaurant.id %>" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 inline-block">
+                            📌 View Details
+                        </a>
+
+                        <!-- 🔹 Remove from Favorites -->
+                        <button class="remove-btn bg-red-500 text-white px-3 py-1 rounded-lg mt-2 inline-block" onclick="removeRestaurant('<%= restaurant.id %>')">❌ Remove</button>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="text-gray-600 text-lg text-center">You haven't saved any restaurants yet.</p>
+        <% } %>
+    </div>
+
+    <!-- 🔹 Back to Homepage Button -->
+    <div class="text-center mt-6">
+        <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded-lg">🏠 Back to Home</a>
+    </div>
+
+    <script>
+        function removeRestaurant(id) {
+            fetch('/recommendation/removeRestaurant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Restaurant removed!");
+                    window.location.reload();
+                } else {
+                    alert("Error removing restaurant.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>

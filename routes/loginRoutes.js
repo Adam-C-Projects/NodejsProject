@@ -3,17 +3,17 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 
 module.exports = (db) => {
-    // This route redirects to login.html
+    // Route to render login page
     router.get('/', (req, res) => {
         res.render('login'); // Render the login view
     });
 
-    // This route handles the redirection to the login page
+    // Redirect to login page if necessary
     router.get('/redirect-login', (req, res) => {
-        res.redirect('/login');  // This redirects to login.html
+        res.redirect('/login');  // Redirect to login
     });
 
-    // This runs when the login form is submitted
+    // Login form submission
     router.post('/submit', (req, res) => {
         const { username, password } = req.body;
 
@@ -38,9 +38,12 @@ module.exports = (db) => {
                         // Store user info in session
                         req.session.username = username;
                         req.session.UID = user.UID;
+                        req.session.user_id = user.UID;
                         req.session.loggedIn = true;
 
-                        // Redirect to homepage
+                        console.log("User logged in. Session data:", req.session);
+
+                        // Redirect to homepage or dashboard
                         res.redirect('/');
                     } else {
                         res.status(401).send('Invalid credentials');
@@ -54,4 +57,3 @@ module.exports = (db) => {
 
     return router;
 };
-

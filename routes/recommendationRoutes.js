@@ -2,7 +2,8 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-module.exports = (db) => {
+module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
+
     router.get("/", (req, res) => {
         const username = req.session?.username || null;
         res.render("RestaurantAdviser", { 
@@ -12,8 +13,9 @@ module.exports = (db) => {
         });
     });
 
+    // ✅ Submit Recipe for Restaurant Recommendations
     router.post('/advisersubmit', async (req, res) => {
-        const { recipeText, filterRating, filterCuisine, filterPrice, filterRestaurantType } = req.body;
+        const { recipeText, filterRating, filterPrice } = req.body;
 
         if (!recipeText || recipeText.trim() === "") {
             return res.status(400).send('Please provide a recipe.');
@@ -36,23 +38,14 @@ module.exports = (db) => {
                 });
             }
 
-            // Apply filters
-            let filteredRecommendations = recommendations.filter(r => r.lat && r.lng); // ✅ Remove restaurants missing location data
+            let filteredRecommendations = recommendations.filter(r => r.lat && r.lng);
 
             if (filterRating) {
                 filteredRecommendations = filteredRecommendations.filter(r => parseFloat(r.rating) >= parseFloat(filterRating));
             }
 
-            if (filterCuisine) {
-                filteredRecommendations = filteredRecommendations.filter(r => r.cuisine.toLowerCase().includes(filterCuisine.toLowerCase()));
-            }
-
             if (filterPrice) {
                 filteredRecommendations = filteredRecommendations.filter(r => r.price_level == filterPrice);
-            }
-
-            if (filterRestaurantType) {
-                filteredRecommendations = filteredRecommendations.filter(r => r.types.includes(filterRestaurantType));
             }
 
             res.render("RestaurantAdviser", { 
@@ -63,17 +56,94 @@ module.exports = (db) => {
         });
     });
 
-    return router;
+    // ✅ Save a Restaurant to Favorites
+    router.post('/saveRestaurant', (req, res) => {
+        if (!req.session || !req.session.user_id) {
+            return res.status(401).send("You must be logged in to save restaurants.");
+        }
+
+        const { name, address, rating, price_level, lat, lng } = req.body;
+        const user_id = req.session.user_id; 
+
+        const sql = `
+            INSERT INTO saved_restaurants (user_id, restaurant_name, address, rating, price_level, lat, lng)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(sql, [user_id, name, address, rating, price_level, lat, lng], (err, result) => {
+            if (err) {
+                console.error("Error saving restaurant:", err);
+                return res.status(500).send("Error saving restaurant.");
+            }
+            res.send({ success: true, message: "Restaurant saved successfully!" });
+        });
+    });
+
+    // ✅ Retrieve Saved Restaurants (Fixed)
+    router.get('/savedRestaurants', (req, res) => {
+        if (!req.session || !req.session.user_id) {
+            return res.status(401).send("You must be logged in to view saved restaurants.");
+        }
+
+        const user_id = req.session.user_id;
+        db.query("SELECT * FROM saved_restaurants WHERE user_id = ?", [user_id], (err, results) => {
+            if (err) {
+                console.error("Error fetching saved restaurants:", err);
+                return res.status(500).send("Error fetching saved restaurants.");
+            }
+            res.render("SavedRestaurants", { savedRestaurants: results });
+        });
+    });
+
+    // ✅ Remove a Restaurant from Favorites (Fixed)
+    router.post('/removeRestaurant', (req, res) => {
+        if (!req.session || !req.session.user_id) {
+            return res.status(401).send("You must be logged in to remove restaurants.");
+        }
+
+        const { id } = req.body;
+        db.query("DELETE FROM saved_restaurants WHERE id = ?", [id], (err, result) => {
+            if (err) {
+                console.error("Error removing restaurant:", err);
+                return res.status(500).send("Error removing restaurant.");
+            }
+            res.send({ success: true, message: "Restaurant removed successfully!" });
+        });
+    });
+
+    // ✅ Fetch Details of a Specific Saved Restaurant (Fixed)
+    router.get('/restaurantDetails/:id', (req, res) => {
+        if (!req.session || !req.session.user_id) {
+            return res.status(401).send("You must be logged in to view restaurant details.");
+        }
+
+        const restaurant_id = req.params.id;
+        const user_id = req.session.user_id;
+
+        db.query("SELECT * FROM saved_restaurants WHERE id = ? AND user_id = ?", [restaurant_id, user_id], (err, results) => {
+            if (err) {
+                console.error("Error fetching restaurant details:", err);
+                return res.status(500).send("Error fetching restaurant details.");
+            }
+
+            if (results.length === 0) {
+                return res.status(404).send("Restaurant not found.");
+            }
+
+            res.render("RestaurantDetails", { restaurant: results[0] });
+        });
+    });
+
+    return router; // ✅ Ensures the router is returned properly
 };
 
-// ✅ Extract Ingredients Function
+// ✅ Extract Key Ingredients
 function extractKeyIngredients(recipeText) {
     return recipeText.toLowerCase().replace(/[^a-z\s]/g, "").split(" ").filter(word => word.length > 2);
 }
 
 // ✅ Fetch Restaurant Data from Google Places API
 function fetchRestaurantRecommendations(ingredients, callback) {
-    const GOOGLE_API_KEY = "AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo"; // Replace with your actual API key
+    const GOOGLE_API_KEY = "AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo"; 
     const GOOGLE_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
 
     if (!Array.isArray(ingredients) || ingredients.length === 0) {
@@ -92,14 +162,12 @@ function fetchRestaurantRecommendations(ingredients, callback) {
 
         const results = response.data.results.map((place) => ({
             name: place.name,
-            cuisine: place.types.includes("restaurant") ? "Restaurant" : "Unknown",
             address: place.formatted_address,
             rating: place.rating || "No rating available",
             price_level: place.price_level || "Unknown",
-            types: place.types || [],
-            lat: place.geometry?.location?.lat || null,  // ✅ Ensure lat exists
-            lng: place.geometry?.location?.lng || null  // ✅ Ensure lng exists
-        })).filter(place => place.lat !== null && place.lng !== null); // ✅ Filter out invalid locations
+            lat: place.geometry?.location?.lat || null,  
+            lng: place.geometry?.location?.lng || null  
+        })).filter(place => place.lat !== null && place.lng !== null);
 
         callback(null, results);
     })
