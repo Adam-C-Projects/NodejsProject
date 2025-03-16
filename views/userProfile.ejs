@@ -93,11 +93,9 @@
 
             <!-- Add Friend Section -->
             <div id="add-section" class="hidden p-3">
-                <form action="/userProfile/sendFriendRequest" method="post" class="flex flex-col">
-                    <label for="receivingUsername" class="text-xl font-bold mb-2">Add Friend:</label>
-                    <input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
-                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">Send Request</button>
-                </form>
+                <label for="receivingUsername" class="text-xl font-bold mb-2">Add Friend:</label>
+                <input type="text" name="receivingUsername" id="receivingUsername" placeholder="Username" class="mb-2 border rounded px-2 py-1">
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"onclick="sendRequest(document.getElementById('receivingUsername').value)">Send Request</button>
             </div>
 
             <!-- Followers and Following Section -->
@@ -106,7 +104,9 @@
                 <% if (following && following.length > 0) { %>
                     <ul class="list-disc list-inside">
                         <% following.forEach(user => { %>
-                            <li><%= user.username %></li>
+                            <li>
+                                <%= user.username %> <a href="/savedRecipes/<%= user.username %>" class="text-blue-500 hover:underline">Saved Recipes</a>
+                            </li>
                         <% }); %>
                     </ul>
                 <% } else { %>
@@ -147,6 +147,8 @@
             </div>
         </main>
     </div>
+    <div id="errorDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
+    <div id="successDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
     <aside class="w-1/4 pl-4 pt-4 bg-gray-200 flex flex-col items-center">
         <!-- Profile Picture on Sidebar -->
         <div class="w-16 h-16 mb-2">
@@ -172,6 +174,91 @@
             document.getElementById(section + '-btn').classList.add('bg-gray-300');
         }
         showSection('profile');
+
+        function acceptRequest(fromUserId) {
+            fetch('/userProfile/acceptFriendRequest', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ fromUserId }),
+            })
+            .then(response => {
+                // Check if the response is JSON before parsing it
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();
+                } else {
+                    return response.text(); // fallback if response isn't JSON
+                }
+            })
+            .then(data => {
+                // If the data is a string, it's probably an error message
+                if (typeof data === 'string') {
+                    alert('Error: ' + data);
+                } else if (data.status === 'success') {
+                    showSuccess();
+                    location.reload();
+                    
+                } else {
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending friend request:', error);
+                alert('An error occurred while sending the friend request.');
+            });
+        }
+        function sendRequest(receivingUsername) {
+            fetch('/userProfile/sendFriendRequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ receivingUsername: receivingUsername }),
+            })
+            .then(response => {
+                // Check if the response is JSON before parsing it
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();
+                } else {
+                    return response.text(); // fallback if response isn't JSON
+                }
+            })
+            .then(data => {
+                // If the data is a string, it's probably an error message
+                if (typeof data === 'string') {
+                    alert('Error: ' + data);
+                } else if (data.status === 'success') {
+                    showSuccess();
+                    document.getElementById("receivingUsername").value = "";
+                } else {
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending friend request:', error);
+                alert('An error occurred while sending the friend request.');
+            });
+        }
+
+        function showError(message) {
+                const errorDropdown = document.getElementById("errorDropdown");
+                errorDropdown.innerText = message;
+                errorDropdown.classList.remove("hidden");
+                setTimeout(() => {
+                errorDropdown.classList.add("hidden");
+                }, 3000);
+            }
+        function showSuccess(){
+            const successDropdown = document.getElementById("successDropdown");
+            successDropdown.innerText = 'friend request sent!';
+            successDropdown.classList.remove("hidden");
+            setTimeout(() => {
+            successDropdown.classList.add("hidden");
+            }, 3000);
+        }
     </script>
 </body>
 </html>
