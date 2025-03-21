@@ -126,7 +126,7 @@ function renderRecipe(recipe, index) {
                     <ul class="list-disc list-inside text-sm text-gray-600">
                         <li>Protein: ${recipe.macros.protein}g</li>
                         <li>total Fat: ${recipe.macros.total_fat}g</li>
-                        <li>Saturated Fat: ${recipe.macros.saturated_fat}</li>
+                        <li>Saturated Fat: ${recipe.macros.saturated_fat}g</li>
                         <li>Sugar: ${recipe.macros.sugar}g</li>
                         <li>Sodium: ${recipe.macros.sodium}g</li>
                     </ul>
