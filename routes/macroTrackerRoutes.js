@@ -8,28 +8,8 @@ module.exports = (db) => {
     router.get('/', async (req, res) => {
         const UID = req.session.UID;
         const username = req.session.username;
-        const today = new Date().toISOString().split("T")[0]; // Get today's date
-        let rows = await query(
-        `SELECT totalcalories,
-                totalprotein,
-                totalfats,
-                totalcarbs,
-                breakfastCalories,
-                breakfastProtein,
-                breakfastFats,
-                breakfastCarbs,
-                lunchCalories,
-                lunchProtein,
-                lunchFats,
-                lunchCarbs,
-                dinnerCalories,
-                dinnerProtein,
-                dinnerFats,
-                dinnerCarbs
-        FROM dailymacros
-        WHERE UID = ? AND date = ?`,
-        [UID, today]
-        );
+        const date = req.query.date || new Date().toISOString().split("T")[0];
+
         if (!UID) {
             return res.status(400).json({error: "Missing UID"});
         }
@@ -54,7 +34,7 @@ module.exports = (db) => {
                         dinnerCarbs
                  FROM dailymacros
                  WHERE UID = ? AND date = ?`,
-                [UID, today]
+                [UID, date]
             );
 
             //Create query
@@ -66,9 +46,9 @@ module.exports = (db) => {
                       lunchCalories, lunchProtein, lunchFats, lunchCarbs,
                       dinnerCalories, dinnerProtein, dinnerFats, dinnerCarbs)
                      VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)`,
-                    [today, UID]
+                    [date, UID]
                 );
-                //REtreive new query
+                //Retreive new query
                 rows = await query(
                     `SELECT totalcalories,
                             totalprotein,
@@ -92,7 +72,7 @@ module.exports = (db) => {
                             snacksCarbs
                      FROM dailymacros
                      WHERE UID = ? AND date = ?`,
-                    [UID, today]
+                    [UID, date]
                 );
             }
             const chartData = rows[0];

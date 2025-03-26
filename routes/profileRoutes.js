@@ -86,7 +86,7 @@ module.exports = (db) => {
                 [UID, "confirmed"]
             );
 
-            //if two users are following echother make sure the correct entry is used.
+            // If two users are following eachother make sure the correct entry is used.
             const filteredFollowing = following.filter(user => user.toUserId !== UID);
             const filteredFollowers = followers.filter(user => user.fromUserId !== UID);
 
