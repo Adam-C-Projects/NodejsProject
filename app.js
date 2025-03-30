@@ -24,7 +24,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     cookie: {
-        maxAge: 6000 * 60,
+        maxAge: 900000 * 60, // 1500 * 60,
         signed: true,
     },
 }));
@@ -37,31 +37,6 @@ app.use((req, res, next) => {
     res.locals.isMobile = /Mobi|Android|iPhone|iPad|iPod|Kindle|Silk/i.test(ua);
     next();
   });
-// Set up multer
-/*const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    }
-    filename: (req, file, cb) => {
-        cb(null, 'avatar_' + req.UID + path.extname(file.originalname)); // Save as avatar_<UID>
-    }
-})
-
-const upload = multer({
-    storage: storage,
-    limits: { filesize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        const allowed = /jpeg|jpg|png/;
-        const extension = allowed.test(path.extname(file.originalname).toLowerCase());
-        const mimeType = allowed.test(file.mimetype);
-
-        if (extension && mimeType) {
-            return cb(null, true);
-        } else {
-            cb(new Error('Only .jpeg, .jpg, and .png files can be uploaded!'));
-        }
-    }
-})*/
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 //upload image profile
 
