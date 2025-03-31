@@ -15,10 +15,7 @@
     <%- include('partials/header_desktop') %>
   <% } %>
 
-<!-- Temporary Manual recipe creation -->
   <main class="w-full max-w-screen-xl mx-auto px-6 py-8">
-
-
   <!-- Generated Recipe -->
   <section class="mb-8">
     <div class="text-center mb-8">
@@ -53,10 +50,10 @@
       </div>
     </div>
     </section>
-    <!--Manual Recipe Creation-->
-    <section id="manual-edit-form" class="bg-white p-6 rounded-lg shadow-md mb-8 hidden">
-      <h2 class="text-2xl font-bold mb-4">Edit Recipe</h2>
-      <form action="/createRecipes" method="POST" id="edit-recipe-form" class="space-y-4">
+    <!-- manual recipe -->
+    <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+      <h2 class="text-2xl font-bold mb-4">Create Recipe Manually</h2>
+      <form action="/createRecipes" method="POST" class="space-y-4">
         <div>
           <label for="recipeName" class="block text-lg font-medium text-gray-700">Recipe Name</label>
           <input type="text" name="recipeName" id="recipeName" required class="mt-1 block w-full px-4 py-2 border rounded-md">
