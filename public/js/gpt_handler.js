@@ -104,15 +104,15 @@ async function callOpenAI(ingredients) {
     }
 }
 function renderRecipe(recipe, index) {
-    
+
     //really annoying to deal with would be great if we could move this functionality into ejs
     const isMobile = window.innerWidth < 768;
     const recipeText = `
         <div data-id="${index}" class="bg-gray-100 shadow-md rounded-lg relative w-full mx-auto md:mx-0 mb-6 pt-2 pl-2">
-            ${isMobile 
-                ? `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md mb-4 ml-4"/>`
-                : `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md absolute top-2 right-2" />`
-            }
+            ${isMobile
+        ? `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md mb-4 ml-4"/>`
+        : `<img src="${recipe.image}" alt="Image for ${recipe.title}" class="w-64 h-64 object-cover rounded-lg shadow-md absolute top-2 right-2" />`
+    }
             <div class="p-4">
                 <h3 class="text-2xl font-bold">${recipe.title}</h3>
                 <div class="py-2">
@@ -175,11 +175,11 @@ function renderRecipe(recipe, index) {
     return recipeDiv;
 }
 async function generateRecipe() {
-    
+
     document.getElementById("loading-indicator").classList.remove("hidden");
     document.getElementById("recipe-gen-text").classList.add("hidden");
     document.getElementById("recipe-text").classList.add("hidden");
-    
+
     const ingredients= document.getElementById("ingredients-input").value;
     const recipeCount=parseInt(document.getElementById("recipeCount").value, 10);
     const recipeOutput= document.getElementById("recipe-text");
@@ -193,8 +193,9 @@ async function generateRecipe() {
         recipeOutput.appendChild(recipeCard);
     }
     document.getElementById("loading-indicator").classList.add("hidden");
-    document.getElementById("recipe-gen-text").classList.remove("hidden"); 
-    document.getElementById("recipe-text").classList.remove("hidden");     
+    document.getElementById("recipe-gen-text").classList.remove("hidden");
+    document.getElementById("recipe-text").classList.remove("hidden");
 }
+
 
 
