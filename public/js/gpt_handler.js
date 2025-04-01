@@ -21,7 +21,7 @@ async function generateImage(recipe) {
             Authorization: `Bearer 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`,
         };
         const apiBody = {
-            prompt: `Generate an image for the following recipe: ${recipe.title}.}`,
+            prompt: `Generate an image for the following recipe: ${recipe.title}.`,
             n: 1,
             size: "512x512",
         };
@@ -52,7 +52,7 @@ function checkAllergens(recipe){
         });
     });
 }
-async function callOpenAI(ingredients) {
+async function callOpenAI(ingredients, title ="") {
     const apiUrl = "https://api.openai.com/v1/chat/completions";
     const apiHeaders = {
         "Content-Type": "application/json",
@@ -63,10 +63,13 @@ async function callOpenAI(ingredients) {
         model: "ft:gpt-3.5-turbo-0125:personal::BDYdTVdf",
         messages: [
             { role: "system", content: "You are a chef who creates recipes based on a list of ingredients. Please return a JSON object with the following structure: {title, ingredients[], instructions[], macros: {total_fat, sugar, sodium, protein, saturated_fat}, calories, diet, allergies[], cookTime, servings}. Don't leave any field undefined or null." },
-            { role: "user", content: `Generate a recipe for these ingredients: ${ingredients}` },
+            { role: "user",
+                content: title
+                    ? `Generate a recipe titled "${title}" using these ingredients: ${ingredients}. You can add more ingredients if needed to complete the dish.`
+                    : `Generate a recipe using these ingredients: ${ingredients}. You can add more ingredients if needed to complete the dish.`,},
         ],
     };
-    const maxRetries = 5; //Max retries
+    const maxRetries = 3; //Max retries
     let attempt = 0;
 
     while (attempt < maxRetries) {
@@ -96,13 +99,20 @@ async function callOpenAI(ingredients) {
         } catch (error) {
             console.error("Error parsing or fetching recipe, attempt:", attempt + 1, error);
             attempt++;
+            await sleep(1000*attempt);
             if (attempt >= maxRetries) {
                 console.error("Max retries reached, failed to get valid JSON.");
                 throw new Error("Failed to generate a valid recipe after multiple attempts");
             }
+            const delay = Math.pow(2, attempt)*500;
+            await sleep(delay);
         }
     }
 }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function renderRecipe(recipe, index) {
 
     //really annoying to deal with would be great if we could move this functionality into ejs
@@ -141,7 +151,7 @@ function renderRecipe(recipe, index) {
                         <input type="hidden" name="diet" value='${JSON.stringify(recipe.instructions)}'>
                         <input type="hidden" name="allergies" value='${JSON.stringify(recipe.allergies) || "[]"}'>
                         <input type="hidden" name="macros" value='${JSON.stringify(recipe.macros)}'>
-                        <input type="hidden" name="calories" value='${JSON.stringify(recipe.total_calories)}'>
+                        <input type="hidden" name="calories" value='${JSON.stringify(recipe.calories)}'>
                         <input type="hidden" name="cookingTime" value="${recipe.cookTime || '0'}">
                         <input type="hidden" name="image" value="${recipe.image}">
                         <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full md:w-auto">
@@ -186,16 +196,54 @@ async function generateRecipe() {
 
     recipeOutput.innerHTML = "";
     for (let i = 0;i < recipeCount; i++) {
-        const recipe = await callOpenAI(ingredients);
-        const imageUrl = await generateImage(recipe); // Generate the image
-        recipe.image = imageUrl;
-        const recipeCard = renderRecipe(recipe, i);
-        recipeOutput.appendChild(recipeCard);
+        try {
+            const recipe = await callOpenAI(ingredients, title);
+            const imageUrl = await generateImage(recipe);
+            recipe.image = imageUrl;
+            const recipeCard = renderRecipe(recipe, i);
+            recipeOutput.appendChild(recipeCard);
+        }catch (error){
+            console.error("Failed to autofill recipe:", error);
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "text-red-500 mb-4";
+            errorDiv.innerText = "Failed to autofill recipe.";
+            recipeOutput.appendChild(errorDiv);
+        }
     }
     document.getElementById("loading-indicator").classList.add("hidden");
     document.getElementById("recipe-gen-text").classList.remove("hidden");
     document.getElementById("recipe-text").classList.remove("hidden");
-}
+
+}document.getElementById("autoFillButton").addEventListener("click", async () => {
+    const name = document.getElementById("autoRecipeName").value.trim();
+    const ingredients = document.getElementById("autoIngredients").value.trim();
+    const title = document.getElementById("title-input").value;
+
+    if (!name && !ingredients) {
+        alert("Please enter at least a recipe name or some ingredients.");
+        return;
+    }
+
+    try {
+        const recipe = await callOpenAI(ingredients || name);
+
+        document.getElementById("autoDiet").value = recipe.diet || "";
+        document.getElementById("autoAllergies").value = (recipe.allergies || []).join(", ");
+        document.getElementById("autoMacros").value = recipe.macros
+            ? `${recipe.macros.protein}g protein, ${recipe.macros.total_fat}g fat`
+            : "";
+        document.getElementById("autoCookTime").value = recipe.cookTime || "";
+        document.getElementById("autoInstructions").value = (recipe.instructions || []).join("\n");
+        document.getElementById("autoCalories").value = recipe.calories || "";
+        document.getElementById("autoImage").value = recipe.image || "";
+        document.getElementById("autoFilledFields").classList.remove("hidden");
+
+    } catch (error) {
+        alert("Failed to auto-fill recipe. Try again.");
+        console.error(error);
+    }
+});
+
 
 
 
