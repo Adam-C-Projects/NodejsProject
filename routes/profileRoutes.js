@@ -1,3 +1,4 @@
+//Required modules
 const express = require("express");
 const router = express.Router();
 const util = require("util");
@@ -19,7 +20,7 @@ module.exports = (db) => {
             cb(null, `profile_${req.session.UID}${path.extname(file.originalname)}`);
         }
     });
-
+    //Multer instance with file size
     const upload = multer({
         storage: storage,
         limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
@@ -35,7 +36,7 @@ module.exports = (db) => {
         }
     });
 
-    //  Fetch User Profile
+    //Fetch User Profile
     router.get("/", async (req, res) => {
         if (!req.session.UID) {
             return res.status(401).send("You must be logged in to view your profile.");

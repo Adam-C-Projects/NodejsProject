@@ -1,10 +1,13 @@
+//Import required modules
 const express = require("express");
 const router = express.Router();
 const util = require("util");
 
 module.exports = (db) => {
 
+    //Promisift db.query to use async/await
     const query = util.promisify(db.query.bind(db));
+    //GET router for viewing macro tracker
     router.get('/', async (req, res) => {
         const UID = req.session.UID;
         const username = req.session.username;
@@ -15,6 +18,7 @@ module.exports = (db) => {
         }
 
         try {
+            //Attempt to get existing macro data
             let rows = await query(
                 `SELECT totalcalories,
                         totalprotein,
@@ -37,7 +41,7 @@ module.exports = (db) => {
                 [UID, date]
             );
 
-            //Create query
+            //If no rows exist, insert a new row with zeroes
             if (rows.length === 0) {
                 await query(
                     `INSERT INTO dailymacros
@@ -48,28 +52,10 @@ module.exports = (db) => {
                      VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)`,
                     [date, UID]
                 );
-                //Retreive new query
+                //Retrieve new query with snack columns
                 rows = await query(
-                    `SELECT totalcalories,
-                            totalprotein,
-                            totalfats,
-                            totalcarbs,
-                            breakfastCalories,
-                            breakfastProtein,
-                            breakfastFats,
-                            breakfastCarbs,
-                            lunchCalories,
-                            lunchProtein,
-                            lunchFats,
-                            lunchCarbs,
-                            dinnerCalories,
-                            dinnerProtein,
-                            dinnerFats,
-                            dinnerCarbs,
-                            snacksCalories,
-                            snacksProtein,
-                            snacksFats,
-                            snacksCarbs
+                    `SELECT totalcalories, totalprotein, totalfats, totalcarbs, breakfastCalories, breakfastProtein, breakfastFats, breakfastCarbs, lunchCalories, lunchProtein,
+                    lunchFats, lunchCarbs, dinnerCalories, dinnerProtein, dinnerFats, dinnerCarbs, snacksCalories, snacksProtein, snacksFats, snacksCarbs
                      FROM dailymacros
                      WHERE UID = ? AND date = ?`,
                     [UID, date]
@@ -83,6 +69,7 @@ module.exports = (db) => {
         }
     });
 
+    //POST route to insert a new day entry
     router.post("/insertDailyMacros", async (req, res) => {
         const UID = req.session.UID;
         if (!UID) {
@@ -92,7 +79,7 @@ module.exports = (db) => {
         const today = new Date().toISOString().split("T")[0]; // Get today's date
 
         try {
-            //Check if row for today esists
+            //Prevent duplicate entries for the same day
             const existing = await query(
                 "SELECT 1 FROM dailymacros WHERE date = ? AND UID = ? LIMIT 1",
                 [today, UID]
@@ -102,7 +89,7 @@ module.exports = (db) => {
                 return res.status(400).send("Today's entry already exists");
             }
 
-            //Insert new daily macros
+            //Insert a new row with zeroed values
             await query(
                 `INSERT INTO dailymacros
                  (date, UID, totalcalories, totalprotein, totalfats, totalcarbs,
@@ -122,6 +109,7 @@ module.exports = (db) => {
         }
     });
 
+    //POST route to update macros for specific meal
     router.post("/updateDailyMacros", async (req, res) => {
         console.log(req.body);
         const calories = parseInt(req.body.calories, 10);
@@ -132,11 +120,13 @@ module.exports = (db) => {
         const UID = req.session.UID;
         const today = new Date().toISOString().split("T")[0];
 
+        //Validate input
         if (!meal || !["breakfast", "lunch", "dinner", "snacks"].includes(meal)) {
             return res.status(400).send("Invalid meal specified");
         }
 
         try {
+            //Fetch existing macro data for current day
             const sql = `SELECT totalcalories,
                                 totalprotein,
                                 totalfats,
@@ -176,6 +166,7 @@ module.exports = (db) => {
             let updateQuery;
             let params;
 
+            //Handle updates based on which meal is being logged
             if (meal === "breakfast") {
                 const updatedBreakfastCalories = current.breakfastCalories + calories;
                 const updatedBreakfastProtein = current.breakfastProtein + protein;
@@ -250,6 +241,8 @@ module.exports = (db) => {
                     updatedSnacksCalories, updatedSnacksProtein, updatedSnacksFats, updatedSnacksCarbs,
                     UID, today];
             }
+
+            //Run the updated totals
             await query(updateQuery, params);
             return res.status(201).json({
                 totalcalories: updatedCalories,
