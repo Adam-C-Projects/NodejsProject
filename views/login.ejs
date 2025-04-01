@@ -15,12 +15,13 @@
   <!-- Login widget centered with flexbox -->
   <div class="flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md bg-white rounded-2xl text-center p-8 shadow-lg">
-      <form class="space-y-6" action="/login/submit" method="POST">
+      <form id="loginform" class="space-y-6">
         <h1 class="text-2xl font-bold">Login</h1>
         <div class="space-y-4">
           <div class="flex items-center w-11/12 h-12 mx-auto">
             <input
               type="text"
+              id="username"
               name="username"
               placeholder="Username"
               required
@@ -30,6 +31,7 @@
           <div class="flex items-center w-11/12 h-12 mx-auto">
             <input
               type="password"
+              id="password"
               name="password"
               placeholder="Password"
               required
@@ -50,5 +52,50 @@
       </p>
     </div>
   </div>
+  <div id="errorDropdown" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg transition-all duration-300"></div>
+  <script>
+    document.getElementById("loginform").addEventListener("submit", async function (event) {
+      event.preventDefault(); // Prevent full-page reload
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      
+
+      function showError(message) {
+        const errorDropdown = document.getElementById("errorDropdown");
+        errorDropdown.innerText = message;
+        errorDropdown.classList.remove("hidden");
+        setTimeout(() => {
+          errorDropdown.classList.add("hidden");
+        }, 3000);
+      }
+
+      try {
+        const response = await fetch("/login/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password})
+        });
+
+        if (response.ok) {
+          window.location.href = "/userProfile"; // Redirect on success
+        } else {
+          const errorMessage = await response.text();
+          if (response.status === 401) {
+            showError(errorMessage);
+          } 
+          else if(response.status === 402){
+            showError(errorMessage); 
+          }
+          else {
+            showError("An unexpected error occurred. Please try again.");
+          }
+        }
+      } catch (error) {
+        console.error("Request failed:", error);
+        showError("Could not connect to the server. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>

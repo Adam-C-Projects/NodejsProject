@@ -31,7 +31,7 @@ module.exports = (db) => {
                 bcrypt.compare(password, user.password_hash, (err, isMatch) => {
                     if (err) {
                         console.error('Error comparing passwords: ', err);
-                        return res.status(500).send('Error comparing passwords');
+                        return res.status(500).send('database error');
                     }
 
                     if (isMatch) {
@@ -46,7 +46,7 @@ module.exports = (db) => {
                         // Redirect to homepage or dashboard
                         res.redirect('/');
                     } else {
-                        res.status(401).send('Invalid credentials');
+                        res.status(402).send('invalid password');
                     }
                 });
             } else {
