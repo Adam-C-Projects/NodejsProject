@@ -127,6 +127,7 @@
         function initMap() {
             console.log("Google Maps is initializing...");
 
+            //Initialize map with default location, Canterbury
             window.map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
                 center: { lat: 51.2802, lng: 1.0789 } // Default center (Canterbury, UK)
@@ -134,17 +135,20 @@
 
             let restaurants;
             try {
+                //Parse restaurant data from backend
                 restaurants = <%- JSON.stringify(recipes) %>;
             } catch (error) {
                 console.error("Error parsing restaurant data:", error);
                 restaurants = [];
             }
 
+            //If no data, do not proceed
             if (!restaurants || restaurants.length === 0) {
                 console.warn("No restaurant data available.");
                 return;
             }
 
+            //Add map markers for each restaurant
             restaurants.forEach(restaurant => {
                 if (restaurant.lat && restaurant.lng) {
                     const marker = new google.maps.Marker({
@@ -153,6 +157,7 @@
                         title: restaurant.name
                     });
 
+                    //Show restaurant info on marker click
                     const infoWindow = new google.maps.InfoWindow({
                         content: `<div><h3>${restaurant.name}</h3><p>${restaurant.address}</p><p>⭐ ${restaurant.rating}</p></div>`
                     });
@@ -168,6 +173,7 @@
 
         window.initMap = initMap;
 
+        //Function to post saved restaurant to server
         function saveRestaurant(name, address, rating, price_level, lat, lng) {
             fetch('/recommendation/saveRestaurant', {
                 method: 'POST',
@@ -185,6 +191,7 @@
             .catch(error => console.error("Error:", error));
         }
 
+        //Make initMap available for Google Maps callback
         function goBack() {
             window.history.back();
         }

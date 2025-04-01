@@ -67,9 +67,11 @@
   </div>
 
   <script>
+    //Attach submit handdler to the form
     document.getElementById("registerForm").addEventListener("submit", async function (event) {
       event.preventDefault(); // Prevent full-page reload
 
+      //Grab form field values
       const username = document.getElementById("username").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -77,6 +79,7 @@
       const height = document.getElementById("height").value;
       const goal = document.getElementById("goal").value;
 
+      //Utility function to display an error dropdown
       function showError(message) {
         const errorDropdown = document.getElementById("errorDropdown");
         errorDropdown.innerText = message;
@@ -87,12 +90,14 @@
       }
 
       try {
+        //Send registration data
         const response = await fetch("/register/registerSubmit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password, weight, height, goal })
         });
 
+        //If registration successful, redirect to profile
         if (response.ok) {
           window.location.href = "/userProfile"; // Redirect on success
         } else {

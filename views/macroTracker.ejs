@@ -12,12 +12,14 @@
   <% } else { %>
     <%- include('partials/header_desktop') %>
   <% } %>
+  <!--Calendar section-->
   <div class="mx-auto w-full max-w-md p-4 bg-white shadow-md rounded-lg">
         <div class="flex items-center justify-between mb-4">
             <button id="prevMonth" class="px-2 py-1 text-gray-700 bg-gray-200 rounded"><</button>
             <h2 id="monthYear" class="text-lg font-semibold"></h2>
             <button id="nextMonth" class="px-2 py-1 text-gray-700 bg-gray-200 rounded">></button>
         </div>
+      <--Days of the week-->
         <div class="grid grid-cols-7 gap-2 text-center">
             <div class="font-semibold">Mon</div>
             <div class="font-semibold">Tue</div>
@@ -38,6 +40,7 @@
 
         let currentDate = new Date();
 
+        //Render calendar view based on current date
         function renderCalendar() {
             calendarDays.innerHTML = "";
             let year = currentDate.getFullYear();
@@ -58,6 +61,7 @@
                 calendarDays.innerHTML += `<div></div>`;
             }
 
+            //Fill day cells with click redirection
             for (let day = 1; day <= lastDay; day++) {
               const dayCell = document.createElement('div');
               dayCell.classList.add('p-2', 'rounded', 'bg-gray-200', 'cursor-pointer');
@@ -72,6 +76,7 @@
             }
         }
 
+        //Navigation button event handlers
         prevMonth.addEventListener("click", () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -84,7 +89,8 @@
 
         renderCalendar();
     </script>
-  </div>
+
+  <!--Pie chart display for daily macros -->
   <div id="container-div" class="flex flex-col md:flex-row items-center justify-center p-6 ">
     <div id="pieChart">
       <canvas id="pie-chart" class="w-96 h-96 pb-3"></canvas>
@@ -145,9 +151,11 @@
   <script>
     window.macroChart=null;
 
+    //Inject data from backend
     let chartData = <%- JSON.stringify(chartData) %>;
     console.log(chartData);
 
+    //Initialize pie chart
     window.macroChart = new Chart(document.getElementById('pie-chart'), {
 
       type: 'pie',
@@ -171,6 +179,7 @@
       }
     });
 
+    //Recalculate chart macros from added inputs
     function recalcMacros(){
       let baseProtein = chartData ? chartData.totalprotein : 0;
       let baseCarbs   = chartData ? chartData.totalcarbs   : 0;
@@ -198,6 +207,8 @@
       ];
       window.macroChart.update();
     }
+
+    //Show error dropdown
     function showError(message) {
       const errorDropdown = document.getElementById("errorDropdown");
       errorDropdown.innerText = message;
@@ -207,6 +218,7 @@
       }, 3000);
     }
 
+    //Show success dropdown
     function showSuccess(message) {
       const successDropdown = document.getElementById("successDropdown");
       successDropdown.innerText = message;
@@ -216,6 +228,7 @@
       }, 3000);
     }
 
+    //Add input fields for a meal
     function addFoodInput(mealType){
     const container= document.getElementById(`${mealType}-foods`);
     const foodDiv = document.createElement('div');
@@ -234,6 +247,8 @@
     });
     recalcMacros();
     }
+
+    //Submit meal data to server
     async function submitMeal(mealType) {
       const container = document.getElementById(`${mealType}-foods`);
       const foodEntries = container.querySelectorAll('.food-entry');
@@ -242,6 +257,7 @@
         return;
       }
       let totalCalories = 0, totalProtein = 0, totalFats = 0, totalCarbs = 0;
+      //Aggregate totals from input fields
       foodEntries.forEach(entry => {
         const calories = parseFloat(entry.querySelector(`input[name="${mealType}_calories[]"]`).value) || 0;
         const protein  = parseFloat(entry.querySelector(`input[name="${mealType}_protein[]"]`).value) || 0;
@@ -252,6 +268,7 @@
         totalFats     += fats;
         totalCarbs    += carbs;
       });
+      //Submit via fetch to server
       try {
         const response = await fetch('/macroTracker/updateDailyMacros', {
           method: 'POST',
@@ -264,6 +281,7 @@
             meal: mealType
           })
         });
+        //Handle server response
         if (response.ok) {
           const data = await response.json();
           window.macroChart.data.datasets[0].data = [
