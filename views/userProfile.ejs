@@ -164,6 +164,7 @@
     </aside>
     
     <script>
+        //Toggle which section is visible
         function showSection(section) {
             const sections = ['profile', 'following', 'followers', 'pending', 'add'];
             sections.forEach(sec => {
@@ -175,6 +176,7 @@
         }
         showSection('profile');
 
+        //Accept a friend request
         function acceptRequest(fromUserId) {
             fetch('/userProfile/acceptFriendRequest', {
                 method: 'POST',
@@ -209,6 +211,7 @@
                 alert('An error occurred while sending the friend request.');
             });
         }
+        //Sends a new friend request
         function sendRequest(receivingUsername) {
             fetch('/userProfile/sendFriendRequest', {
                 method: 'POST',
@@ -243,6 +246,7 @@
             });
         }
 
+        //Display error popup
         function showError(message) {
                 const errorDropdown = document.getElementById("errorDropdown");
                 errorDropdown.innerText = message;
@@ -250,7 +254,9 @@
                 setTimeout(() => {
                 errorDropdown.classList.add("hidden");
                 }, 3000);
-            }
+        }
+
+        //Display success popup
         function showSuccess(){
             const successDropdown = document.getElementById("successDropdown");
             successDropdown.innerText = 'friend request sent!';

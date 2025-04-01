@@ -9,13 +9,13 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-gray-100">
-  <% if (isMobile) { %>
-    <%- include('partials/header_mobile') %>
-  <% } else { %>
-    <%- include('partials/header_desktop') %>
-  <% } %>
+<% if (isMobile) { %>
+  <%- include('partials/header_mobile') %>
+<% } else { %>
+  <%- include('partials/header_desktop') %>
+<% } %>
 
-  <main class="w-full max-w-screen-xl mx-auto px-6 py-8">
+<main class="w-full max-w-screen-xl mx-auto px-6 py-8">
   <!-- Generated Recipe -->
   <section class="mb-8">
     <div class="text-center mb-8">
@@ -25,17 +25,33 @@
       <p class="mt-2 text-lg sm:text-xl text-gray-600">
         We can find you available recipes based on your input.
       </p>
-      <div class="mt-4 flex flex-col sm:flex-row justify-center items-center">
-        <textarea id="ingredients-input" class="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:outline-none" rows="3" placeholder="Enter your ingredients here..."></textarea>
-        <button id="enter-button" class="mt-2 sm:mt-0 sm:ml-2 px-4 py-2 border rounded-lg bg-white text-gray-800 hover:bg-gray-200 transition">
-          Enter
-        </button>
+      <div class="mt-4 flex flex-col items-center">
+        <input
+                type="text"
+                id="title-input"
+                class="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:outline-none mb-2"
+                placeholder="Optional: Name your recipe idea (e.g. Mac and Cheese)"
+        />
+        <div class="flex flex-col sm:flex-row w-full sm:w-1/2">
+    <textarea
+            id="ingredients-input"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none"
+            rows="3"
+            placeholder="Enter your ingredients here...">
+    </textarea>
+          <button
+                  id="enter-button"
+                  class="mt-2 sm:mt-0 sm:ml-2 px-4 py-2 border rounded-lg bg-white text-gray-800 hover:bg-gray-200 transition">
+            Enter
+          </button>
+        </div>
       </div>
+
     </div>
 
     <div class="text-center mb-8">
       <label for="recipe-count" class="text-lg sm:text-xl text-gray-800">Number of recipes</label>
-      <input type="number" id="recipeCount" min="1" max="10" value="1" class="mt-2 w-24 px-4 py-2 border rounded-lg focus:outline-none">
+      <input type="number" id="recipeCount" min="1" max="2" value="1" class="mt-2 w-24 px-4 py-2 border rounded-lg focus:outline-none">
     </div>
 
     <div class="mb-8">
@@ -49,55 +65,110 @@
 
       </div>
     </div>
-    </section>
-    <!-- manual recipe -->
-    <section class="bg-white p-6 rounded-lg shadow-md mb-8">
-      <h2 class="text-2xl font-bold mb-4">Create Recipe Manually</h2>
-      <form action="/createRecipes" method="POST" class="space-y-4">
+  </section>
+  <!-- edit recipe -->
+  <section id="manual-edit-form" class="bg-white p-6 rounded-lg shadow-md mb-8 hidden">
+    <h2 class="text-2xl font-bold mb-4">Edit Recipe</h2>
+    <form action="/createRecipes" method="POST" id="edit-recipe-form" class="space-y-4">
+      <div>
+        <label for="recipeName">Recipe Name</label>
+        <input type="text" name="recipeName" id="recipeName" required class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="ingredientName">Ingredients</label>
+        <input type="text" name="ingredientName" id="ingredientName" required class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="diet">Diet</label>
+        <input type="text" name="diet" id="diet" class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="allergies">Allergies</label>
+        <input type="text" name="allergies" id="allergies" class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="macros">Macros</label>
+        <input type="text" name="macros" id="macros" class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="cookingTime">Cooking Time</label>
+        <input type="number" name="cookingTime" id="cookingTime" required class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="instructions">Instructions</label>
+        <textarea name="instructions" id="instructions" rows="3" class="w-full border rounded-md p-2"></textarea>
+      </div>
+      <div>
+        <label for="calories">Calories</label>
+        <input type="number" name="calories" id="calories" class="w-full border rounded-md p-2">
+      </div>
+      <div>
+        <label for="image">Image URL</label>
+        <input type="url" name="image" id="image" class="w-full border rounded-md p-2">
+      </div>
+      <div class="text-center">
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Submit Recipe</button>
+      </div>
+    </form>
+  </section>
+  <!-- AI-AutoFill Manual Recipe -->
+  <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+    <h2 class="text-2xl font-bold mb-4">Create Recipe with AI Assistance</h2>
+    <form id="autoFillForm" action="/createRecipes" method="POST" class="space-y-4">
+      <div>
+        <label for="autoRecipeName" class="block text-lg font-medium text-gray-700">Recipe Name</label>
+        <input type="text" id="autoRecipeName" name="recipeName" class="mt-1 block w-full px-4 py-2 border rounded-md">
+      </div>
+      <div>
+        <label for="autoIngredients" class="block text-lg font-medium text-gray-700">Ingredients (comma separated)</label>
+        <input type="text" id="autoIngredients" name="ingredientName" class="mt-1 block w-full px-4 py-2 border rounded-md">
+      </div>
+    <div id="autoFilledFields" class="mt-6">
+      <h3 class="text-xl font-semibold mb-2">Auto-Filled Details</h3>
+      <div class="space-y-4">
         <div>
-          <label for="recipeName" class="block text-lg font-medium text-gray-700">Recipe Name</label>
-          <input type="text" name="recipeName" id="recipeName" required class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for= "autoDiet" class="block font-medium">Diet</label>
+          <input type="text" id="autoDiet" name="diet" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
         <div>
-          <label for="ingredientName" class="block text-lg font-medium text-gray-700">Ingredients (comma separated)</label>
-          <input type="text" name="ingredientName" id="ingredientName" required class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for="autoAllergies" class="block font-medium">Allergies</label>
+          <input type="text" id="autoAllergies" name="allergies" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
         <div>
-          <label for="diet" class="block text-lg font-medium text-gray-700">Diet</label>
-          <input type="text" name="diet" id="diet" placeholder="e.g., Vegan, Keto" class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for ="autoMacros" class="block font-medium">Macros</label>
+          <input type="text" id="autoMacros" name="macros" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
         <div>
-          <label for="allergies" class="block text-lg font-medium text-gray-700">Allergies</label>
-          <input type="text" name="allergies" id="allergies" placeholder="e.g., Nuts, Dairy" class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for ="autoCookTime" class="block font-medium">Cooking Time</label>
+          <input type="text" id="autoCookTime" name="cookingTime" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
         <div>
-          <label for="macros" class="block text-lg font-medium text-gray-700">Macros</label>
-          <input type="text" name="macros" id="macros" placeholder="e.g., 30g protein, 10g fat" class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for="autoInstructions" class="block font-medium">Instructions</label>
+          <textarea id="autoInstructions" name="instructions" rows="3" class="mt-1 block w-full px-4 py-2 border rounded-md"></textarea>
         </div>
         <div>
-          <label for="cookingTime" class="block text-lg font-medium text-gray-700">Cooking Time (minutes)</label>
-          <input type="number" name="cookingTime" id="cookingTime" required class="mt-1 block w-full px-4 py-2 border rounded-md">
+          <label for="autoCalories" class="block font-medium">Calories</label>
+          <input type="text" id="autoCalories" name="calories" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
         <div>
-          <label for="instructions" class="block text-lg font-medium text-gray-700">Instructions</label>
-          <textarea name="instructions" id="instructions" rows="3" required class="mt-1 block w-full px-4 py-2 border rounded-md"></textarea>
+          <label for ="autoImage" class="block font-medium">Image URL</label>
+          <input type="text" id="autoImage" name="image" class="mt-1 block w-full px-4 py-2 border rounded-md">
         </div>
-        <div>
-          <label for="calories" class="block text-lg font-medium text-gray-700">Calories</label>
-          <input type="number" name="calories" id="calories" required class="mt-1 block w-full px-4 py-2 border rounded-md">
-        </div>
-        <div>
-          <label for="image" class="block text-lg font-medium text-gray-700">Image URL</label>
-          <input type="url" name="image" id="image" class="mt-1 block w-full px-4 py-2 border rounded-md">
-        </div>
-        <div class="text-center">
-          <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Submit Recipe</button>
-        </div>
-      </form>
-    </section>
-  </main>
-  
-  <script type="module" src="js/gpt_handler.js"></script>
-  <script src="js/mainPage.js"></script>
+      </div>
+    </div>
+      <div class="text-center">
+        <button type="button" id="autoFillButton" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Auto-Fill Recipe</button>
+      </div>
+      <button type="submit" id="saveAutoRecipe" class="mt-4 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+        Save Recipe
+      </button>
+    </form>
+  </section>
+
+</main>
+
+<script type="module" src="js/gpt_handler.js"></script>
+<script src="js/mainPage.js"></script>
 </body>
 </html>
+

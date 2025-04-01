@@ -4,6 +4,7 @@ const router = express.Router();
 
 module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
 
+    //GET route to display restaurant adviser page
     router.get("/", (req, res) => {
         const username = req.session?.username || null;
         res.render("RestaurantAdviser", { 
@@ -13,7 +14,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
         });
     });
 
-    // ✅ Submit Recipe for Restaurant Recommendations
+    //Submit Recipe for Restaurant Recommendations
     router.post('/advisersubmit', async (req, res) => {
         const { recipeText, filterRating, filterPrice } = req.body;
 
@@ -21,9 +22,11 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
             return res.status(400).send('Please provide a recipe.');
         }
 
+        //Extract key ingredients from recipe text
         const keyIngredients = extractKeyIngredients(recipeText);
         console.log("Extracted Ingredients:", keyIngredients);
 
+        //fetch restaurant recommendations using ingredients
         fetchRestaurantRecommendations(keyIngredients, (err, recommendations) => {
             if (err) {
                 console.error("Error fetching recommendations:", err);
@@ -38,6 +41,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
                 });
             }
 
+            //Filter based on rating and price and price
             let filteredRecommendations = recommendations.filter(r => r.lat && r.lng);
 
             if (filterRating) {
@@ -56,7 +60,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
         });
     });
 
-    // ✅ Save a Restaurant to Favorites
+    //Save a Restaurant to Favorites
     router.post('/saveRestaurant', (req, res) => {
         if (!req.session || !req.session.user_id) {
             return res.status(401).send("You must be logged in to save restaurants.");
@@ -78,7 +82,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
         });
     });
 
-    // ✅ Retrieve Saved Restaurants (Fixed)
+    //Get route to retrieve a users saved restaurants
     router.get('/savedRestaurants', (req, res) => {
         if (!req.session || !req.session.user_id) {
             return res.status(401).send("You must be logged in to view saved restaurants.");
@@ -94,7 +98,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
         });
     });
 
-    // ✅ Remove a Restaurant from Favorites (Fixed)
+    //Remove a Restaurant from Favorites
     router.post('/removeRestaurant', (req, res) => {
         if (!req.session || !req.session.user_id) {
             return res.status(401).send("You must be logged in to remove restaurants.");
@@ -110,7 +114,7 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
         });
     });
 
-    // ✅ Fetch Details of a Specific Saved Restaurant (Fixed)
+    //Fetch Details of a Specific Saved Restaurant
     router.get('/restaurantDetails/:id', (req, res) => {
         if (!req.session || !req.session.user_id) {
             return res.status(401).send("You must be logged in to view restaurant details.");
@@ -132,16 +136,15 @@ module.exports = (db) => {  // ✅ Ensure `db` is passed correctly
             res.render("RestaurantDetails", { restaurant: results[0] });
         });
     });
-
-    return router; // ✅ Ensures the router is returned properly
+    return router;
 };
 
-// ✅ Extract Key Ingredients
+//Extract ingredients from recipe text
 function extractKeyIngredients(recipeText) {
     return recipeText.toLowerCase().replace(/[^a-z\s]/g, "").split(" ").filter(word => word.length > 2);
 }
 
-// ✅ Fetch Restaurant Data from Google Places API
+//Utility function to call Google Places APi with ingredient keyword
 function fetchRestaurantRecommendations(ingredients, callback) {
     const GOOGLE_API_KEY = "AIzaSyCCjr0wxL8myd9wPSo2tcszUBU31Wtf-wo"; 
     const GOOGLE_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";

@@ -1,13 +1,19 @@
+//Import necessary modules
 const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
+
+    //GET route to view saved recipes for the current user
     router.get('/:username?', (req, res) => {
+        //Get username from URL parameter or session
         let username = req.params.username || req.session.username;
-        
+
+        //If no user is logged in or specified and redirect to login page
         if (!username) {
             return res.redirect('/login'); // If the user is not logged in, redirect to login
         }
+        //Querry to fetch all recipes saved by user
         db.query(
             `SELECT r.*
              FROM SavedRecipes sr
@@ -20,7 +26,8 @@ module.exports = (db) => {
                     console.error('Error fetching saved recipes: ', err);
                     return res.status(500).send('Error fetching saved recipes');
                 }
-    
+
+                //Format macros field into an array
                 recipeResults.forEach(recipe => {
                     if (recipe.macros) {
                         recipe.macros = recipe.macros
@@ -30,6 +37,7 @@ module.exports = (db) => {
                     }
                 });
 
+                //Format the ingredientName field into an array
                 recipeResults.forEach(recipe => {
                     if (recipe.ingredientName) {
                         recipe.ingredientName = recipe.ingredientName
@@ -39,16 +47,20 @@ module.exports = (db) => {
                     }
                 });
                 console.log(recipeResults);
+                //Render the savedRecipes EJS page with recipe results
                 const username = req.session.username || null;
                 res.render('savedRecipes', { recipes: recipeResults, username: username });
             }
         );
     });
 
+    //DELETE route to remove a saved recipe for the logged-in user
     router.delete('/remove/:rid', (req, res) => {
         const username = req.session.username;
         const recipeId = req.params.rid;
         console.log(recipeId);
+
+        //Delete the saved recipe based on the RID and username
         db.query(
             `DELETE sr
              FROM SavedRecipes sr

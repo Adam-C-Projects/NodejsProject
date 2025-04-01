@@ -1,5 +1,7 @@
+//Import required modules
 const express = require("express");
 const router = express.Router();
+//Import bcrypt for secure password comparison
 const bcrypt = require('bcrypt');
 
 module.exports = (db) => {

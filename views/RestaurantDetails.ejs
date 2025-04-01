@@ -27,21 +27,24 @@
 
     <script>
         function initMap() {
+            //Parse coordination from EJs values
             var lat = <%= restaurant.lat %>;
             var lng = <%= restaurant.lng %>;
 
+            //Initialize map centered on restaurant
             var map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 15,
                 center: { lat: lat, lng: lng }
             });
 
+            //Add a marker for the restaurant location
             new google.maps.Marker({
                 position: { lat: lat, lng: lng },
                 map: map,
                 title: "<%= restaurant.restaurant_name %>"
             });
         }
-
+        //Ensure the initMap function is callable by the maps API
         window.initMap = initMap;
     </script>
 

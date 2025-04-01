@@ -63,11 +63,13 @@
         </main>
 
         <script>
+            //Toggles visibility of a recipe detail section
             function toggleRecipeDetails(event) {
                 const details = event.target.closest('li').querySelector('.recipe-details');
                 details.classList.toggle('hidden');
             }
 
+            //Handles recipe removal logic
             document.addEventListener('DOMContentLoaded', () => {
                 const recipeList = document.getElementById('recipe-list');
 
