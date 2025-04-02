@@ -189,6 +189,3 @@ async function generateRecipe() {
     document.getElementById("recipe-gen-text").classList.remove("hidden");
     document.getElementById("recipe-text").classList.remove("hidden");
 }
-
-
-
