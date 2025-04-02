@@ -13,13 +13,14 @@
     <%- include('partials/header_desktop') %>
   <% } %>
   <!--Calendar section-->
+  <div id="selectedDate" class="font-semibold text-center text-xl mb-4 mt-2"></div>
   <div class="mx-auto w-full max-w-md p-4 bg-white shadow-md rounded-lg">
         <div class="flex items-center justify-between mb-4">
             <button id="prevMonth" class="px-2 py-1 text-gray-700 bg-gray-200 rounded"><</button>
             <h2 id="monthYear" class="text-lg font-semibold"></h2>
             <button id="nextMonth" class="px-2 py-1 text-gray-700 bg-gray-200 rounded">></button>
         </div>
-      <--Days of the week-->
+      <!--Days of the week-->
         <div class="grid grid-cols-7 gap-2 text-center">
             <div class="font-semibold">Mon</div>
             <div class="font-semibold">Tue</div>
@@ -37,10 +38,19 @@
         const calendarDays = document.getElementById("calendarDays");
         const prevMonth = document.getElementById("prevMonth");
         const nextMonth = document.getElementById("nextMonth");
+        const selectedDateLabel = document.getElementById('selectedDate');
 
-        let currentDate = new Date();
+        //Get the date from the URL query if present
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentDate = urlParams.has('date') ? new Date(urlParams.get('date')) : new Date();
+        selectedDateLabel.textContent = `${currentDate.toLocaleDateString('en-GB', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}`;
 
-        //Render calendar view based on current date
+        //Function to render the calendar
         function renderCalendar() {
             calendarDays.innerHTML = "";
             let year = currentDate.getFullYear();
@@ -48,31 +58,31 @@
             let firstDay = new Date(year, month, 1).getDay();
             let lastDay = new Date(year, month + 1, 0).getDate();
 
-            /* 
-              Adjust firstDay so the first column is Monday, and the last is Sunday.
-              If firstDay is 0 (Sunday), set firstDay to 6, otherwise reduce firstDay by 1.
-            */
             firstDay = firstDay == 0 ? 6 : firstDay - 1;
 
             monthYear.textContent = new Intl.DateTimeFormat('en-GB', {month: 'long', year: 'numeric'}).format(currentDate);
 
-            // Create empty cells
+            //Create empty cells
             for (let i = 0; i < firstDay; i++) {
                 calendarDays.innerHTML += `<div></div>`;
             }
 
             //Fill day cells with click redirection
             for (let day = 1; day <= lastDay; day++) {
-              const dayCell = document.createElement('div');
-              dayCell.classList.add('p-2', 'rounded', 'bg-gray-200', 'cursor-pointer');
-              dayCell.textContent = day;
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('p-2', 'rounded', 'bg-gray-200', 'cursor-pointer');
+                dayCell.textContent = day;
 
-              dayCell.addEventListener('click', () => {
-                  const selectedDate = new Date(year, month, day).toISOString().split('T')[0];
-                  window.location.href = `/macroTracker?date=${selectedDate}`;
-              });
+                dayCell.addEventListener('click', () => {
+                    currentDate.setDate(day);
+                    const selectedDate = new Date(currentDate);
+                    //Fix timezone issues
+                    selectedDate.setHours(12, 0, 0, 0); 
+                    const formattedDate = selectedDate.toISOString().split('T')[0];
+                    window.location.href = `/macroTracker?date=${formattedDate}`;
+                });
 
-              calendarDays.appendChild(dayCell);
+                calendarDays.appendChild(dayCell);
             }
         }
 
