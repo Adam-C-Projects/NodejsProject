@@ -174,28 +174,6 @@ function renderRecipe(recipe, index) {
     //Create container div and insert recipe content
     const recipeDiv = document.createElement("div");
     recipeDiv.innerHTML = recipeText;
-
-
-    //Create edit button for manual updates
-    const editButton = document.createElement("button");
-    editButton.innerText = "Edit Recipe";
-    editButton.className = "edit-button bg-blue-500 text-white px-3 py-1 rounded mt-2 hover:bg-blue-600";
-
-    //Show form and populate it with recipe data when clicking "edit"
-    editButton.addEventListener("click", () => {
-        document.getElementById("manual-edit-form").classList.remove("hidden");
-        document.getElementById("recipeName").value = recipe.title;
-        document.getElementById("ingredientName").value = recipe.ingredients.join(", ");
-        document.getElementById("diet").value = recipe.diet || "";
-        document.getElementById("allergies").value = recipe.allergies.join(", ") || "";
-        document.getElementById("macros").value = `${recipe.macros.protein}g protein, ${recipe.macros.total_fat}g fat`;
-        document.getElementById("cookingTime").value = recipe.cookTime || 0;
-        document.getElementById("instructions").value = recipe.instructions.join("\n");
-        document.getElementById("calories").value = recipe.calories || "";
-        document.getElementById("image").value = recipe.image || "";
-    });
-
-    recipeDiv.appendChild(editButton);
     return recipeDiv;
 }
 
