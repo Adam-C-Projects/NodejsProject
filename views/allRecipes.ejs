@@ -355,56 +355,62 @@
 
     </div>
 
-    <!--Table method-->
-    <div class="recipe-container px-1">
-        <% if (recipes && recipes.length > 0) { %>
-            <ul id="recipe-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-                <% recipes.forEach((recipe, index) => { %>
-                    <li data-id="<%= recipe.RID || index %>" class="bg-white shadow-md rounded-lg overflow-hidden">
-                        <button class="w-full text-left px-4 py-2 bg-green-500 text-white rounded-t-lg hover:bg-green-600 focus:outline-none" onclick="toggleRecipeDetails(event)">
-                            <h3 class="text-lg font-bold"><%= recipe.recipeName %></h3>
-                        </button>
-                        <% if (recipe.image) { %>
-                            <img src="<%= recipe.image %>" alt="Image for <%= recipe.recipeName %>" class="w-64 h-64 object-cover rounded mx-auto" />
+    <!-- Table method -->
+<div class="recipe-container px-1">
+    <% if (recipes && recipes.length > 0) { %>
+        <ul id="recipe-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+            <% recipes.forEach((recipe, index) => { %>
+                <li data-id="<%= recipe.RID || index %>" class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <button class="w-full text-left px-4 py-2 bg-green-500 text-white rounded-t-lg hover:bg-green-600 focus:outline-none" onclick="toggleRecipeDetails(event)">
+                        <h3 class="text-lg font-bold"><%= recipe.recipeName %></h3>
+                    </button>
+                    <% if (recipe.image) { %>
+                        <img src="<%= recipe.image %>" alt="Image for <%= recipe.recipeName %>" class="w-64 h-64 object-cover rounded mx-auto" />
+                    <% } %>
+                    <div class="recipe-details hidden px-4 py-2">
+                        <strong>Ingredients:</strong>
+                        <% if (Array.isArray(recipe.ingredientName)) { %>
+                            <ul class="list-disc ml-4">
+                                <% recipe.ingredientName.forEach(function(ingredient) { %>
+                                    <li><%= ingredient %></li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p><%= recipe.ingredientName %></p>
                         <% } %>
-                        <div class="recipe-details hidden px-4 py-2">
-                            <strong>Ingredients:</strong>
-                            <% if (Array.isArray(recipe.ingredientName)) { %>
-                                <ul class="list-disc ml-4">
-                                    <% recipe.ingredientName.forEach(function(ingredient) { %>
-                                        <li><%= ingredient %></li>
-                                    <% }); %>
-                                </ul>
-                            <% } else { %>
-                                <p><%= recipe.ingredientName %></p>
-                            <% } %>
-                            <p class="mt-2 dietary-req"><strong>Dietary Requirements:</strong> <%= recipe.diet %></p>
-                            <div class="w-1/2">
-                                <div class="w-1/2">
-                                    <strong>Calories:</strong>
-                                    <p><%= recipe.calories %></p>
-                                </div>
-                                <strong>Macros</strong>
 
+                        <p class="mt-2 dietary-req"><strong>Dietary Requirements:</strong> <%= recipe.diet %></p>
+                        
+                        <div class="w-1/2">
+                            <div class="w-1/2">
+                                <strong>Calories:</strong>
+                                <p><%= recipe.calories %></p>
+                            </div>
+                            <strong>Macros:</strong>
+                            <% if (Array.isArray(recipe.macros)) { %>
                                 <ul class="list-disc list-inside">
                                     <% recipe.macros.forEach((macro) => { %>
                                         <li><%= macro %></li>
                                     <% }) %>
                                 </ul>
-                            </div>
-
-                            <strong>Cooking Time:</strong>
-                            <p><%= recipe.cookingTime %> minutes</p>
-                            <strong> Contains:</strong>
-                            <p class="recipe-allergies"><%= recipe.allergies %></p>
+                            <% } else { %>
+                                <p><%= recipe.macros %></p>
+                            <% } %>
                         </div>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p class="text-center text-gray-600">No recipes found.</p>
-        <% } %>
-    </div>
+
+                        <strong>Cooking Time:</strong>
+                        <p><%= recipe.cookingTime %> minutes</p>
+                        <strong>Contains:</strong>
+                        <p class="recipe-allergies"><%= recipe.allergies %></p>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p class="text-center text-gray-600">No recipes found.</p>
+    <% } %>
+</div>
+
 </main>
 
 <script>
